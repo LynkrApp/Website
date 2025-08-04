@@ -30,12 +30,6 @@
 - 🎯 **Drag & Drop** - Intuitive interface for managing links
 - 📤 **Data Export** - Download your data anytime in JSON format
 
-## 🚀 Demo
-
-<div align="center">
-  <img src="public/assets/new_shot.png" alt="Lynkr Dashboard" width="800">
-</div>
-
 ## 🛠️ Tech Stack
 
 - **Framework:** [Next.js 13](https://nextjs.org/)
@@ -191,7 +185,7 @@ We welcome feature requests! Please:
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL 3 License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
