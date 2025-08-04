@@ -33,7 +33,7 @@
 ## 🛠️ Tech Stack
 
 - **Framework:** [Next.js 13](https://nextjs.org/)
-- **Database:** [Prisma](https://prisma.io/) with PostgreSQL
+- **Database:** [Prisma](https://prisma.io/) with Mongoose
 - **Authentication:** [NextAuth.js](https://next-auth.js.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Components:** [Radix UI](https://radix-ui.com/)
@@ -48,7 +48,7 @@
 
 - Node.js 18+ 
 - npm or yarn or bun
-- PostgreSQL database
+- Mongoose database
 
 ### Installation
 
@@ -75,7 +75,7 @@
    Fill in your environment variables:
    ```env
    # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/lynkr"
+   DATABASE_URL="mongodb://username:password@localhost:27017/lynkr"
    
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
@@ -205,7 +205,7 @@ This project is licensed under the AGPL 3 License - see the [LICENSE](LICENSE) f
 ## 📊 Status
 
 - **Website:** [lynkr.link](https://lynkr.link)
-- **Status Page:** [status.lynkr.link](https://lynkr.instatus.com)
+- **Status Page:** [status.lynkr.link](https://lynkrapp.instatus.com)
 - **Documentation:** Coming soon
 - **API:** Coming soon
 
