@@ -10,7 +10,7 @@
   [![GitHub Stars](https://img.shields.io/github/stars/LynkrApp/Website?style=for-the-badge)](https://github.com/LynkrApp/Website/stargazers)
   [![GitHub Issues](https://img.shields.io/github/issues/LynkrApp/Website?style=for-the-badge)](https://github.com/LynkrApp/Website/issues)
   [![GitHub License](https://img.shields.io/github/license/LynkrApp/Website?style=for-the-badge)](https://github.com/LynkrApp/Website/blob/main/LICENSE)
-  [![Discord](https://img.shields.io/discord/YOUR_DISCORD_ID?style=for-the-badge&logo=discord)](https://discord.gg/g76w2v7RzG)
+  [![Discord](https://img.shields.io/discord/1387524650895933540?style=for-the-badge&logo=discord)](https://discord.gg/g76w2v7RzG)
 
   [🌐 Live Demo](https://lynkr.link) • [📖 Documentation](#getting-started) • [🐛 Report Bug](https://github.com/LynkrApp/Website/issues) • [💡 Request Feature](https://github.com/LynkrApp/Website/issues)
 </div>
