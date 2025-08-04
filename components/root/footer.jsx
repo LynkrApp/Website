@@ -23,7 +23,7 @@ const Footer = ({ className = "" }) => {
       { label: 'Follow us on Twitter', href: 'https://x.com/HeyLynkr' },
       { label: 'Follow us on GitHub', href: 'https://github.com/LynkrApp' },
       { label: 'Join our Discord', href: 'https://discord.gg/g76w2v7RzG' },
-      { label: 'View our Status', href: 'https://lynkr.instatus.com' }
+      { label: 'View our Status', href: 'https://lynkrapp.instatus.com' }
     ],
     legal: [
       { label: 'Privacy Policy', href: '/privacy' },
