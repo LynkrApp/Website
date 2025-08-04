@@ -3,36 +3,7 @@ import { ArrowLeft, Heart, Code, Users, Globe, Zap, Coffee, Target } from 'lucid
 import { ContentLayout } from '@/components/layout/BaseLayout';
 
 const Careers = () => {
-    const openRoles = [
-        {
-            title: "Senior Full-Stack Developer",
-            department: "Engineering",
-            location: "Remote",
-            type: "Full-time",
-            description: "Help us build the future of link-in-bio platforms with Next.js, React, and modern web technologies."
-        },
-        {
-            title: "DevOps Engineer",
-            department: "Infrastructure",
-            location: "Remote",
-            type: "Full-time",
-            description: "Scale our infrastructure and improve deployment processes for millions of users worldwide."
-        },
-        {
-            title: "Product Designer",
-            department: "Design",
-            location: "Remote",
-            type: "Full-time",
-            description: "Create beautiful, intuitive user experiences that make link management effortless for creators."
-        },
-        {
-            title: "Community Manager",
-            department: "Community",
-            location: "Remote",
-            type: "Part-time",
-            description: "Build and nurture our open-source community, manage GitHub discussions, and create educational content."
-        }
-    ];
+    const openRoles = [];
 
     const benefits = [
         {
