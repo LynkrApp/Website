@@ -1,0 +1,41 @@
+import { Drawer } from 'vaul';
+import Link from 'next/link';
+import { AlertCircle, User } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+
+const UserNavButtonMobile = ({ data, logout }) => {
+  return (
+    <>
+      <Drawer.Portal>
+        <Drawer.Overlay className="fixed inset-0 backdrop-blur-sm" />
+        <Drawer.Content className="bg-white p-4 flex flex-col rounded-t-xl h-[33%] mt-24 fixed bottom-0 left-0 right-0">
+          <div className="mx-auto mt-6 w-12 h-1.5 flex-shrink-0 rounded-full bg-zinc-300 mb-4" />
+          <Link
+            href="/admin/settings"
+            className="flex items-center w-full gap-2 p-3 text-sm font-medium text-gray-500 transition-all duration-75 rounded-md group hover:bg-gray-100"
+          >
+            <User size={17} color="gray" />
+            <h3 className="w-full text-lg truncate">{data.user.name}</h3>
+          </Link>
+          <Link
+            target="_blank"
+            href="https://github.com/LynkrApp/Website/issues/new/choose"
+            className="flex items-center w-full gap-2 p-3 text-sm font-medium text-gray-500 transition-all duration-75 rounded-md group hover:bg-gray-100"
+          >
+            <AlertCircle size={17} color="gray" />
+            <h3 className="text-lg">Feedback</h3>
+          </Link>
+          <button
+            onClick={logout}
+            className="flex items-center w-full gap-2 p-3 text-sm font-medium text-red-400 transition-all duration-75 rounded-md group hover:bg-red-500 hover:text-white"
+          >
+            <LogOut size={17} className="text-b-400 hover:text-white" />
+            <h3 className="text-lg">Sign out</h3>
+          </button>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </>
+  );
+};
+
+export default UserNavButtonMobile;
