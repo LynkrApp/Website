@@ -52,6 +52,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ Implemented social media preview customization with multiple templates
 - ✨ Added color picker interface for fine-tuning social preview appearance
 - ✨ Created adaptive layout system for different screen sizes in profile editor
+- ✨ Enhanced 404 Not Found page with improved visual design and user experience
+- ✨ Created custom error pages for better error handling throughout the application
+- ✨ Implemented responsive design fixes for OG image editor on mobile devices
+- ✨ Added smooth animations to error pages for better visual feedback
+- ✨ Improved "favicon toggle" functionality in link editor with proper state persistence
+- ✨ Enhanced UX for handle claim suggestions on 404 pages
+- ✨ Created page router friendly error pages with better debugging capabilities
 
 ### 🔧 Bug Fixes
 
@@ -76,6 +83,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 🐛 Fixed social card icon rendering for special cases and aliases
 - 🐛 Resolved layout issues with the OG customizer on small screens
 - 🐛 Fixed navigation for mobile users in the admin dashboard
+- 🐛 Fixed OG image editor overflowing screen boundaries on small devices
+- 🐛 Resolved issues with color picker positioning in mobile view
+- 🐛 Fixed responsive layout issues with tabs in OG image editor
+- 🐛 Corrected error page routing and display on various error types
+- 🐛 Fixed favicon toggle not properly saving state to database
+- 🐛 Resolved UI inconsistencies in link editing modals
+- 🐛 Fixed error display and handling for various error scenarios
+- 🐛 Corrected drag and drop confusion between links and sections in editor
 
 ### ⚡ Improvements
 
@@ -106,6 +121,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ⚡ Enhanced mobile navigation with dedicated bottom controls
 - ⚡ Improved share button functionality for better content distribution
 - ⚡ Optimized page metadata for better SEO and social sharing
+- ⚡ Enhanced mobile experience with better spacing and sizing in OG editor
+- ⚡ Improved error page UX with clear actions and better guidance
+- ⚡ Added proper scrolling behavior to theme galleries on small screens
+- ⚡ Enhanced color picker interface with improved touch interaction
+- ⚡ Improved visual feedback during OG image editing
+- ⚡ Optimized error page loading and rendering
+- ⚡ Added custom 500 error page with helpful messaging
+- ⚡ Enhanced debugging information for developers in error pages
 
 ## [0.1.0] - 2025-08-04
 
