@@ -1,14 +1,13 @@
 import { AnalyticsDashboard } from '@/components/core/profile-analytics/dashboard';
 import Layout from '@/components/layout/Layout';
 import Footer from '@/components/layout/footer/footer';
+import { AdminPageMeta } from '@/components/meta/metadata';
 import Head from 'next/head';
 
 const Analytics = () => {
   return (
     <>
-      <Head>
-        <title>Lynkr | Analytics</title>
-      </Head>
+      <AdminPageMeta pageType="analytics" />
       <Layout>
         <div className="w-full lg:w-[100vw] pl-4 pr-4 overflow-auto">
           <div className="max-w-[700px] mx-auto my-10">

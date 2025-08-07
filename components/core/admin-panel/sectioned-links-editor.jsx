@@ -174,10 +174,11 @@ const SectionedLinksEditor = () => {
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverSection, setDragOverSection] = useState(null);
   const [isDraggingOverSection, setIsDraggingOverSection] = useState(false);
-  // Add state for active drag section
   const [activeDragSectionId, setActiveDragSectionId] = useState(null);
   const [collapseAllSections, setCollapseAllSections] = useState(false);
   const [isDraggingSection, setIsDraggingSection] = useState(false);
+  // Add state to track whether we're in a link drag operation
+  const [isDraggingLink, setIsDraggingLink] = useState(false);
 
   // Add section reordering mutation
   const updateSectionsOrderMutation = useMutation(
@@ -234,29 +235,46 @@ const SectionedLinksEditor = () => {
   // Add the missing handleSectionDragStart function
   const handleSectionDragStart = useCallback((event) => {
     const { active } = event;
-    setActiveDragSectionId(active.id);
-    setIsDraggingSection(true);
-  }, []);
+
+    // Check if the active item is a section
+    const isSectionDrag = userSections?.some(section => section.id === active.id);
+
+    if (isSectionDrag) {
+      setActiveDragSectionId(active.id);
+      setIsDraggingSection(true);
+      setIsDraggingLink(false); // Ensure we're not in link drag mode
+    }
+  }, [userSections]);
 
   // Enhanced drag handlers with cross-section support and smoother animations
   const handleDragStart = useCallback((event) => {
     const { active } = event;
-    setActiveDragId(active.id);
 
-    // Find the dragged item
-    const draggedLink = userLinks?.find(link => link.id === active.id);
-    setDraggedItem(draggedLink);
-    setDragOverSection(null);
-    setIsDraggingOverSection(false);
+    // Check if the active item is a link
+    const isLinkDrag = userLinks?.some(link => link.id === active.id);
+
+    if (isLinkDrag) {
+      setActiveDragId(active.id);
+      setIsDraggingLink(true);
+      setIsDraggingSection(false); // Ensure we're not in section drag mode
+
+      // Find the dragged item
+      const draggedLink = userLinks?.find(link => link.id === active.id);
+      setDraggedItem(draggedLink);
+      setDragOverSection(null);
+      setIsDraggingOverSection(false);
+    }
   }, [userLinks]);
 
   const handleDragEnd = useCallback(async (event) => {
     const { active, over } = event;
 
+    // Reset all drag states
     setActiveDragId(null);
     setDraggedItem(null);
     setDragOverSection(null);
     setIsDraggingOverSection(false);
+    setIsDraggingLink(false);
 
     if (!over || active.id === over.id) return;
 
@@ -507,7 +525,7 @@ const SectionedLinksEditor = () => {
                   <span className="text-xs text-gray-500">({groupedLinks.unsectioned.length})</span>
                 </div>
 
-                {/* Show links only if not dragging sections */}
+                {/* Show links unless we're specifically dragging sections */}
                 {!isDraggingSection && (
                   <SortableContext items={groupedLinks.unsectioned.map(link => link.id)} strategy={verticalListSortingStrategy}>
                     {groupedLinks.unsectioned
@@ -557,7 +575,7 @@ const SectionedLinksEditor = () => {
                       onVisibilityToggle={() => toggleSectionVisibility(section.id, section.visible)}
                       onDelete={() => deleteSection(section.id)}
                     >
-                      {/* Section links - hide during section dragging */}
+                      {/* Section links - only hide during section dragging */}
                       {!isDraggingSection && section.links.length > 0 ? (
                         <SortableContext items={section.links.map(link => link.id)} strategy={verticalListSortingStrategy}>
                           {section.links
@@ -618,7 +636,7 @@ const SectionedLinksEditor = () => {
       {/* Drag Overlay for smooth animations */}
       <DragOverlay dropAnimation={{ duration: 150, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
         {activeDragId && draggedItem ? (
-          <div className="transform shadow-2xl rotate-3 opacity-90 scale-105">
+          <div className="transform scale-105 shadow-2xl rotate-3 opacity-90">
             <Link
               id={draggedItem.id}
               title={draggedItem.title}
@@ -643,10 +661,14 @@ const SectionedLinksEditor = () => {
         )}
       </DragOverlay>
 
-      {/* Help tooltip for dragging */}
+      {/* Help tooltip for dragging - improved to show different messages */}
       {(activeDragId || activeDragSectionId) && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm">
-          {activeDragSectionId ? "Drop on another section to reorder" : "Drop on a section header to move this link"}
+        <div className="fixed px-4 py-2 text-sm text-white transform -translate-x-1/2 rounded-lg shadow-lg bottom-4 left-1/2 bg-slate-800">
+          {isDraggingSection
+            ? "Drop on another section to reorder sections"
+            : isDraggingLink
+              ? "Drop on a section header to move this link to that section"
+              : "Drag to reorder"}
         </div>
       )}
 

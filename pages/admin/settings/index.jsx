@@ -23,6 +23,7 @@ import DataViewer from '@/components/core/data-management/data-viewer';
 import useDataExport from '@/hooks/useDataExport';
 import { Download, Eye, FileText, AlertTriangle } from 'lucide-react';
 import LoadingDots from '@/components/utils/loading-dots';
+import { AdminPageMeta } from '@/components/meta/metadata';
 
 const Settings = () => {
   const { data: currentUser } = useCurrentUser();
@@ -189,8 +190,8 @@ const Settings = () => {
           <>
             <div className="max-w-[690px] mx-auto my-10">
               <h3 className="text-xl font-semibold">Profile Settings</h3>
-              <div className="mt-4 rounded-2xl border bg-white p-lg w-full h-auto pb-10">
-                <div className="flex flex-col lg:flex-row gap-x-6 p-10">
+              <div className="w-full h-auto pb-10 mt-4 bg-white border rounded-2xl p-lg">
+                <div className="flex flex-col p-10 lg:flex-row gap-x-6">
                   <div className="w-[100px] h-[100px] pb-6 rounded-full flex items-center mx-auto">
                     {fetchedUser ? (
                       <UserAvatarSetting />
@@ -234,7 +235,7 @@ const Settings = () => {
 
                   {/* Handle Input */}
                   <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
                       Handle (your unique URL)
                     </label>
                     <div className="relative">
@@ -284,7 +285,7 @@ const Settings = () => {
       case 'accounts':
         return (
           <div className="max-w-[690px] mx-auto my-10">
-            <h3 className="text-xl font-semibold mb-4">Account Management</h3>
+            <h3 className="mb-4 text-xl font-semibold">Account Management</h3>
             <AccountLinking />
           </div>
         );
@@ -292,8 +293,8 @@ const Settings = () => {
       case 'danger':
         return (
           <div className="max-w-[690px] mx-auto my-10">
-            <h3 className="text-xl font-semibold mb-1">Danger Zone</h3>
-            <h3 className="mb-6 text-gray-600 text-sm">
+            <h3 className="mb-1 text-xl font-semibold">Danger Zone</h3>
+            <h3 className="mb-6 text-sm text-gray-600">
               <Balancer>
                 Manage your account data and perform destructive actions. These operations cannot be undone.
               </Balancer>
@@ -301,25 +302,25 @@ const Settings = () => {
 
             {/* Data Management Section */}
             <div className="mb-6">
-              <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <h4 className="flex items-center gap-2 mb-3 text-lg font-semibold">
                 <FileText className="w-5 h-5 text-blue-600" />
                 Data Management
               </h4>
               <div className="space-y-4">
                 {/* View Your Data */}
-                <div className="w-full h-auto border bg-white rounded-lg p-6">
+                <div className="w-full h-auto p-6 bg-white border rounded-lg">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h5 className="font-medium text-gray-900 mb-2">View Your Data</h5>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <h5 className="mb-2 font-medium text-gray-900">View Your Data</h5>
+                      <p className="mb-4 text-sm text-gray-600">
                         See all the data we have stored about your account in an organized, readable format.
                       </p>
                     </div>
-                    <Eye className="w-5 h-5 text-gray-400 mt-1" />
+                    <Eye className="w-5 h-5 mt-1 text-gray-400" />
                   </div>
                   <button
                     onClick={() => setShowDataViewer(true)}
-                    className="w-full lg:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                    className="flex items-center w-full gap-2 px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg lg:w-auto hover:bg-blue-700"
                   >
                     <Eye className="w-4 h-4" />
                     View My Data
@@ -327,20 +328,20 @@ const Settings = () => {
                 </div>
 
                 {/* Export Your Data */}
-                <div className="w-full h-auto border bg-white rounded-lg p-6">
+                <div className="w-full h-auto p-6 bg-white border rounded-lg">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h5 className="font-medium text-gray-900 mb-2">Export Your Data</h5>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <h5 className="mb-2 font-medium text-gray-900">Export Your Data</h5>
+                      <p className="mb-4 text-sm text-gray-600">
                         Download a complete copy of your account data in JSON format. This includes your profile, links, sections, and settings.
                       </p>
                     </div>
-                    <Download className="w-5 h-5 text-gray-400 mt-1" />
+                    <Download className="w-5 h-5 mt-1 text-gray-400" />
                   </div>
                   <button
                     onClick={exportData}
                     disabled={isExporting}
-                    className="w-full lg:w-auto px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center w-full gap-2 px-4 py-2 text-white transition-colors bg-green-600 rounded-lg lg:w-auto hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isExporting ? (
                       <>
@@ -360,21 +361,21 @@ const Settings = () => {
 
             {/* Account Deletion Section */}
             <div>
-              <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <h4 className="flex items-center gap-2 mb-3 text-lg font-semibold">
                 <AlertTriangle className="w-5 h-5 text-red-600" />
                 Destructive Actions
               </h4>
-              <div className="w-full h-auto border border-red-200 bg-red-50 rounded-lg p-6">
+              <div className="w-full h-auto p-6 border border-red-200 rounded-lg bg-red-50">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h5 className="font-medium text-red-900 mb-2">Delete Account</h5>
+                    <h5 className="mb-2 font-medium text-red-900">Delete Account</h5>
                     <p className="text-sm text-red-700">
                       <Balancer>
                         Permanently delete your account and remove all your data from our servers. This action cannot be undone.
                       </Balancer>
                     </p>
                   </div>
-                  <AlertTriangle className="w-5 h-5 text-red-500 mt-1" />
+                  <AlertTriangle className="w-5 h-5 mt-1 text-red-500" />
                 </div>
                 <AlertDialog.Root>
                   <AlertDialog.Trigger asChild>
@@ -389,7 +390,7 @@ const Settings = () => {
 
             {/* Data Viewer Modal */}
             {showDataViewer && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
                 <DataViewer onClose={() => setShowDataViewer(false)} />
               </div>
             )}
@@ -403,14 +404,12 @@ const Settings = () => {
 
   return (
     <>
-      <Head>
-        <title>Lynkr | Settings</title>
-      </Head>
+      <AdminPageMeta pageType="settings" />
       <Layout>
-        <div className="w-full lg:basis-3/5 pl-4 pr-4 border-r overflow-scroll">
+        <div className="w-full pl-4 pr-4 overflow-scroll border-r lg:basis-3/5">
           {/* Tab Navigation */}
           <div className="max-w-[690px] mx-auto mt-10">
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+            <div className="flex p-1 space-x-1 bg-gray-100 rounded-lg">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
