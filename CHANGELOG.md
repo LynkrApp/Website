@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk link import/export
 - Link scheduling
 
-## [0.2.0] - 2025-08-05
+## [0.2.0] - 2025-08-07
 
 ### 🚀 New Features
 
