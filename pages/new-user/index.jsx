@@ -21,11 +21,15 @@ export default function NewUser() {
 
     // Check if user already has a profile (existing user linking account)
     if (session?.user) {
-      // This could be an account linking for an existing user
-      // Check if they have a handle (sign they've completed onboarding)
+      // Only redirect to admin if they have completed onboarding (have a handle)
       if (session.user.handle) {
-        console.log('Existing user detected, redirecting to admin');
+        console.log('Existing user with handle detected, redirecting to admin');
         router.replace('/admin');
+        return;
+      } else {
+        // User exists but doesn't have a handle - redirect to onboarding
+        console.log('User without handle detected, redirecting to onboarding');
+        router.replace('/onboarding');
         return;
       }
     }

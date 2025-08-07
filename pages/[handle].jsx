@@ -16,6 +16,8 @@ import Script from 'next/script';
 import { SocialCards } from '@/components/core/user-profile/social-cards';
 import Head from 'next/head';
 import AnimatedBackground from '@/components/core/animated-backgrounds/animated-background';
+import { ProfilePageMeta } from '@/components/meta/metadata';
+import TabbedSections from '@/components/core/user-profile/tabbed-sections';
 
 const ProfilePage = () => {
   const { query } = useRouter();
@@ -78,6 +80,23 @@ const ProfilePage = () => {
       setIsDataLoaded(true);
     }
   }, [fetchedUser, userLinks, sections]);
+
+  // Track page view when component mounts
+  useEffect(() => {
+    if (fetchedUser?.handle) {
+      const trackPageView = async () => {
+        try {
+          await axios.post('/api/analytics/views', {
+            handle: fetchedUser.handle,
+          });
+        } catch (err) {
+          console.error('Failed to track page view:', err);
+        }
+      };
+
+      trackPageView();
+    }
+  }, [fetchedUser?.handle]);
 
   if (isUserLoading) {
     return <Loader message={'Loading...'} bgColor="black" textColor="black" />;
@@ -151,13 +170,13 @@ const ProfilePage = () => {
 
   const getContainerClasses = () => {
     const layout = fetchedUser?.layoutTheme;
-    if (!layout) return "relative z-10 flex flex-col items-center justify-center w-full max-w-3xl px-8 mx-auto mt-4 lg:mt-16";
+    if (!layout) return "relative z-10 flex flex-col items-center justify-center w-full max-w-2xl px-4 mx-auto mt-6 md:mt-10";
 
     const alignmentClass = layout.alignment === 'left' ? 'items-start' : 'items-center';
-    const spacingClass = layout.spacing === 'tight' ? 'gap-2' : layout.spacing === 'loose' ? 'gap-6' : 'gap-4';
-    const widthClass = layout.containerWidth || 'max-w-3xl';
+    const spacingClass = layout.spacing === 'tight' ? 'gap-3' : layout.spacing === 'loose' ? 'gap-8' : 'gap-5';
+    const widthClass = layout.containerWidth || 'max-w-2xl';
 
-    return `relative z-10 flex flex-col ${alignmentClass} justify-center w-full ${widthClass} px-8 mx-auto mt-4 lg:mt-16 ${spacingClass}`;
+    return `relative z-10 flex flex-col ${alignmentClass} justify-center w-full ${widthClass} px-4 mx-auto mt-6 md:mt-10 ${spacingClass}`;
   };
 
   const getTypographyStyles = () => {
@@ -165,21 +184,34 @@ const ProfilePage = () => {
     if (!typography) return {};
 
     return {
-      fontFamily: typography.fontFamily,
-      letterSpacing: typography.letterSpacing,
-      lineHeight: typography.lineHeight,
+      fontFamily: typography.fontFamily || 'inherit',
+      letterSpacing: typography.letterSpacing || 'normal',
+      lineHeight: typography.lineHeight || 'normal',
+    };
+  };
+
+  // Get CSS variables for typography weights
+  const getTypographyVariables = () => {
+    const typography = fetchedUser?.typographyTheme;
+    if (!typography) return {};
+
+    return {
+      '--heading-weight': typography.headingWeight || '700',
+      '--body-weight': typography.bodyWeight || '400',
     };
   };
 
   return (
     <>
-      <Head>
-        <title> @{handle} | Lynkr</title>
-      </Head>
+      <ProfilePageMeta
+        handle={handle}
+        name={fetchedUser?.name}
+        bio={fetchedUser?.bio || 'Welcome to Lynkr'}
+        user={fetchedUser}
+      />
       {!query.isIframe ? (
         <Script
           defer
-          src="https://unpkg.com/@tinybirdco/flock.js"
           data-host="https://api.tinybird.co"
           data-token={process.env.NEXT_PUBLIC_DATA_TOKEN}
         />
@@ -189,7 +221,7 @@ const ProfilePage = () => {
       <AnimatedBackground theme={fetchedUser?.themePalette?.type === 'animated' ? fetchedUser.themePalette : null}>
         <section
           style={getBackgroundStyle()}
-          className={`h-[100vh] w-[100vw] no-scrollbar overflow-auto relative ${fetchedUser?.themePalette?.type === 'animated' && fetchedUser.themePalette.animation === 'gradient'
+          className={`min-h-screen w-full no-scrollbar overflow-auto relative ${fetchedUser?.themePalette?.type === 'animated' && fetchedUser.themePalette.animation === 'gradient'
             ? 'animated-gradient'
             : ''
             }`}
@@ -202,7 +234,7 @@ const ProfilePage = () => {
           )}
           <div
             className={getContainerClasses()}
-            style={getTypographyStyles()}
+            style={{ ...getTypographyStyles(), ...getTypographyVariables() }}
           >
             {(isLinksFetching || isUserFetching || isSectionsFetching) && (
               <div className="absolute -top-5 left-2">
@@ -214,38 +246,54 @@ const ProfilePage = () => {
                 />
               </div>
             )}
-            <Avatar.Root
-              className="inline-flex h-[70px] w-[70px] border-2 border-blue-300
-						items-center justify-center overflow-hidden rounded-full align-middle lg:w-[96px] lg:h-[96px]"
-            >
-              <Avatar.Image
-                className="h-full w-full rounded-[inherit] object-cover"
-                src={fetchedUser && fetchedUser?.image}
-                referrerPolicy="no-referrer"
-                alt="avatar"
-              />
-              <Avatar.Fallback
-                className="leading-1 flex h-full w-full items-center justify-center bg-white text-[15px] font-medium"
-                delayMs={100}
+
+            {/* Profile Header - MUCH LARGER */}
+            <div className="flex flex-col items-center mb-4">
+              {/* Significantly larger Avatar */}
+              <Avatar.Root
+                className="inline-flex items-center justify-center w-32 h-32 overflow-hidden align-middle border-2 border-blue-300 rounded-full sm:h-36 sm:w-36"
               >
-                @
-              </Avatar.Fallback>
-            </Avatar.Root>
-            <p
-              style={{ color: theme.accent }}
-              className="mt-4 mb-2 text-sm font-bold text-center text-white lg:text-xl lg:mt-4"
-            >
-              {fetchedUser?.name}
-            </p>
-            {fetchedUser?.bio && (
-              <p
-                style={{ color: theme.accent }}
-                className="w-[150px] truncate text-center text-sm mt-1 mb-4 lg:text-xl lg:mb-4 lg:w-[600px] "
+                <Avatar.Image
+                  className="h-full w-full rounded-[inherit] object-cover"
+                  src={fetchedUser && fetchedUser?.image}
+                  referrerPolicy="no-referrer"
+                  alt="avatar"
+                />
+                <Avatar.Fallback
+                  className="flex items-center justify-center w-full h-full text-2xl font-medium bg-white leading-1"
+                  delayMs={100}
+                >
+                  @
+                </Avatar.Fallback>
+              </Avatar.Root>
+
+              {/* Larger name with proper font weight */}
+              <h1
+                style={{ color: theme.accent, fontWeight: 'var(--heading-weight)' }}
+                className="mt-5 mb-2 text-2xl font-bold text-center sm:text-3xl"
               >
-                {fetchedUser?.bio}
-              </p>
-            )}
-            <div className="flex flex-wrap items-center justify-center gap-2 mb-8 min-w-max lg:w-fit lg:gap-4">
+                {fetchedUser?.name}
+              </h1>
+
+              {/* Larger bio text with proper font weight */}
+              {fetchedUser?.bio && (
+                <div
+                  style={{ color: theme.accent, fontWeight: 'var(--body-weight)' }}
+                  className="w-full max-w-md text-center"
+                >
+                  {fetchedUser.bio.split('\n').map((line, i) => (
+                    line.trim() ? (
+                      <p key={i} className="text-base sm:text-lg">
+                        {line}
+                      </p>
+                    ) : <br key={i} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Social Links - Now properly sized */}
+            <div className="flex flex-wrap items-center justify-center w-full gap-3 mb-4">
               {userLinks
                 ?.filter((link) => link.isSocial && !link.archived)
                 .map(({ id, title, url }) => {
@@ -261,55 +309,69 @@ const ProfilePage = () => {
                 })}
             </div>
 
-            {/* Render sections with their links */}
-            {sections
-              ?.filter((section) => section.visible)
-              .map((section) => {
-                const sectionLinks = section.links?.filter((link) => !link.isSocial && !link.archived) || [];
+            {/* Render sections based on layout mode */}
+            {fetchedUser?.layoutTheme?.displayMode === 'tabbed' ? (
+              <TabbedSections
+                sections={sections}
+                userLinks={userLinks}
+                theme={theme}
+                buttonStyle={buttonStyle}
+                buttonStyleTheme={buttonStyleTheme}
+                handleRegisterClick={handleRegisterClick}
+              />
+            ) : (
+              <>
+                {/* Render sections with their links (original layout) */}
+                {sections
+                  ?.filter((section) => section.visible)
+                  .map((section) => {
+                    const sectionLinks = section.links?.filter((link) => !link.isSocial && !link.archived) || [];
 
-                if (sectionLinks.length === 0) return null;
+                    if (sectionLinks.length === 0) return null;
 
-                return (
-                  <div key={section.id} className="flex flex-col items-center w-full max-w-md mb-6">
-                    <h3
-                      style={{ color: theme.accent }}
-                      className="items-center justify-center mb-4 text-lg font-semibold text-center"
-                    >
-                      {section.name}
-                    </h3>
-                    <div className="flex flex-col items-center w-full">
-                      {sectionLinks.map(({ id, ...link }) => (
-                        <LinkCard
-                          buttonStyle={buttonStyle}
-                          buttonStyleTheme={buttonStyleTheme}
-                          theme={theme}
-                          id={id}
-                          key={id}
-                          {...link}
-                          registerClicks={() => handleRegisterClick(id)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
+                    return (
+                      <div key={section.id} className="flex flex-col items-center w-full max-w-md my-3">
+                        <h3
+                          style={{ color: theme.accent, fontWeight: 'var(--heading-weight)' }}
+                          className="items-center justify-center mb-4 text-xl font-semibold text-center sm:text-2xl"
+                        >
+                          {section.name}
+                        </h3>
+                        <div className="flex flex-col items-center w-full gap-3 sm:gap-4">
+                          {sectionLinks.map(({ id, ...link }) => (
+                            <LinkCard
+                              buttonStyle={buttonStyle}
+                              buttonStyleTheme={buttonStyleTheme}
+                              theme={theme}
+                              id={id}
+                              key={id}
+                              {...link}
+                              registerClicks={() => handleRegisterClick(id)}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
 
-            {/* Render links without sections */}
-            <div className="flex flex-col items-center w-full max-w-md">
-              {userLinks
-                ?.filter((link) => !link.isSocial && !link.sectionId && !link.archived)
-                .map(({ id, ...link }) => (
-                  <LinkCard
-                    buttonStyle={buttonStyle}
-                    buttonStyleTheme={buttonStyleTheme}
-                    theme={theme}
-                    id={id}
-                    key={id}
-                    {...link}
-                    registerClicks={() => handleRegisterClick(id)}
-                  />
-                ))}
-            </div>
+                {/* Render links without sections */}
+                <div className="flex flex-col items-center w-full max-w-md gap-3 sm:gap-4">
+                  {userLinks
+                    ?.filter((link) => !link.isSocial && !link.sectionId && !link.archived)
+                    .map(({ id, ...link }) => (
+                      <LinkCard
+                        buttonStyle={buttonStyle}
+                        buttonStyleTheme={buttonStyleTheme}
+                        theme={theme}
+                        id={id}
+                        key={id}
+                        {...link}
+                        registerClicks={() => handleRegisterClick(id)}
+                      />
+                    ))}
+                </div>
+              </>
+            )}
 
             {userLinks?.filter(link => !link.archived).length === 0 && (
               <div className="flex justify-center">
@@ -322,16 +384,17 @@ const ProfilePage = () => {
               </div>
             )}
           </div>
-          <div className="my-10 lg:my-24" />
-          {userLinks?.filter(link => !link.archived).length > 0 ? (
-            <footer className="relative left-1/2 bottom-0 transform -translate-x-1/2 w-[200px]">
+
+          {/* Footer with proper spacing */}
+          {userLinks?.filter(link => !link.archived).length > 0 && (
+            <footer className="w-full py-8 mt-4 text-center">
               <p
                 style={{ color: theme.accent }}
-                className="text-sm text-center text-semibold w lg:text-lg"
+                className="text-base"
               >
                 Made with{' '}
                 <Link
-                  className="font-semibold"
+                  className="font-semibold hover:underline"
                   target="_blank"
                   href="https://lynkr.link"
                 >
@@ -339,8 +402,6 @@ const ProfilePage = () => {
                 </Link>
               </p>
             </footer>
-          ) : (
-            ''
           )}
         </section>
       </AnimatedBackground>

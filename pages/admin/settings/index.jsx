@@ -32,6 +32,7 @@ const Settings = () => {
   const [bio, setBio] = useState('');
   const [image, setImage] = useState('');
   const [handle, setHandle] = useState('');
+  const [handleError, setHandleError] = useState('');
   const [activeTab, setActiveTab] = useState('profile');
   const [showDataViewer, setShowDataViewer] = useState(false);
 
@@ -103,7 +104,34 @@ const Settings = () => {
     }
   );
 
+  // Validate handle format (letters, numbers, underscores, no spaces)
+  const validateHandle = (value) => {
+    if (!value) {
+      setHandleError('Handle is required');
+      return false;
+    }
+
+    if (value.length < 3) {
+      setHandleError('Handle must be at least 3 characters');
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9_]+$/.test(value)) {
+      setHandleError('Handle can only contain letters, numbers, and underscores');
+      return false;
+    }
+
+    setHandleError('');
+    return true;
+  };
+
   const handleSubmit = async () => {
+    // Validate handle before submission
+    if (handle && !validateHandle(handle)) {
+      toast.error(handleError);
+      return;
+    }
+
     toast.loading('Applying changes');
     await editMutation.mutateAsync({ bio, username, image, handle });
   };
@@ -195,19 +223,55 @@ const Settings = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-4 max-w-[640px] mx-auto px-4">
+                  {/* Username Input */}
                   <input
                     value={username ?? ''}
                     onChange={(e) => setUsername(e.target.value)}
                     onBlur={handleSubmit}
-                    placeholder="@Username"
+                    placeholder="Username"
                     className="outline-none w-full p-4 h-[50px] rounded-lg border-2 bg-gray-100 text-black focus:border-slate-900"
                   />
 
+                  {/* Handle Input */}
+                  <div className="w-full">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Handle (your unique URL)
+                    </label>
+                    <div className="relative">
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                        lynkr.link/
+                      </span>
+                      <input
+                        value={handle ?? ''}
+                        onChange={(e) => {
+                          const newHandle = e.target.value.trim();
+                          setHandle(newHandle);
+                          validateHandle(newHandle);
+                        }}
+                        onBlur={() => {
+                          if (validateHandle(handle)) {
+                            handleSubmit();
+                          }
+                        }}
+                        placeholder="your-handle"
+                        className={`outline-none w-full pl-24 p-4 h-[50px] rounded-lg border-2 
+                        bg-gray-100 text-black focus:border-slate-900 ${handleError ? 'border-red-500' : ''}`}
+                      />
+                    </div>
+                    {handleError && (
+                      <p className="mt-1 text-sm text-red-600">{handleError}</p>
+                    )}
+                    <p className="mt-1 text-xs text-gray-500">
+                      Your handle will be used as your unique URL: lynkr.link/{handle || 'your-handle'}
+                    </p>
+                  </div>
+
+                  {/* Bio Textarea */}
                   <textarea
                     value={bio ?? ''}
                     onChange={(e) => setBio(e.target.value)}
                     onBlur={handleSubmit}
-                    placeholder="@Bio"
+                    placeholder="Bio"
                     className="outline-none w-full p-4 h-[120px] rounded-lg border-2
                   bg-gray-100 text-black focus:border-slate-900"
                   />
@@ -352,8 +416,8 @@ const Settings = () => {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex-1 flex items-center justify-center gap-2 py-2 px-4 rounded-md text-sm font-medium transition-colors ${activeTab === tab.id
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
                     }`}
                 >
                   <span>{tab.icon}</span>

@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { 
-  themes, 
-  imageThemes, 
-  gradientThemes, 
-  patternThemes, 
-  typographyThemes, 
-  layoutThemes, 
+import {
+  themes,
+  imageThemes,
+  gradientThemes,
+  patternThemes,
+  typographyThemes,
+  layoutThemes,
   animatedThemes,
-  buttonStyles 
+  buttonStyles
 } from '@/utils/themes';
 import { CheckMark } from '@/components/utils/checkmark';
 import useCurrentUser from '@/hooks/useCurrentUser';
@@ -16,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signalIframe } from '@/utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
+import OgImageEditor from '../og-customizer/og-image-editor';
 
 const EnhancedThemesPicker = () => {
   const { data: currentUser } = useCurrentUser();
@@ -25,7 +26,7 @@ const EnhancedThemesPicker = () => {
   const [selectedTypography, setSelectedTypography] = useState(null);
   const [selectedLayout, setSelectedLayout] = useState(null);
   const [selectedButtonStyle, setSelectedButtonStyle] = useState(null);
-  
+
   const themeFromDB = currentUser?.themePalette?.name;
   const queryClient = useQueryClient();
 
@@ -35,26 +36,26 @@ const EnhancedThemesPicker = () => {
     const dbTypography = currentUser?.typographyTheme;
     const dbLayout = currentUser?.layoutTheme;
     const dbButtonStyle = currentUser?.buttonStyleTheme;
-    
+
     // Set main theme (colors, gradients, images, patterns, animated)
     if (dbTheme?.name) {
       const allMainThemes = [...themes, ...imageThemes, ...gradientThemes, ...patternThemes, ...animatedThemes];
       const theme = allMainThemes.find((t) => t.name === dbTheme.name);
       if (theme) setSelectedTheme(theme);
     }
-    
+
     // Set typography theme
     if (dbTypography?.name) {
       const typography = typographyThemes.find((t) => t.name === dbTypography.name);
       if (typography) setSelectedTypography(typography);
     }
-    
+
     // Set layout theme
     if (dbLayout?.name) {
       const layout = layoutThemes.find((t) => t.name === dbLayout.name);
       if (layout) setSelectedLayout(layout);
     }
-    
+
     // Set button style theme
     if (dbButtonStyle?.name) {
       const buttonStyle = buttonStyles.find((t) => t.name === dbButtonStyle.name);
@@ -106,7 +107,7 @@ const EnhancedThemesPicker = () => {
   const mutateTheme = useMutation(
     async (theme) => {
       const updateData = {};
-      
+
       // Determine which field to update based on theme type
       if (theme.type === 'typography') {
         updateData.typographyTheme = theme;
@@ -122,7 +123,7 @@ const EnhancedThemesPicker = () => {
         // Color, gradient, image, pattern, animated themes go to themePalette
         updateData.themePalette = theme;
       }
-      
+
       await axios.patch('/api/customize', updateData);
     },
     {
@@ -136,13 +137,13 @@ const EnhancedThemesPicker = () => {
   const handleThemeSelect = async (theme) => {
     const loadingMessage = `Applying ${theme.type === 'typography' ? 'typography' : theme.type === 'layout' ? 'layout' : theme.type === 'button' ? 'button style' : 'theme'}...`;
     const successMessage = `${theme.type === 'typography' ? 'Typography' : theme.type === 'layout' ? 'Layout' : theme.type === 'button' ? 'Button style' : 'Theme'} applied successfully!`;
-    
+
     await toast.promise(mutateTheme.mutateAsync(theme), {
       loading: loadingMessage,
       success: successMessage,
       error: 'Failed to apply changes',
     });
-    
+
     // Update local state based on theme type
     if (theme.type === 'typography') {
       setSelectedTypography(theme);
@@ -153,7 +154,7 @@ const EnhancedThemesPicker = () => {
     } else {
       setSelectedTheme(theme);
     }
-    
+
     localStorage.setItem(`selected${theme.type === 'typography' ? 'Typography' : theme.type === 'layout' ? 'Layout' : theme.type === 'button' ? 'ButtonStyle' : 'Theme'}`, theme.name);
   };
 
@@ -165,16 +166,15 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${
-            selectedTheme?.name === theme.name
+          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${selectedTheme?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
-          <div 
+          <div
             className="h-24 md:h-28"
-            style={{ 
+            style={{
               backgroundColor: theme.backgroundColor,
               backgroundImage: theme.backgroundImage,
               backgroundSize: theme.backgroundSize || 'auto',
@@ -199,16 +199,15 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${
-            selectedTheme?.name === theme.name
+          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${selectedTheme?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
-          <div 
+          <div
             className="relative h-24 md:h-28"
-            style={{ 
+            style={{
               backgroundColor: theme.backgroundColor,
               backgroundImage: theme.backgroundImage,
               backgroundSize: theme.backgroundSize || 'auto',
@@ -242,22 +241,21 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-white ${
-            selectedTypography?.name === theme.name
+          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-white ${selectedTypography?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
           <div style={{ fontFamily: theme.fontFamily }}>
-            <h3 
-              className="mb-2 text-lg" 
+            <h3
+              className="mb-2 text-lg"
               style={{ fontWeight: theme.headingWeight, letterSpacing: theme.letterSpacing }}
             >
               {theme.name}
             </h3>
-            <p 
-              className="text-sm text-gray-600" 
+            <p
+              className="text-sm text-gray-600"
               style={{ fontWeight: theme.bodyWeight, lineHeight: theme.lineHeight }}
             >
               Sample text preview
@@ -279,11 +277,10 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-gray-50 ${
-            selectedLayout?.name === theme.name
+          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-gray-50 ${selectedLayout?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
           <div className="space-y-2">
@@ -313,11 +310,10 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-white ${
-            selectedButtonStyle?.name === theme.name
+          className={`p-4 rounded-2xl cursor-pointer relative duration-200 w-full border-2 bg-white ${selectedButtonStyle?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
           <div className="space-y-3">
@@ -353,18 +349,17 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${
-            selectedTheme?.name === theme.name
+          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${selectedTheme?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
-          <div 
+          <div
             className="relative h-24 bg-center bg-cover md:h-28"
             style={{ backgroundImage: `url(${theme.backgroundImage})` }}
           >
-            <div 
+            <div
               className="absolute inset-0"
               style={{ backgroundColor: theme.overlay }}
             />
@@ -387,14 +382,13 @@ const EnhancedThemesPicker = () => {
           key={theme.name}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${
-            selectedTheme?.name === theme.name
+          className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${selectedTheme?.name === theme.name
               ? 'border-blue-500 ring-2 ring-blue-200'
               : 'border-gray-200 hover:border-gray-300'
-          }`}
+            }`}
           onClick={() => handleThemeSelect(theme)}
         >
-          <div 
+          <div
             className="h-24 md:h-28"
             style={{ backgroundImage: theme.backgroundImage }}
           />
@@ -416,11 +410,10 @@ const EnhancedThemesPicker = () => {
         key={theme.name}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${
-          selectedTheme?.name === theme.name
+        className={`rounded-2xl overflow-hidden cursor-pointer relative duration-200 w-full border-2 ${selectedTheme?.name === theme.name
             ? 'border-blue-500 ring-2 ring-blue-200'
             : 'border-gray-200 hover:border-gray-300'
-        }`}
+          }`}
         onClick={() => handleThemeSelect(theme)}
       >
         <div className="grid h-24 grid-cols-4 md:h-28">
@@ -456,22 +449,22 @@ const EnhancedThemesPicker = () => {
     { key: 'typography', label: 'Typography', icon: '✍️' },
     { key: 'layouts', label: 'Layouts', icon: '📐' },
     { key: 'buttons', label: 'Buttons', icon: '🔘' },
+    { key: 'og', label: 'Meta Image', icon: '🔗' },
   ];
 
   return (
     <div className="max-w-[640px] mx-auto my-6">
       <h3 className="mb-4 text-xl font-semibold">Customize Your Profile</h3>
-      
+
       {/* Enhanced Tab Navigation */}
       <div className="flex flex-wrap gap-2 mb-6">
         {tabConfig.map((tab) => (
           <button
             key={tab.key}
-            className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-              activeTab === tab.key
+            className={`flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${activeTab === tab.key
                 ? 'bg-blue-500 text-white shadow-md'
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
+              }`}
             onClick={() => {
               setActiveTab(tab.key);
               setShowAll(false);
@@ -483,7 +476,7 @@ const EnhancedThemesPicker = () => {
         ))}
       </div>
 
-      {/* Theme Grid */}
+      {/* Theme Grid or OG Image Editor */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
@@ -491,18 +484,23 @@ const EnhancedThemesPicker = () => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
-          className={`grid gap-4 p-4 mx-auto my-4 overflow-y-auto bg-white rounded-2xl ${
-            ['typography', 'layouts', 'buttons'].includes(activeTab)
-              ? 'grid-cols-1 md:grid-cols-2'
-              : 'grid-cols-2 lg:grid-cols-3'
-          } auto-rows-max md:gap-6`}
         >
-          {getCurrentThemes()?.map((theme) => renderThemeCard(theme))}
+          {activeTab === 'og' ? (
+            <OgImageEditor />
+          ) : (
+            <div className={`grid gap-4 p-4 mx-auto my-4 overflow-y-auto bg-white rounded-2xl ${['typography', 'layouts', 'buttons'].includes(activeTab)
+                ? 'grid-cols-1 md:grid-cols-2'
+                : 'grid-cols-2 lg:grid-cols-3'
+              } auto-rows-max md:gap-6`}
+            >
+              {getCurrentThemes()?.map((theme) => renderThemeCard(theme))}
+            </div>
+          )}
         </motion.div>
       </AnimatePresence>
-        
+
       {/* Show More/Less Buttons */}
-      {getCurrentThemes().length >= getMaxInitialThemes() && !showAll && !['typography', 'layouts', 'buttons'].includes(activeTab) && (
+      {activeTab !== 'og' && getCurrentThemes().length >= getMaxInitialThemes() && !showAll && !['typography', 'layouts', 'buttons'].includes(activeTab) && (
         <button
           className="block px-6 py-3 mx-auto mt-4 font-medium text-white transition-colors duration-200 bg-blue-600 rounded-xl hover:bg-blue-700"
           onClick={() => setShowAll(true)}
@@ -510,7 +508,7 @@ const EnhancedThemesPicker = () => {
           Show More
         </button>
       )}
-      {showAll && getCurrentThemes().length > getMaxInitialThemes() && (
+      {activeTab !== 'og' && showAll && getCurrentThemes().length > getMaxInitialThemes() && (
         <button
           className="block px-6 py-3 mx-auto mt-4 font-medium text-white transition-colors duration-200 bg-gray-600 rounded-xl hover:bg-gray-700"
           onClick={() => setShowAll(false)}

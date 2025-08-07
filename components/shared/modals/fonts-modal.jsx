@@ -1,22 +1,50 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import closeSVG from '@/public/close_button.svg';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+import { typographyThemes } from '@/utils/themes';
 
 export const FontsModal = ({ onSelectFont }) => {
-  const fonts = [
-    'Epilogue',
-    'Poppins',
-    'Inter',
-    'Roboto',
-    'Open-Sans',
-    'Raleway',
-  ];
   const [selectedFont, setSelectedFont] = useState('');
+  const queryClient = useQueryClient();
 
-  const handleFontSelect = (font) => {
-    setSelectedFont(font);
-    onSelectFont(font);
+  // Apply font mutation
+  const mutateFont = useMutation(
+    async (fontName) => {
+      // Find the theme object from our predefined themes
+      const selectedTheme = typographyThemes.find(
+        (theme) => theme.name === fontName
+      );
+      if (!selectedTheme) return;
+
+      await axios.patch('/api/customize', {
+        typographyTheme: selectedTheme,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('users');
+        toast.success('Font applied successfully!');
+        // Add iframe signal if needed
+      },
+      onError: () => {
+        toast.error('Failed to apply font');
+      },
+    }
+  );
+
+  const handleFontSelect = (fontName) => {
+    setSelectedFont(fontName);
+  };
+
+  const handleSave = () => {
+    if (selectedFont) {
+      mutateFont.mutate(selectedFont);
+      if (onSelectFont) onSelectFont(selectedFont);
+    }
   };
 
   return (
@@ -33,17 +61,36 @@ export const FontsModal = ({ onSelectFont }) => {
               </div>
             </Dialog.Close>
           </div>
-          <div className="p-4  overflow-auto mb-4">
-            <div className="flex flex-col gap-2 h-[200px]">
-              {fonts.map((font) => (
+          <div className="p-4 overflow-auto mb-4">
+            <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+              {typographyThemes.map((font) => (
                 <button
-                  key={font}
-                  className={`rounded-3xl bg-[#F3F3F1] text-lg p-3 transition-colors ${
-                    selectedFont === font ? 'bg-white' : ''
-                  }`}
-                  onClick={() => handleFontSelect(font)}
+                  key={font.name}
+                  className={`rounded-lg p-4 transition-colors ${selectedFont === font.name
+                      ? 'bg-blue-50 border border-blue-200'
+                      : 'bg-gray-50 hover:bg-gray-100 border border-gray-100'
+                    }`}
+                  onClick={() => handleFontSelect(font.name)}
+                  style={{
+                    fontFamily: font.fontFamily,
+                    letterSpacing: font.letterSpacing,
+                  }}
                 >
-                  {font}
+                  <h3
+                    className="text-lg"
+                    style={{ fontWeight: font.headingWeight }}
+                  >
+                    {font.name}
+                  </h3>
+                  <p
+                    className="text-sm text-gray-600"
+                    style={{
+                      fontWeight: font.bodyWeight,
+                      lineHeight: font.lineHeight,
+                    }}
+                  >
+                    The quick brown fox jumps over the lazy dog.
+                  </p>
                 </button>
               ))}
             </div>
@@ -52,8 +99,10 @@ export const FontsModal = ({ onSelectFont }) => {
             <button
               className="inline-block w-full px-4 py-4 leading-none text-lg my-4 
                         text-white rounded-3xl bg-slate-900"
+              onClick={handleSave}
+              disabled={mutateFont.isLoading}
             >
-              Save ✨
+              {mutateFont.isLoading ? 'Applying...' : 'Apply Font ✨'}
             </button>
           </Dialog.Close>
         </Dialog.Content>

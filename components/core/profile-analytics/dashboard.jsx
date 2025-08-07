@@ -18,11 +18,12 @@ export function AnalyticsDashboard() {
   ];
 
   const { data: currentUser } = useCurrentUser();
-  const [filter, setFilter] = useState('last_hour');
+  const [filter, setFilter] = useState('last_24_hours');
 
-  const { data: visitAnalytics } = useAnalytics(filter, currentUser?.handle);
-  const { data: locationAnalytics } = useLocationAnalytics(currentUser?.handle);
-  const { data: deviceAnalytics } = useDeviceAnalytics(currentUser?.handle);
+  // Use our custom hooks to fetch analytics data
+  const { data: visitAnalytics, isLoading: isLoadingVisits } = useAnalytics(filter, currentUser?.handle);
+  const { data: locationAnalytics, isLoading: isLoadingLocation } = useLocationAnalytics(currentUser?.handle);
+  const { data: deviceAnalytics, isLoading: isLoadingDevices } = useDeviceAnalytics(currentUser?.handle);
 
   return (
     <>
@@ -31,14 +32,15 @@ export function AnalyticsDashboard() {
         <Select
           onChange={(option) => setFilter(option.value)}
           className="w-[170px]"
-          defaultValue={options[0]}
+          defaultValue={options[1]} // Default to 24 hours
           options={options}
         />
       </div>
-      <Chart analytics={visitAnalytics} />
+
+      <Chart analytics={visitAnalytics} isLoading={isLoadingVisits} />
       <LinkStats />
-      <DeviceStats analytics={deviceAnalytics} />
-      <LocationStats analytics={locationAnalytics} />
+      <DeviceStats analytics={deviceAnalytics} isLoading={isLoadingDevices} />
+      <LocationStats analytics={locationAnalytics} isLoading={isLoadingLocation} />
     </>
   );
 }

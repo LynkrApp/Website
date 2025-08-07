@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const useAnalytics = (filter, handle) => {
   return useQuery({
@@ -12,10 +12,11 @@ const useAnalytics = (filter, handle) => {
       return response.data;
     },
     enabled: !!handle,
-    onError: () => {
-      toast.error('An error occurred');
+    onError: (error) => {
+      console.error('Analytics error:', error);
+      toast.error('Failed to fetch analytics data');
     },
-    // refetchInterval: 2000,
+    refetchInterval: 300000, // Refresh every 5 minutes
   });
 };
 

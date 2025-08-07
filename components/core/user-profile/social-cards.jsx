@@ -32,12 +32,17 @@ export const SocialCards = ({ url, title, color, registerClicks }) => {
         onClick={registerClicks}
         target="_blank"
         href={url}
-        className="hover:scale-125 transition-all w-[30px] h-[30px]  md:h-[35px] md:w-[35px] rounded-full px-2 lg:w-[42px] lg:h-[42px]"
+        className="hover:scale-110 transition-all w-[40px] h-[40px] sm:h-[45px] sm:w-[45px] md:h-[50px] md:w-[50px] rounded-full p-1.5 lg:w-[50px] lg:h-[50px]"
+        style={{
+          /* Apply typography styles for consistent theming */
+          fontFamily: 'inherit',
+          fontWeight: 'var(--body-weight, 400)'
+        }}
       >
         <img
           loading="lazy"
           src={`https://s2.svgbox.net/social.svg?color=${validColor}&ic=${socialIcon}`}
-          className="w-[42px] h-[42px]"
+          className="w-full h-full"
           alt={title}
         />
       </a>

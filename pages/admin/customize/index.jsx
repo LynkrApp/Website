@@ -11,7 +11,7 @@ const Customize = () => {
         <title>Lynkr | Customize</title>
       </Head>
       <Layout>
-        <div className="w-full pl-4 pr-4 overflow-auto border-r lg:basis-3/5">
+        <div className="w-full pl-4 pr-4 overflow-scroll border-r lg:basis-3/5">
           <EnhancedThemesPicker />
           <Footer />
         </div>

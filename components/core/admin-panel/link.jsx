@@ -33,11 +33,10 @@ const LinkCard = (props) => {
       <div
         ref={setNodeRef}
         style={style}
-        className={`flex bg-white items-center p-2 rounded-lg drop-shadow-md my-5 transition-all duration-200 ${
-          isDragging || props.isDragging 
-            ? 'shadow-2xl scale-105 rotate-2 z-50' 
+        className={`flex bg-white items-center p-2 rounded-lg drop-shadow-md my-5 transition-all duration-200 ${isDragging || props.isDragging
+            ? 'shadow-2xl scale-105 rotate-2 z-50'
             : 'hover:shadow-lg'
-        }`}
+          }`}
       >
         <div
           className="text-gray-400 text-sm hover:bg-blue-100 rounded-sm p-[3px] cursor-grab active:cursor-grabbing transition-colors duration-150"
@@ -47,26 +46,30 @@ const LinkCard = (props) => {
           <GripVertical color="grey" size={17} />
         </div>
         {!props.archived ? (
-          <Image
-            src={`${GOOGLE_FAVICON_URL}${apexDomain}`}
-            alt={apexDomain}
-            className="h-8 w-8 blur-0 rounded-full sm:h-10 sm:w-10"
-            unoptimized
-            width={20}
-            height={20}
-            priority
-          />
+          props.showFavicon !== false ? (
+            <Image
+              src={`${GOOGLE_FAVICON_URL}${apexDomain}`}
+              alt={apexDomain}
+              className="w-8 h-8 rounded-full blur-0 sm:h-10 sm:w-10"
+              unoptimized
+              width={20}
+              height={20}
+              priority
+            />
+          ) : (
+            <div className="w-8 h-8 sm:w-10 sm:h-10"></div> // Empty placeholder to maintain spacing
+          )
         ) : (
           <TooltipWrapper
             title="This link has been archived by you"
             component={<ArchiveSVG />}
           />
         )}
-        <div className="flex-1 p-2 h-full relative">
+        <div className="relative flex-1 h-full p-2">
           <div className="flex">
             <div className="w-full pr-3">
               <div className="grid mb-1 w-full grid-cols-[minmax(0,_90%)] items-baseline">
-                <div className=" w-full row-start-1 col-start-1 items-center">
+                <div className="items-center w-full col-start-1 row-start-1 ">
                   <div
                     target="_blank"
                     className="flex items-center max-w-full rounded-[2px] outline-offset-2 outline-2 gap-2 lg:gap-4"
@@ -75,7 +78,7 @@ const LinkCard = (props) => {
                       {props.title}
                     </p>
 
-                    <div className="flex justify-between items-start">
+                    <div className="flex items-start justify-between">
                       <div className="flex flex-wrap gap-2">
                         <Link
                           onClick={handleCopyLink}
@@ -90,9 +93,9 @@ const LinkCard = (props) => {
                           className="flex items-center space-x-1 rounded-md bg-gray-100 px-2 py-0.5 transition-all duration-75 hover:scale-105 hover:bg-blue-100 active:scale-100"
                         >
                           <BarChart color="grey" size={15} />
-                          <p className="whitespace-nowrap text-sm text-gray-500">
+                          <p className="text-sm text-gray-500 whitespace-nowrap">
                             {props.clicks}
-                            <span className="ml-1 hidden sm:inline-block">
+                            <span className="hidden ml-1 sm:inline-block">
                               clicks
                             </span>
                           </p>
@@ -103,7 +106,7 @@ const LinkCard = (props) => {
                 </div>
 
                 <div className="">
-                  <div className="row-start-1 col-start-1 inline-flex">
+                  <div className="inline-flex col-start-1 row-start-1">
                     <a
                       target="_blank"
                       href={props.url}
@@ -117,9 +120,9 @@ const LinkCard = (props) => {
                 </div>
               </div>
             </div>
-            <button className="flex justify-center items-center ">
+            <button className="flex items-center justify-center ">
               <div className="flex items-center">
-                <small className="mr-8 hidden whitespace-nowrap text-sm text-gray-500 sm:block">
+                <small className="hidden mr-8 text-sm text-gray-500 whitespace-nowrap sm:block">
                   Added {timeAgo(props.createdAt, true)}
                 </small>
                 <PopoverDesktop {...props} />

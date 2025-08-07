@@ -87,4 +87,12 @@ export const getCurrentBaseURL = () => {
     const baseURL = window.location.origin;
     return baseURL;
   }
+
+  // For server-side, use environment variable or fallback
+  const vercelUrl = process.env.VERCEL_URL;
+  if (vercelUrl) {
+    return `https://${vercelUrl}`;
+  }
+
+  return process.env.NEXT_PUBLIC_BASE_URL || 'https://lynkr.link';
 };

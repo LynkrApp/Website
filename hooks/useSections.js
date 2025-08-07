@@ -15,6 +15,10 @@ const useSections = (userId) => {
     onError: () => {
       toast.error('An error occurred');
     },
+    select: (data) => {
+      // Sort sections by their order property
+      return data?.sort((a, b) => (a.order || 0) - (b.order || 0)) || [];
+    },
   });
 };
 

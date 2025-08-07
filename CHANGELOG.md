@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
+
 - API documentation
 - Mobile app
 - Custom domain support
@@ -15,11 +16,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk link import/export
 - Link scheduling
 
+## [0.2.0] - 2025-08-05
+
+### 🚀 New Features
+
+- ✨ Redesigned hero section with slate gradient theme for improved visual appeal
+- ✨ Updated navigation bar to match the slate theme of the footer
+- ✨ Added version display with git hash in the footer
+- ✨ Implemented changelog API for dynamic version history
+- ✨ Improved footer layout with better grid structure and mobile responsiveness
+- ✨ Created glassmorphic tabbed sections component for better content organization
+- ✨ Enhanced social cards component with improved sizing and responsiveness
+- ✨ Added new tab-button component with animation and active state indicators
+- ✨ Implemented collapsible sections in the admin panel for better link management
+- ✨ Added mobile-optimized layout for the admin dashboard
+- ✨ Introduced improved drag and drop interface for section reordering
+- ✨ Implemented custom page meta tags for improved SEO and social sharing
+- ✨ Added user handle editing capability in settings page
+- ✨ Fixed authentication system to properly direct new users to onboarding flow
+- ✨ Implemented tabbed layouts for user profiles with smooth transitions
+- ✨ Added reorderable sections in admin panel with visual feedback
+- ✨ Created user onboarding flow with step-by-step guidance
+- ✨ Implemented handle availability checker in real-time
+- ✨ Added multiple layout options for profile organization
+- ✨ Enhanced profile customization with additional theming options
+- ✨ Implemented social cards grid layout option
+- ✨ Added OG image customization for better social media previews
+- ✨ Created fully mobile-responsive OG image editor with real-time preview
+- ✨ Added theme application system to automatically apply profile themes to OG images
+- ✨ Implemented typography customization for OG images
+- ✨ Added statistics display toggle for OG images
+- ✨ Improved user profile metadata with dynamic Open Graph tags
+- ✨ Added geolocation support for analytics with IP-based country detection
+- ✨ Created database models for better analytics tracking (page views, link clicks)
+- ✨ Implemented social media preview customization with multiple templates
+- ✨ Added color picker interface for fine-tuning social preview appearance
+- ✨ Created adaptive layout system for different screen sizes in profile editor
+
+### 🔧 Bug Fixes
+
+- 🐛 Fixed mobile menu layout issues on smaller screens
+- 🐛 Corrected social icon spacing in the footer
+- 🐛 Resolved navigation inconsistencies between mobile and desktop
+- 🐛 Fixed tab text visibility issues with proper z-index layering
+- 🐛 Resolved section reordering functionality in the admin panel
+- 🐛 Fixed profile page layout spacing and sizing on mobile devices
+- 🐛 Corrected avatar and bio display sizing on profile pages
+- 🐛 Fixed section dragging and dropping in the admin interface
+- 🐛 Resolved authentication redirection issues for new users
+- 🐛 Fixed handle validation and uniqueness checking
+- 🐛 Corrected meta tag generation for social media previews
+- 🐛 Fixed tab navigation accessibility issues
+- 🐛 Resolved social icon rendering on different backgrounds
+- 🐛 Fixed mobile responsive layout for onboarding screens
+- 🐛 Fixed database relation definitions in Prisma schema for analytics models
+- 🐛 Resolved Vercel OG image generation issues with proper component structure
+- 🐛 Fixed color picker positioning and interaction on mobile devices
+- 🐛 Corrected theme application system for profile customization
+- 🐛 Fixed social card icon rendering for special cases and aliases
+- 🐛 Resolved layout issues with the OG customizer on small screens
+- 🐛 Fixed navigation for mobile users in the admin dashboard
+
+### ⚡ Improvements
+
+- ⚡ Enhanced overall UI consistency with slate theme
+- ⚡ Optimized footer grid layout for better content organization
+- ⚡ Improved loading of version information
+- ⚡ Added transition animations to navigation elements
+- ⚡ Enhanced mobile responsiveness across all components
+- ⚡ Improved profile layout with better spacing and visual hierarchy
+- ⚡ Enhanced admin dashboard with better visual feedback during interactions
+- ⚡ Optimized social icons for better visibility and sizing
+- ⚡ Refined tab navigation with improved animations and state management
+- ⚡ Added visual feedback for drag and drop operations
+- ⚡ Improved typography across all components for better readability
+- ⚡ Enhanced user onboarding experience with clearer instructions
+- ⚡ Improved handle editing workflow with validation feedback
+- ⚡ Optimized authentication flow for smoother user experience
+- ⚡ Enhanced section management with better organization options
+- ⚡ Improved profile customization with more intuitive controls
+- ⚡ Refined tabbed interface for better usability on all devices
+- ⚡ Added performance optimizations for smoother animations
+- ⚡ Enhanced user data models for better analytics tracking
+- ⚡ Improved social media preview generation with Vercel OG Image
+- ⚡ Optimized theme application across different components
+- ⚡ Enhanced layout responsiveness for various screen sizes
+- ⚡ Improved color picker interface with better usability
+- ⚡ Added tooltips and help text for better user guidance
+- ⚡ Enhanced mobile navigation with dedicated bottom controls
+- ⚡ Improved share button functionality for better content distribution
+- ⚡ Optimized page metadata for better SEO and social sharing
+
 ## [0.1.0] - 2025-08-04
 
 ### 🎉 Initial Release
 
 #### Added
+
 - **Core Features**
   - User authentication via Google, GitHub, and Discord OAuth
   - Custom handle/username system
@@ -73,6 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Docker support
 
 #### Technical Stack
+
 - **Frontend:** Next.js 13, React 18, Tailwind CSS
 - **Backend:** Next.js API routes, Prisma ORM
 - **Database:** PostgreSQL
@@ -83,6 +177,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Deployment:** Vercel
 
 #### Security
+
 - OAuth-based authentication (no password storage)
 - CSRF protection
 - Secure session management
@@ -94,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Release Notes
 
 ### 🎯 What's Next?
+
 - Enhanced analytics with detailed metrics
 - Custom domain support for pro users
 - API access for developers
@@ -101,12 +197,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Advanced customization options
 
 ### 🐛 Known Issues
+
 - None at this time
 
 ### 🤝 Contributing
+
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
 
 ### 📞 Support
+
 - 🐛 [Report bugs](https://github.com/LynkrApp/Website/issues)
 - 💡 [Request features](https://github.com/LynkrApp/Website/issues)
 - 💬 [Join our Discord](https://discord.gg/g76w2v7RzG)
@@ -114,4 +213,4 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ---
 
-**Full Changelog**: https://github.com/LynkrApp/Website/commits/v0.1.0
+**Full Changelog**: https://github.com/LynkrApp/Website/commits/v0.2.0

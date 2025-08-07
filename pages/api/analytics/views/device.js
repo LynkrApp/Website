@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { db } from '@/lib/db';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
@@ -7,20 +7,46 @@ export default async function handler(req, res) {
 
   try {
     const { handle } = req.query;
-    const endpoint =
-      'https://api.northamerica-northeast2.gcp.tinybird.co/v0/pipes/linkcord_device_tracking.json';
 
-    if (!handle || typeof handle !== 'string') {
-      return res.status(404).end();
+    if (!handle) {
+      return res.status(400).json({ error: 'Handle is required' });
     }
 
-    const analytics = await axios.get(
-      `${endpoint}?token=${process.env.DEVICE_ANALYTICS_TOKEN}&handle=/${handle}`
-    );
+    // Find user by handle
+    const user = await db.user.findUnique({
+      where: { handle },
+    });
 
-    return res.status(200).json(analytics.data.data);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get all pageViews with device data
+    const allPageViews = await db.pageView.findMany({
+      where: {
+        userId: user.id,
+        device: { not: null },
+      },
+      select: {
+        device: true,
+      },
+    });
+
+    // Group by device and count occurrences
+    const countByDevice = allPageViews.reduce((acc, view) => {
+      acc[view.device] = (acc[view.device] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Convert to array and sort
+    const formattedDeviceData = Object.entries(countByDevice)
+      .map(([device, visits]) => ({ device, visits }))
+      .sort((a, b) => b.visits - a.visits)
+      .slice(0, 20);
+
+    return res.status(200).json(formattedDeviceData);
   } catch (error) {
-    console.log(error);
-    return res.status(500).end();
+    console.error('Device analytics error:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }

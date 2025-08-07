@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import closeSVG from '@/public/close_button.svg';
 import Image from 'next/image';
 import { toast } from 'react-hot-toast';
@@ -8,11 +8,14 @@ import { isValidUrl, signalIframe } from '@/utils/helpers';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import useSections from '@/hooks/useSections';
+import * as Switch from '@radix-ui/react-switch';
 
-const EditLinkModal = ({ id, title, url, sectionId, close }) => {
-  const [newTitle, setNewTitle] = useState(title);
-  const [newUrl, setNewUrl] = useState(url);
+const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close }) => {
+  const [newTitle, setNewTitle] = useState(title || '');
+  const [newUrl, setNewUrl] = useState(url || '');
   const [newSectionId, setNewSectionId] = useState(sectionId);
+  const [newShowFavicon, setNewShowFavicon] = useState(showFavicon);
+  const [newIsSocial, setNewIsSocial] = useState(isSocial);
 
   const [urlError, setUrlError] = useState(false);
 
@@ -22,11 +25,22 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
   const userId = currentUser?.id ?? null;
 
   const editMutation = useMutation(
-    async ({ newTitle, newUrl, newSectionId }) => {
+    async ({ newTitle, newUrl, newSectionId, newIsSocial, newShowFavicon }) => {
+      // Log what we're sending for debugging
+      console.log('Sending to API:', {
+        newTitle,
+        newUrl,
+        sectionId: newSectionId,
+        isSocial: newIsSocial,
+        showFavicon: newShowFavicon
+      });
+
       await axios.patch(`/api/links/${id}`, {
         newTitle,
         newUrl,
         sectionId: newSectionId,
+        newIsSocial,
+        newShowFavicon
       });
     },
     {
@@ -38,6 +52,25 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
     }
   );
 
+  // Update state when props change
+  useEffect(() => {
+    setNewTitle(title || '');
+    setNewUrl(url || '');
+    setNewSectionId(sectionId);
+    setNewIsSocial(isSocial);
+    setNewShowFavicon(showFavicon);
+
+    // Log received props for debugging
+    console.log('EditLinkModal received props:', {
+      id,
+      title,
+      url,
+      sectionId,
+      isSocial: isSocial === true ? 'true' : 'false',
+      showFavicon: showFavicon === true ? 'true' : 'false'
+    });
+  }, [id, title, url, sectionId, isSocial, showFavicon]);
+
   const handleEditLink = async () => {
     if (newTitle.trim() === '' || newUrl.trim() === '') {
       close();
@@ -45,10 +78,16 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
       return;
     }
     close(); // close drawer
-    await toast.promise(editMutation.mutateAsync({ newTitle, newUrl, newSectionId }), {
+    await toast.promise(editMutation.mutateAsync({
+      newTitle,
+      newUrl,
+      newSectionId,
+      newIsSocial,
+      newShowFavicon
+    }), {
       loading: 'Editing link',
       success: 'Link edited successfully',
-      error: 'An error occured',
+      error: 'An error occurred',
     });
   };
 
@@ -60,24 +99,28 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
     setUrlError(!URL);
   };
 
+  // Use the same switch styling for both switches for consistency
+  const switchRootClass = "w-[39px] h-[21px] bg-[#E4E4E7] rounded-full relative focus:shadow-black border border-slate-200 data-[state=checked]:bg-slate-900 outline-none cursor-default lg:w-[42px] lg:h-[25px]";
+  const switchThumbClass = "block w-[17px] h-[17px] bg-white rounded-full shadow-[0_2px_2px] transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px] lg:w-[21px] lg:h-[21px]";
+
   return (
     <>
       <div>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 backdrop-blur-sm bg-gray-800 bg-opacity-50 sm:w-full" />
+          <Dialog.Overlay className="fixed inset-0 bg-gray-800 bg-opacity-50 backdrop-blur-sm sm:w-full" />
           <Dialog.Content
             className=" contentShow fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                 		rounded-2xl bg-white p-6 sm:p-8 lg:max-w-3xl w-[350px] sm:w-[500px] shadow-lg 
                			md:max-w-lg max-md:max-w-lg focus:outline-none"
           >
-            <div className="flex flex-row justify-between items-center mb-4">
-              <Dialog.Title className="text-xl text-center font-medium mb-2 sm:mb-0 sm:mr-4">
+            <div className="flex flex-row items-center justify-between mb-4">
+              <Dialog.Title className="mb-2 text-xl font-medium text-center sm:mb-0 sm:mr-4">
                 Edit Link
               </Dialog.Title>
-              <Dialog.Close className="flex flex-end justify-end">
+              <Dialog.Close className="flex justify-end flex-end">
                 <div
                   onClick={close}
-                  className="p-2 rounded-full flex justify-center items-center bg-gray-100 hover:bg-gray-300"
+                  className="flex items-center justify-center p-2 bg-gray-100 rounded-full hover:bg-gray-300"
                 >
                   <Image priority src={closeSVG} alt="close" />
                 </div>
@@ -88,7 +131,7 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
                 <input
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none focus:shadow-outline"
+                  className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border appearance-none rounded-2xl focus:outline-none focus:shadow-outline"
                   id="name"
                   type="text"
                   placeholder="Title"
@@ -98,13 +141,13 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
                 <input
                   value={newUrl}
                   onChange={handleUrlChange}
-                  className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none focus:shadow-outline"
+                  className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border appearance-none rounded-2xl focus:outline-none focus:shadow-outline"
                   id="name"
                   type="url"
                   placeholder="URL"
                 />
                 {urlError && (
-                  <small className="text-red-500 text-sm">
+                  <small className="text-sm text-red-500">
                     Enter a valid url
                   </small>
                 )}
@@ -113,13 +156,13 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
               {/* Section Selection */}
               {userSections && userSections.length > 0 && (
                 <div className="relative mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block mb-2 text-sm font-medium text-gray-700">
                     Section
                   </label>
                   <select
                     value={newSectionId || ''}
                     onChange={(e) => setNewSectionId(e.target.value || null)}
-                    className="block w-full h-12 px-4 py-3 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none focus:shadow-outline bg-white"
+                    className="block w-full h-12 px-4 py-3 leading-tight text-gray-700 bg-white border appearance-none rounded-2xl focus:outline-none focus:shadow-outline"
                   >
                     <option value="">No Section (General Links)</option>
                     {userSections.map((section) => (
@@ -131,12 +174,44 @@ const EditLinkModal = ({ id, title, url, sectionId, close }) => {
                 </div>
               )}
 
+              {/* Toggle for is social media link */}
+              <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
+                <div>
+                  <h3 className="text-md lg:text-lg">Social media link</h3>
+                  <p className="text-xs text-gray-500">
+                    Is this a social media platform link?
+                  </p>
+                </div>
+                <Switch.Root
+                  checked={newIsSocial}
+                  onCheckedChange={setNewIsSocial}
+                  className={switchRootClass}
+                >
+                  <Switch.Thumb className={switchThumbClass} />
+                </Switch.Root>
+              </div>
+
+              {/* Toggle for showing favicon */}
+              <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
+                <div>
+                  <h3 className="text-md lg:text-lg">Show website icon</h3>
+                  <p className="text-xs text-gray-500">
+                    Display the website's favicon next to the link title
+                  </p>
+                </div>
+                <Switch.Root
+                  checked={newShowFavicon}
+                  onCheckedChange={setNewShowFavicon}
+                  className={switchRootClass}
+                >
+                  <Switch.Thumb className={switchThumbClass} />
+                </Switch.Root>
+              </div>
+
               <Dialog.Close asChild>
                 <button
                   onClick={handleEditLink}
-                  className="inline-block w-full px-4 py-4 leading-none 
-                        			text-lg mt-2 text-white bg-slate-800 hover:bg-slate-900 rounded-3xl 
-                        			focus:outline-none focus:shadow-outline-blue"
+                  className="inline-block w-full px-4 py-4 mt-2 text-lg leading-none text-white bg-slate-800 hover:bg-slate-900 rounded-3xl focus:outline-none focus:shadow-outline-blue"
                 >
                   Edit link{' '}
                   <span role="img" aria-label="sparkling star">

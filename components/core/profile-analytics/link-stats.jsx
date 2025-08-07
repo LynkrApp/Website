@@ -47,16 +47,20 @@ const LinkStats = () => {
                         key={userLink.id}
                         className="flex items-center p-2 rounded-lg"
                       >
-                        <div className="h-8 w-8">
-                          <img
-                            src={`${GOOGLE_FAVICON_URL}${getApexDomain(
-                              userLink.url
-                            )}`}
-                            alt={userLink.title}
-                            className="h-8 w-8 blur-0 rounded-full sm:h-8 lg:w-8"
-                            loading="lazy"
-                          />
-                        </div>
+                        {userLink.showFavicon !== false ? (
+                          <div className="h-8 w-8">
+                            <img
+                              src={`${GOOGLE_FAVICON_URL}${getApexDomain(
+                                userLink.url
+                              )}`}
+                              alt={userLink.title}
+                              className="h-8 w-8 blur-0 rounded-full sm:h-8 lg:w-8"
+                              loading="lazy"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-8 w-8"></div> // Empty placeholder to maintain spacing
+                        )}
                         <div className="ml-4">
                           <p className="truncate w-[100px] text-md text-slate-900 font-medium leading-none md:w-auto lg:w-auto">
                             {userLink.title}

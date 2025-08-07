@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 const useDeviceAnalytics = (handle) => {
   return useQuery({
@@ -12,10 +12,11 @@ const useDeviceAnalytics = (handle) => {
       return response.data;
     },
     enabled: !!handle,
-    onError: () => {
-      toast.error('An error occurred');
+    onError: (error) => {
+      console.error('Device analytics error:', error);
+      toast.error('Failed to fetch device analytics');
     },
-    // refetchInterval: 2000,
+    refetchInterval: 300000, // Refresh every 5 minutes
   });
 };
 

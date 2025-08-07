@@ -1,5 +1,14 @@
+import Image from 'next/image';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { MetaTags } from '@/components/meta/metadata';
+import { HomeLayout } from '@/components/layout/BaseLayout';
+import PreviewCarousel from '@/components/root/preview-carousel';
+
 /* eslint-disable @next/next/no-img-element */
 import GithubStar from '@/components/utils/github-star';
+
 import {
   Zap,
   Shield,
@@ -9,14 +18,6 @@ import {
   ArrowRight,
   Sparkles
 } from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { MetaTags } from '@/components/meta/metadata';
-import Navbar from '@/components/root/navbar';
-import Footer from '@/components/root/footer';
-import { HomeLayout } from '@/components/layout/BaseLayout';
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -61,78 +62,81 @@ const Home = () => {
   return (
     <>
       <HomeLayout>
-        <div className="-z-10 h-full w-full bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px]">
+        <div className="-z-10 h-full w-full">
           <div className="relative overflow-hidden">
-            <div
-              className="absolute inset-y-0 w-full h-full"
-              aria-hidden="true"
-            ></div>
-            <div className="relative pt-6 pb-16 sm:pb-24">
-              <div className="px-4 mx-auto mt-24 max-w-7xl sm:mt-16 sm:px-6">
-                <div className="flex items-center justify-center mb-6">
-                  <a
-                    className="group inline-flex items-center gap-2 px-4 py-4 text-sm bg-gray-50 border rounded-3xl text-gray-500 w-[180px] h-[35px] justify-center transition-colors hover:bg-gray-100"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href="https://github.com/LynkrApp/Website"
-                  >
-                    <div className="">
-                      <GithubStar />
-                    </div>{' '}
-                    Star us on Github
-                  </a>
-                </div>
-                <div className="text-center">
-                  <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-                    <span className="block">Your links, your way</span>
-                    <span className="block text-transparent hero-title bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text">Beautiful & organized</span>
-                  </h1>
-                  <p className="max-w-md mx-auto mt-3 text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                    Create stunning link in bio pages that capture attention and drive engagement.
-                    Completely free, open source, and packed with powerful features.
-                  </p>
-                </div>
-                <div className="flex justify-center mt-6">
-                  <div className="flex flex-col items-center">
-                    <span className="inline-flex shadow rounded-xl">
-                      <Link legacyBehavior href="/register">
-                        <a className="inline-flex items-center px-6 py-3 font-semibold text-lg bg-gradient-to-r from-blue-600 to-purple-600 border border-transparent rounded-xl text-white w-[200px] h-[55px] justify-center hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
-                          Start for free
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </a>
-                      </Link>
-                    </span>
+            {/* Hero Section with Slate Gradient */}
+            <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-[#376878]">
+              {/* Background Pattern Overlay */}
+              <div className="absolute inset-0 opacity-10">
+                <div className="h-full w-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+              </div>
+
+              <div className="relative pt-6 pb-16 sm:pb-24">
+                <div className="px-4 mx-auto mt-24 max-w-7xl sm:mt-20 sm:px-6">
+                  {/* GitHub Star button */}
+                  <div className="flex items-center justify-center mb-8">
+                    <motion.a
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="group inline-flex items-center gap-2 px-4 py-2 text-sm bg-slate-800/70 backdrop-blur-sm border border-slate-700 rounded-3xl text-slate-300 w-[180px] h-[35px] justify-center transition-all hover:bg-slate-700/80 hover:border-slate-600"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://github.com/LynkrApp/Website"
+                    >
+                      <div className="text-white">
+                        <GithubStar />
+                      </div>{' '}
+                      <span className="group-hover:text-white transition-colors">Star us on Github</span>
+                    </motion.a>
+                  </div>
+
+                  {/* Hero content */}
+                  <div className="text-center">
+                    <motion.h1
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6 }}
+                      className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl"
+                    >
+                      <span className="block mb-2">Your links, your way</span>
+                      <span className="block text-[#14AAFF]">Beautiful & organized</span>
+                    </motion.h1>
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: 0.1 }}
+                      className="max-w-md mx-auto mt-5 text-base text-slate-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl"
+                    >
+                      Create stunning link in bio pages that capture attention and drive engagement.
+                      Completely free, open source, and packed with powerful features.
+                    </motion.p>
+                  </div>
+
+                  {/* CTA button */}
+                  <div className="flex justify-center mt-8">
+                    <div className="flex flex-col items-center">
+                      <span className="inline-flex shadow-lg">
+                        <Link legacyBehavior href="/register">
+                          <a className="inline-flex items-center px-6 py-3 font-semibold text-lg bg-gradient-to-r from-blue-400 to-teal-300 border border-transparent rounded-xl text-slate-900 w-[200px] h-[55px] justify-center hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+                            Start for free
+                            <ArrowRight className="w-5 h-5 ml-2" />
+                          </a>
+                        </Link>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Preview Section */}
-            <div className="w-full py-24 bg-slate-900">
-              <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-                <div className="mb-12 text-center">
-                  <h2 className="mb-4 text-3xl font-extrabold text-white sm:text-4xl">
-                    See Lynkr in action
-                  </h2>
-                  <p className="max-w-2xl mx-auto text-xl text-gray-300">
-                    Create beautiful, organized link pages that drive engagement and showcase your content professionally
-                  </p>
-                </div>
-                <div className="flex justify-center">
-                  <Image
-                    className="border border-gray-700 rounded-lg shadow-2xl"
-                    src="/assets/new_shot.png"
-                    alt="Lynkr app screenshot showing beautiful link in bio page"
-                    height={700}
-                    width={1200}
-                  />
-                </div>
-              </div>
-            </div>
+            {/* Preview Carousel Section - Replacing the static preview */}
+            <PreviewCarousel />
+
           </div>
 
           {/* Features Section */}
-          <div className="py-24 bg-white">
+          <div className="py-24 bg-[#f8eeee]">
             <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
               <div className="text-center">
                 <motion.h2

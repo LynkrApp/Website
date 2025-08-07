@@ -12,8 +12,8 @@ async function cleanupExpiredTokens() {
     // Clean up expired tokens from database
     await db.linkingToken.deleteMany({
       where: {
-        expiresAt: { lt: new Date() }
-      }
+        expiresAt: { lt: new Date() },
+      },
     });
 
     // Clean up expired data from global storage
@@ -21,14 +21,14 @@ async function cleanupExpiredTokens() {
       const expiredTokens = [];
       for (const [token, data] of Object.entries(global.pendingAccountLinks)) {
         const tokenInDb = await db.linkingToken.findUnique({
-          where: { token }
+          where: { token },
         });
         if (!tokenInDb) {
           expiredTokens.push(token);
         }
       }
-      
-      expiredTokens.forEach(token => {
+
+      expiredTokens.forEach((token) => {
         delete global.pendingAccountLinks[token];
         delete global.accountLinkingRedirects?.[token];
       });
@@ -40,7 +40,8 @@ async function cleanupExpiredTokens() {
 
 // Run cleanup every 5 minutes in development, less frequently in production
 if (!global.cleanupInterval) {
-  const interval = process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 30 * 60 * 1000;
+  const interval =
+    process.env.NODE_ENV === 'development' ? 5 * 60 * 1000 : 30 * 60 * 1000;
   global.cleanupInterval = setInterval(cleanupExpiredTokens, interval);
 }
 
@@ -76,18 +77,20 @@ export const authOptions = {
     async signIn({ user, account, profile, email, credentials, req }) {
       if (account && account.type === 'oauth') {
         const userEmail = user?.email || profile?.email;
-        
+
         if (!userEmail) {
           return false;
         }
 
         const existingUser = await db.user.findUnique({
           where: { email: userEmail },
-          include: { accounts: true }
+          include: { accounts: true },
         });
 
         if (existingUser) {
-          const hasThisProvider = existingUser.accounts.some(acc => acc.provider === account.provider);
+          const hasThisProvider = existingUser.accounts.some(
+            (acc) => acc.provider === account.provider
+          );
           if (hasThisProvider) {
             return true;
           }
@@ -98,24 +101,26 @@ export const authOptions = {
             where: {
               provider: account.provider,
               userId: existingUser.id,
-              expiresAt: { gt: new Date() }
+              expiresAt: { gt: new Date() },
             },
             orderBy: {
-              createdAt: 'desc'
-            }
+              createdAt: 'desc',
+            },
           });
 
           if (activeTokens.length > 0) {
             if (global.pendingAccountLinks) {
-              for (const [token, data] of Object.entries(global.pendingAccountLinks)) {
-                const tokenExists = activeTokens.find(t => t.token === token);
+              for (const [token, data] of Object.entries(
+                global.pendingAccountLinks
+              )) {
+                const tokenExists = activeTokens.find((t) => t.token === token);
                 if (!tokenExists) {
                   delete global.pendingAccountLinks[token];
                   delete global.accountLinkingRedirects?.[token];
                 }
               }
             }
-            
+
             const matchingToken = activeTokens[0];
 
             global.pendingAccountLinks = global.pendingAccountLinks || {};
@@ -131,12 +136,12 @@ export const authOptions = {
                 scope: account.scope,
                 id_token: account.id_token,
                 session_state: account.session_state,
-              }
+              },
             };
 
             return true;
           }
-          
+
           return true;
         }
 
@@ -168,32 +173,27 @@ export const authOptions = {
         return token;
       }
 
-      if (!dbUser.handle) {
-        await db.user.update({
-          where: {
-            id: dbUser.id,
-          },
-          data: {
-            handle: nanoid(10),
-          },
-        });
-      }
-
+      // Remove the automatic handle assignment
+      // Only set handle if it already exists in the database
       return {
         id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
-        handle: dbUser.handle,
+        handle: dbUser.handle, // This will be undefined for new users, which is what we want
         buttonStyle: dbUser.buttonStyle,
         themePalette: dbUser.themePalette,
       };
     },
 
     redirect({ url, baseUrl }) {
-      if (url.includes('/admin/settings') && url.includes('tab=accounts') && url.includes('action=complete')) {
+      if (
+        url.includes('/admin/settings') &&
+        url.includes('tab=accounts') &&
+        url.includes('action=complete')
+      ) {
         return url.startsWith('http') ? url : `${baseUrl}${url}`;
       }
-      
+
       if (url.includes('/admin/settings') && url.includes('tab=accounts')) {
         return url.startsWith('http') ? url : `${baseUrl}${url}`;
       }

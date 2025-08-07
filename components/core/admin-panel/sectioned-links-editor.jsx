@@ -1,4 +1,4 @@
-import { Plus, FolderPlus, Settings } from 'lucide-react';
+import { Plus, FolderPlus, Settings, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import AddLinkModal from '../../shared/modals/add-new-link';
 import AddSectionModal from '../../shared/modals/add-section';
@@ -23,6 +23,7 @@ import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
+  useSortable, // Add this import
 } from '@dnd-kit/sortable';
 import { useDroppable } from '@dnd-kit/core';
 import useLinks from '@/hooks/useLinks';
@@ -33,9 +34,10 @@ import axios from 'axios';
 import { signalIframe } from '@/utils/helpers';
 import toast from 'react-hot-toast';
 import LinkSkeleton from './link-skeleton';
+import { CSS } from '@dnd-kit/utilities'; // Add this import for CSS.Transform
 
 // Enhanced Droppable Section Component with better visual feedback
-const DroppableSection = ({ id, children, isOver, isDragOver, className = "" }) => {
+const DroppableSection = ({ id, children, isOver, isDragOver, className = "", isDraggingSection = false }) => {
   const { setNodeRef, isOver: isDropZone } = useDroppable({
     id: `section-${id}`,
   });
@@ -45,9 +47,10 @@ const DroppableSection = ({ id, children, isOver, isDragOver, className = "" }) 
       ref={setNodeRef}
       className={`
         ${className} 
-        ${isDropZone || isDragOver ? 'bg-blue-50 border-2 border-blue-300 border-dashed' : 'border-2 border-transparent'} 
-        transition-all duration-300 ease-in-out rounded-lg
+        ${(isDropZone || isDragOver) ? 'bg-blue-50 border-2 border-blue-300 border-dashed ring-2 ring-blue-300 ring-opacity-50' : 'border-2 border-transparent'} 
+        transition-all duration-300 ease-in-out rounded-lg relative
         ${isDragOver ? 'shadow-lg transform scale-[1.02]' : ''}
+        ${isDraggingSection ? 'p-2' : ''}
       `}
     >
       {children}
@@ -56,13 +59,87 @@ const DroppableSection = ({ id, children, isOver, isDragOver, className = "" }) 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.8 }}
-          className="absolute inset-0 flex items-center justify-center bg-opacity-50 rounded-lg pointer-events-none bg-blue-50"
+          className="absolute inset-0 flex items-center justify-center bg-opacity-50 rounded-lg pointer-events-none"
         >
-          <div className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-100 rounded-full shadow-md">
+          <div className="px-6 py-3 text-sm font-medium text-blue-700 bg-blue-100 rounded-lg shadow-md">
             Drop here
           </div>
         </motion.div>
       )}
+    </div>
+  );
+};
+
+// Add a SortableSection component with collapse functionality
+const SortableSection = ({ id, children, sectionName, linkCount, visible, onVisibilityToggle, onDelete }) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 999 : 1
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="mb-4">
+      <div className="flex items-center justify-between px-2 py-2 mb-2 transition-colors border-2 border-transparent rounded-lg hover:border-gray-200 bg-white/90">
+        <div className="flex items-center gap-2">
+          <div
+            {...attributes}
+            {...listeners}
+            className="p-1 text-gray-400 cursor-grab hover:text-gray-600 active:cursor-grabbing"
+          >
+            <GripVertical size={18} />
+          </div>
+          <h3 className="text-sm font-medium text-gray-800">{sectionName}</h3>
+          <span className="text-xs text-gray-500">({linkCount})</span>
+
+          {/* Collapse toggle button */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="p-1 ml-1 text-gray-400 rounded-full hover:bg-gray-100 hover:text-gray-600"
+          >
+            {isCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+          </button>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onVisibilityToggle}
+            className={`text-xs px-2 py-1 rounded-full transition-colors ${visible
+              ? 'bg-green-100 text-green-700 hover:bg-green-200'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+          >
+            {visible ? 'Visible' : 'Hidden'}
+          </button>
+          <button
+            onClick={onDelete}
+            className="px-2 py-1 text-xs text-red-700 transition-colors bg-red-100 rounded-full hover:bg-red-200"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+
+      {/* Collapsible content */}
+      <motion.div
+        animate={{ height: isCollapsed ? 0 : 'auto', opacity: isCollapsed ? 0 : 1 }}
+        initial={false}
+        transition={{ duration: 0.3 }}
+        className={isCollapsed ? 'overflow-hidden' : ''}
+      >
+        {children}
+      </motion.div>
     </div>
   );
 };
@@ -97,6 +174,69 @@ const SectionedLinksEditor = () => {
   const [draggedItem, setDraggedItem] = useState(null);
   const [dragOverSection, setDragOverSection] = useState(null);
   const [isDraggingOverSection, setIsDraggingOverSection] = useState(false);
+  // Add state for active drag section
+  const [activeDragSectionId, setActiveDragSectionId] = useState(null);
+  const [collapseAllSections, setCollapseAllSections] = useState(false);
+  const [isDraggingSection, setIsDraggingSection] = useState(false);
+
+  // Add section reordering mutation
+  const updateSectionsOrderMutation = useMutation(
+    async (sections) => {
+      await axios.put('/api/sections/reorder', { sections });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(['sections', userId]);
+        signalIframe();
+        toast.success('Sections reordered successfully');
+      },
+      onError: () => {
+        toast.error('Failed to reorder sections');
+        queryClient.invalidateQueries(['sections', userId]);
+      },
+    }
+  );
+
+  // Add the missing handleSectionDragEnd function
+  const handleSectionDragEnd = useCallback(async (event) => {
+    const { active, over } = event;
+
+    setActiveDragSectionId(null);
+    setIsDraggingSection(false);
+    setCollapseAllSections(false);
+
+    if (!over || active.id === over.id) return;
+
+    // Get current sections order
+    const sections = userSections?.sort((a, b) => (a.order || 0) - (b.order || 0));
+    if (!sections) return;
+
+    const activeIndex = sections.findIndex(section => section.id === active.id);
+    const overIndex = sections.findIndex(section => section.id === over.id);
+
+    if (activeIndex !== -1 && overIndex !== -1 && activeIndex !== overIndex) {
+      const reorderedSections = arrayMove(sections, activeIndex, overIndex);
+
+      // Update order values
+      const sectionsWithNewOrder = reorderedSections.map((section, index) => ({
+        id: section.id,
+        order: index
+      }));
+
+      try {
+        await updateSectionsOrderMutation.mutateAsync(sectionsWithNewOrder);
+      } catch (error) {
+        console.error('Section reorder error:', error);
+      }
+    }
+  }, [userSections, updateSectionsOrderMutation]);
+
+  // Add the missing handleSectionDragStart function
+  const handleSectionDragStart = useCallback((event) => {
+    const { active } = event;
+    setActiveDragSectionId(active.id);
+    setIsDraggingSection(true);
+  }, []);
 
   // Enhanced drag handlers with cross-section support and smoother animations
   const handleDragStart = useCallback((event) => {
@@ -337,93 +477,119 @@ const SectionedLinksEditor = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Unsectioned Links */}
-          {groupedLinks.unsectioned.length > 0 && (
-            <DroppableSection id="unsectioned" className="space-y-2">
-              <div className="flex items-center justify-between px-2 py-1">
-                <h3 className="text-sm font-medium text-gray-600">Links</h3>
-                <span className="text-xs text-gray-500">({groupedLinks.unsectioned.length})</span>
-              </div>
-              <SortableContext items={groupedLinks.unsectioned.map(link => link.id)} strategy={verticalListSortingStrategy}>
-                {groupedLinks.unsectioned
-                  .sort((a, b) => (a.order || 0) - (b.order || 0))
-                  .map((userLink) => {
-                    const { id, ...rest } = userLink;
-                    return (
-                      <motion.div
-                        key={id}
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.3 }}
-                        style={{
-                          opacity: activeDragId === id ? 0.5 : 1,
-                        }}
-                      >
-                        <Link key={id} id={id} {...rest} />
-                      </motion.div>
-                    );
-                  })}
-              </SortableContext>
-            </DroppableSection>
-          )}
+          {/* Action buttons for sections */}
+          <div className="flex justify-end mb-2">
+            <button
+              onClick={() => setCollapseAllSections(!collapseAllSections)}
+              className="px-3 py-1 text-xs text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200"
+            >
+              {collapseAllSections ? 'Expand All' : 'Collapse All'}
+            </button>
+          </div>
 
-          {/* Sectioned Links */}
-          {Object.values(groupedLinks.sections).map((section) => (
-            <DroppableSection key={section.id} id={section.id} className="space-y-2">
-              <div className="flex items-center justify-between px-2 py-1 transition-colors border-2 border-transparent rounded-lg hover:border-gray-200">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium text-gray-800">{section.name}</h3>
-                  <span className="text-xs text-gray-500">({section.links.length})</span>
+          {/* First DndContext for Sections */}
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleSectionDragStart}
+            onDragEnd={handleSectionDragEnd}
+          >
+            {/* Enhanced drop zone for unsectioned links */}
+            {/* Unsectioned Links */}
+            {groupedLinks.unsectioned.length > 0 && (
+              <DroppableSection
+                id="unsectioned"
+                className="space-y-2"
+                isDraggingSection={isDraggingSection}
+              >
+                <div className="flex items-center justify-between px-2 py-1">
+                  <h3 className="text-sm font-medium text-gray-600">Links</h3>
+                  <span className="text-xs text-gray-500">({groupedLinks.unsectioned.length})</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => toggleSectionVisibility(section.id, section.visible)}
-                    className={`text-xs px-2 py-1 rounded-full transition-colors ${section.visible
-                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                  >
-                    {section.visible ? 'Visible' : 'Hidden'}
-                  </button>
-                  <button
-                    onClick={() => deleteSection(section.id)}
-                    className="px-2 py-1 text-xs text-red-700 transition-colors bg-red-100 rounded-full hover:bg-red-200"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
 
-              {section.links.length > 0 ? (
-                <SortableContext items={section.links.map(link => link.id)} strategy={verticalListSortingStrategy}>
-                  {section.links
-                    .sort((a, b) => (a.order || 0) - (b.order || 0))
-                    .map((userLink) => {
-                      const { id, ...rest } = userLink;
-                      return (
-                        <motion.div
-                          key={id}
-                          initial={{ opacity: 0, y: -20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          transition={{ duration: 0.3 }}
-                          style={{
-                            opacity: activeDragId === id ? 0.5 : 1,
-                          }}
-                        >
-                          <Link key={id} id={id} {...rest} />
-                        </motion.div>
-                      );
-                    })}
-                </SortableContext>
-              ) : (
-                <div className="py-4 text-sm text-center text-gray-500 border border-gray-200 border-dashed rounded-lg">
-                  Drop links here or add new ones
-                </div>
-              )}
-            </DroppableSection>
-          ))}
+                {/* Show links only if not dragging sections */}
+                {!isDraggingSection && (
+                  <SortableContext items={groupedLinks.unsectioned.map(link => link.id)} strategy={verticalListSortingStrategy}>
+                    {groupedLinks.unsectioned
+                      .sort((a, b) => (a.order || 0) - (b.order || 0))
+                      .map((userLink) => {
+                        const { id, ...rest } = userLink;
+                        return (
+                          <motion.div
+                            key={id}
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                            style={{
+                              opacity: activeDragId === id ? 0.5 : 1,
+                            }}
+                          >
+                            <Link key={id} id={id} {...rest} />
+                          </motion.div>
+                        );
+                      })}
+                  </SortableContext>
+                )}
+              </DroppableSection>
+            )}
+
+            {/* Sortable Sections Context with improved drag feedback */}
+            <SortableContext
+              items={Object.values(groupedLinks.sections).map(section => section.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {Object.values(groupedLinks.sections)
+                .sort((a, b) => (a.order || 0) - (b.order || 0))
+                .map((section) => (
+                  <DroppableSection
+                    key={section.id}
+                    id={section.id}
+                    className="space-y-2"
+                    isDragOver={dragOverSection === section.id && isDraggingOverSection}
+                    isDraggingSection={isDraggingSection}
+                  >
+                    <SortableSection
+                      id={section.id}
+                      sectionName={section.name}
+                      linkCount={section.links.length}
+                      visible={section.visible}
+                      onVisibilityToggle={() => toggleSectionVisibility(section.id, section.visible)}
+                      onDelete={() => deleteSection(section.id)}
+                    >
+                      {/* Section links - hide during section dragging */}
+                      {!isDraggingSection && section.links.length > 0 ? (
+                        <SortableContext items={section.links.map(link => link.id)} strategy={verticalListSortingStrategy}>
+                          {section.links
+                            .sort((a, b) => (a.order || 0) - (b.order || 0))
+                            .map((userLink) => {
+                              const { id, ...rest } = userLink;
+                              return (
+                                <motion.div
+                                  key={id}
+                                  initial={{ opacity: 0, y: -20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -20 }}
+                                  transition={{ duration: 0.3 }}
+                                  style={{
+                                    opacity: activeDragId === id ? 0.5 : 1,
+                                  }}
+                                >
+                                  <Link key={id} id={id} {...rest} />
+                                </motion.div>
+                              );
+                            })}
+                        </SortableContext>
+                      ) : !isDraggingSection ? (
+                        <div className="py-4 text-sm text-center text-gray-500 border border-gray-200 border-dashed rounded-lg">
+                          Drop links here or add new ones
+                        </div>
+                      ) : null}
+                    </SortableSection>
+                  </DroppableSection>
+                ))}
+            </SortableContext>
+          </DndContext>
 
           {/* Loading State */}
           {isLoading && Array.from({ length: 4 }).map((_, i) => <LinkSkeleton key={i} />)}
@@ -450,9 +616,9 @@ const SectionedLinksEditor = () => {
       </div>
 
       {/* Drag Overlay for smooth animations */}
-      <DragOverlay dropAnimation={null}>
+      <DragOverlay dropAnimation={{ duration: 150, easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)' }}>
         {activeDragId && draggedItem ? (
-          <div className="transform shadow-2xl rotate-6 opacity-90">
+          <div className="transform shadow-2xl rotate-3 opacity-90 scale-105">
             <Link
               id={draggedItem.id}
               title={draggedItem.title}
@@ -464,7 +630,25 @@ const SectionedLinksEditor = () => {
             />
           </div>
         ) : null}
+
+        {activeDragSectionId && (
+          <div className="p-4 bg-white border-2 border-blue-300 rounded-lg shadow-xl w-full max-w-[500px] scale-105">
+            <div className="flex items-center gap-2">
+              <GripVertical size={18} className="text-blue-400" />
+              <h3 className="text-sm font-medium text-gray-800">
+                {userSections?.find(s => s.id === activeDragSectionId)?.name || 'Section'}
+              </h3>
+            </div>
+          </div>
+        )}
       </DragOverlay>
+
+      {/* Help tooltip for dragging */}
+      {(activeDragId || activeDragSectionId) && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm">
+          {activeDragSectionId ? "Drop on another section to reorder" : "Drop on a section header to move this link"}
+        </div>
+      )}
 
       <div className="h-[40px] mb-12" />
     </DndContext>

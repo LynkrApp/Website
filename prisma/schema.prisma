@@ -9,25 +9,27 @@ datasource db {
 }
 
 model User {
-  id               String    @id @default(auto()) @map("_id") @db.ObjectId
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
   name             String?
-  handle           String?   @unique
+  handle           String?    @unique
   bio              String?
   image            String?
-  email            String?   @unique
+  email            String?    @unique
   emailVerified    DateTime?
-  totalViews       Int       @default(0)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  totalViews       Int        @default(0)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
   links            Link[]
   sections         Section[]
-  linksLocation    String?   @default("top")
-  themePalette     Json?     @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
-  buttonStyle      String    @default("rounded-md")
-  typographyTheme  Json?     @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
-  layoutTheme      Json?     @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
-  buttonStyleTheme Json?     @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
+  linksLocation    String?    @default("top")
+  themePalette     Json?      @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
+  buttonStyle      String     @default("rounded-md")
+  typographyTheme  Json?      @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
+  layoutTheme      Json?      @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
+  buttonStyleTheme Json?      @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
   accounts         Account[]
+  ogStyles         Json? // Used for both OG image styling and meta theme configuration
+  pageViews        PageView[] // Add the missing relation field here
 
   @@unique([handle, email])
 }
@@ -68,20 +70,22 @@ model Account {
 }
 
 model Link {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  title     String
-  url       String
-  archived  Boolean  @default(false)
-  order     Int?     @default(0)
-  isSocial  Boolean  @default(false)
+  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  url         String
+  archived    Boolean     @default(false)
+  order       Int?        @default(0)
+  isSocial    Boolean     @default(false)
+  showFavicon Boolean     @default(true) // New field to control favicon display
   // Link metadata
-  clicks    Int      @default(0) // number of clicks
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String   @db.ObjectId
-  sectionId String?  @db.ObjectId
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  section   Section? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  clicks      Int         @default(0) // number of clicks
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  userId      String      @db.ObjectId
+  sectionId   String?     @db.ObjectId
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  section     Section?    @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+  linkClicks  LinkClick[] // Relation to LinkClick model
 
   @@index(userId)
   @@index(sectionId)
@@ -96,4 +100,29 @@ model LinkingToken {
   createdAt DateTime @default(now())
 
   @@index([userId])
+}
+
+// Analytics Models
+model PageView {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  timestamp DateTime @default(now())
+  referer   String?
+  userAgent String?
+  ipAddress String?
+  country   String?
+  device    String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LinkClick {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  linkId    String   @db.ObjectId
+  timestamp DateTime @default(now())
+  referer   String?
+  userAgent String?
+  ipAddress String?
+  country   String?
+  device    String?
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 }

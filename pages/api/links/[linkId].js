@@ -1,10 +1,6 @@
 import { db } from '@/lib/db';
 
 export default async function handler(req, res) {
-  // if (req.method !== "PATCH" && req.method !== "DELETE") {
-  //   return res.status(405).end();
-  // }
-
   try {
     const { linkId } = req.query;
 
@@ -13,7 +9,23 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      const { newTitle, newUrl, archived, sectionId } = req.body;
+      const {
+        newTitle,
+        newUrl,
+        archived,
+        sectionId,
+        newShowFavicon,
+        newIsSocial,
+      } = req.body;
+
+      // Enhanced logging for debugging
+      console.log('PATCH request body:', req.body);
+      console.log(
+        'showFavicon value received:',
+        newShowFavicon,
+        'type:',
+        typeof newShowFavicon
+      );
 
       const updatedLink = await db.link.update({
         where: {
@@ -24,9 +36,15 @@ export default async function handler(req, res) {
           ...(newUrl !== undefined && { url: newUrl }),
           ...(archived !== undefined && { archived }),
           ...(sectionId !== undefined && { sectionId }),
+          // Ensure explicit boolean conversion
+          ...(newShowFavicon !== undefined && {
+            showFavicon: newShowFavicon === true,
+          }),
+          ...(newIsSocial !== undefined && { isSocial: newIsSocial === true }),
         },
       });
 
+      console.log('Updated link:', updatedLink);
       return res.status(200).json(updatedLink);
     } else if (req.method === 'DELETE') {
       await db.link.delete({

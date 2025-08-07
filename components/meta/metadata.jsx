@@ -1,5 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
+import { getCurrentBaseURL } from '@/utils/helpers';
 
 // Default configuration for Lynkr
 const defaultConfig = {
@@ -20,19 +21,31 @@ export const MetaTags = ({
   type = 'website',
   url,
   noIndex = false,
-  twitterCard = 'summary_large_image'
+  twitterCard = 'summary_large_image',
+  handle = null,
+  ogStylesApplied = false
 }) => {
   // Build full title
   const fullTitle = title ? `${title} | ${defaultConfig.siteName}` : `${defaultConfig.siteName} | The Ultimate Free Link in Bio Platform`;
 
-  // Use single canonical image URL (primary domain only)
-  const ogImage = image || defaultConfig.defaultImage;
-  const canonicalImageUrl = `https://${defaultConfig.domain}${ogImage}`;
+  // Get base URL 
+  const baseUrl = getCurrentBaseURL();
 
-  // Use single canonical URL (primary domain only)
+  // Use dynamic OG image if handle is provided, with timestamp to prevent caching
+  const timestamp = Date.now();
+  const ogImage = handle
+    ? `${baseUrl}/api/og?username=${handle}&t=${timestamp}`
+    : image || defaultConfig.defaultImage;
+
+  // Use single canonical image URL
+  const canonicalImageUrl = ogImage.startsWith('http')
+    ? ogImage
+    : `${baseUrl}${ogImage}`;
+
+  // Use single canonical URL
   const canonicalUrl = url ?
-    `https://${defaultConfig.domain}${url}` :
-    `https://${defaultConfig.domain}/`;
+    `${baseUrl}${url}` :
+    `${baseUrl}/`;
 
   return (
     <Head>
@@ -99,14 +112,21 @@ export const HomePageMeta = (props) => (
   />
 );
 
-export const ProfilePageMeta = ({ handle, name, bio, ...props }) => (
-  <MetaTags
-    title={name ? `${name} (@${handle})` : `@${handle}`}
-    description={bio || `Check out ${name || handle}'s links on Lynkr - the ultimate link in bio platform.`}
-    url={`/${handle}`}
-    {...props}
-  />
-);
+export const ProfilePageMeta = ({ handle, name, bio, user, ...props }) => {
+  // Check if user has custom OG styles defined
+  const hasCustomOgStyles = user?.ogStyles && Object.keys(user.ogStyles).length > 0;
+
+  return (
+    <MetaTags
+      title={name ? `${name} (@${handle})` : `@${handle}`}
+      description={bio || `Check out ${name || handle}'s links on Lynkr - the ultimate link in bio platform.`}
+      url={`/${handle}`}
+      handle={handle}
+      ogStylesApplied={hasCustomOgStyles}
+      {...props}
+    />
+  );
+};
 
 export const AuthPageMeta = ({ pageType, ...props }) => {
   const titles = {

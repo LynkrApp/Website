@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
-import { Menu, X, User, Settings, LogOut } from 'lucide-react';
+import { useState } from 'react';
+import { Menu, X, Settings, LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import UserAccountNavDesktop from '../utils/usernavbutton-desktop';
@@ -11,34 +11,9 @@ const Navbar = ({ transparent = false, className = "" }) => {
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
 
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' });
-  };
-
-  // Handle scroll effect
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Dynamic navbar classes based on scroll state
-  const getNavbarClasses = () => {
-    if (transparent && !isScrolled) {
-      return 'bg-transparent border-transparent';
-    }
-
-    if (isScrolled) {
-      return 'bg-white/95 backdrop-blur-md border-gray-200 shadow-sm';
-    }
-
-    return 'bg-white/80 backdrop-blur-md border-gray-200';
   };
 
   const navLinks = [
@@ -48,12 +23,12 @@ const Navbar = ({ transparent = false, className = "" }) => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 ${getNavbarClasses()} border-b transition-all duration-300 ease-in-out z-50 ${className}`}>
+    <nav className={`fixed top-0 left-0 right-0 bg-slate-900 border-slate-800 border-b z-50 ${className}`}>
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
-            className="flex items-center gap-2 text-xl font-bold text-gray-900 transition-colors hover:text-blue-600"
+            className="flex items-center gap-2 text-xl font-bold text-white transition-colors hover:text-blue-400"
             href="/"
           >
             <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600">
@@ -74,7 +49,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="font-medium text-gray-600 transition-colors hover:text-blue-600"
+                className="font-medium text-slate-300 transition-colors hover:text-white"
               >
                 {link.label}
               </Link>
@@ -85,7 +60,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
           <div className="flex items-center gap-4">
             {/* Mobile menu button */}
             <button
-              className="p-2 transition-colors rounded-lg md:hidden hover:bg-gray-100"
+              className="p-2 text-slate-300 transition-colors rounded-lg md:hidden hover:bg-slate-800 hover:text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >
@@ -101,21 +76,21 @@ const Navbar = ({ transparent = false, className = "" }) => {
               {isAuthenticated ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <button className="flex items-center gap-2 px-4 py-2 transition-colors rounded-lg hover:bg-gray-100">
+                    <button className="flex items-center gap-2 px-4 py-2 transition-colors rounded-lg text-white hover:bg-slate-800">
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full">
                         <UserAccountNavDesktop />
                       </div>
-                      <span className="ml-2 font-medium text-gray-900">
+                      <span className="ml-2 font-medium">
                         {session.user?.name || 'User'}
                       </span>
                     </button>
                   </DropdownMenu.Trigger>
                   <DropdownMenu.Portal>
-                    <DropdownMenu.Content className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-w-[200px] z-50">
+                    <DropdownMenu.Content className="bg-slate-800 rounded-xl shadow-lg border border-slate-700 p-2 min-w-[200px] z-50">
                       <DropdownMenu.Item asChild>
                         <Link
                           href="/admin"
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-slate-300 hover:bg-slate-700 hover:text-white"
                         >
                           <Settings className="w-4 h-4" />
                           Dashboard
@@ -124,16 +99,16 @@ const Navbar = ({ transparent = false, className = "" }) => {
                       <DropdownMenu.Item asChild>
                         <Link
                           href="/admin/settings"
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-gray-100"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-slate-300 hover:bg-slate-700 hover:text-white"
                         >
                           <Settings className="w-4 h-4" />
                           Settings
                         </Link>
                       </DropdownMenu.Item>
-                      <DropdownMenu.Separator className="h-px my-1 bg-gray-200" />
+                      <DropdownMenu.Separator className="h-px my-1 bg-slate-700" />
                       <DropdownMenu.Item
                         onClick={handleSignOut}
-                        className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-red-50 hover:text-red-600"
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-red-900/60 text-slate-300 hover:text-red-200"
                       >
                         <LogOut className="w-4 h-4" />
                         Sign Out
@@ -145,7 +120,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
                 <>
                   <Link
                     href="/login"
-                    className="px-4 py-2 font-medium text-gray-600 transition-colors hover:text-blue-600"
+                    className="px-4 py-2 font-medium text-slate-300 transition-colors hover:text-white"
                   >
                     Sign In
                   </Link>
@@ -163,26 +138,26 @@ const Navbar = ({ transparent = false, className = "" }) => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute left-0 right-0 bg-white border-b border-gray-200 shadow-lg md:hidden top-full">
+          <div className="absolute left-0 right-0 bg-slate-800 border-b border-slate-700 shadow-lg md:hidden top-full">
             <div className="px-4 py-6 space-y-4">
               {/* Mobile Navigation Links */}
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block py-2 font-medium text-gray-600 transition-colors hover:text-blue-600"
+                  className="block py-2 font-medium text-slate-300 transition-colors hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
                 </Link>
               ))}
 
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4 border-t border-slate-700">
                 {isAuthenticated ? (
                   <div className="space-y-3">
                     <Link
                       href="/admin"
-                      className="flex items-center gap-3 py-2 font-medium text-gray-600 transition-colors hover:text-blue-600"
+                      className="flex items-center gap-3 py-2 font-medium text-slate-300 transition-colors hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Settings className="w-4 h-4" />
@@ -193,7 +168,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
                         handleSignOut();
                         setIsMobileMenuOpen(false);
                       }}
-                      className="flex items-center w-full gap-3 py-2 font-medium text-left text-red-600 transition-colors hover:text-red-700"
+                      className="flex items-center w-full gap-3 py-2 font-medium text-left text-red-300 transition-colors hover:text-red-200"
                     >
                       <LogOut className="w-4 h-4" />
                       Sign Out
@@ -203,7 +178,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
                   <div className="space-y-3">
                     <Link
                       href="/login"
-                      className="block py-2 font-medium text-gray-600 transition-colors hover:text-blue-600"
+                      className="block py-2 font-medium text-slate-300 transition-colors hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign In

@@ -1,37 +1,22 @@
 import { db } from '@/lib/db';
-import { UAParser } from 'ua-parser-js';
 import { getClientIp } from 'request-ip';
 import { getLocationFromIp } from '@/utils/geo-service';
+import { UAParser } from 'ua-parser-js';
 
 export default async function handler(req, res) {
-  if (req.method !== 'PATCH') {
+  if (req.method !== 'POST') {
     return res.status(405).end();
   }
 
   try {
-    const { id } = req.query;
+    const { userId, referer } = req.body;
 
-    if (!id) {
-      return res.status(400).json({ error: 'Link ID is required' });
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
     }
-
-    // Find the link to ensure it exists
-    const link = await db.link.findUnique({
-      where: { id },
-    });
-
-    if (!link) {
-      return res.status(404).json({ error: 'Link not found' });
-    }
-
-    // Increment the clicks count on the link
-    await db.link.update({
-      where: { id },
-      data: { clicks: { increment: 1 } },
-    });
 
     // Extract client information
-    const userAgent = req.headers['user-agent'];
+    const userAgent = req.headers['user-agent'] || null;
     const clientIp = getClientIp(req);
 
     // Get location data
@@ -50,12 +35,11 @@ export default async function handler(req, res) {
         (userAgent.includes('Mobile') ? 'mobile' : 'desktop');
     }
 
-    // Record detailed click analytics
-    await db.linkClick.create({
+    // Create page view with collected data
+    await db.pageView.create({
       data: {
-        linkId: id,
-        timestamp: new Date(),
-        referer: req.headers.referer,
+        userId,
+        referer,
         userAgent,
         ipAddress: clientIp,
         country: locationData?.country || null,
@@ -63,9 +47,15 @@ export default async function handler(req, res) {
       },
     });
 
+    // Increment user's total views
+    await db.user.update({
+      where: { id: userId },
+      data: { totalViews: { increment: 1 } },
+    });
+
     return res.status(200).json({ success: true });
   } catch (error) {
-    console.error('Click tracking error:', error);
+    console.error('Error recording page view:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }

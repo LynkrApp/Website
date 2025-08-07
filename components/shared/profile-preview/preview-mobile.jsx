@@ -9,8 +9,9 @@ import useLinks from '@/hooks/useLinks';
 import useSections from '@/hooks/useSections';
 import { SocialCards } from '@/components/core/user-profile/social-cards';
 import useCurrentUser from '@/hooks/useCurrentUser';
-import { X } from 'lucide-react';
 import AnimatedBackground from '@/components/core/animated-backgrounds/animated-background';
+import FontLoader from '@/components/utils/font-loader';
+import { X } from 'lucide-react';
 
 const PreviewMobile = ({ close }) => {
   const [, setIsDataLoaded] = useState(false);
@@ -125,8 +126,10 @@ const PreviewMobile = ({ close }) => {
 
     return {
       fontFamily: typographyTheme.fontFamily || 'inherit',
-      '--heading-font': typographyTheme.headingFont || typographyTheme.fontFamily || 'inherit',
-      '--body-font': typographyTheme.bodyFont || typographyTheme.fontFamily || 'inherit',
+      letterSpacing: typographyTheme.letterSpacing || 'normal',
+      lineHeight: typographyTheme.lineHeight || 'normal',
+      '--heading-weight': typographyTheme.headingWeight || '700',
+      '--body-weight': typographyTheme.bodyWeight || '400',
     };
   };
 
@@ -141,12 +144,13 @@ const PreviewMobile = ({ close }) => {
 
   return (
     <>
+      <FontLoader typographyTheme={currentUser?.typographyTheme} />
       <AnimatedBackground theme={currentUser?.themePalette?.type === 'animated' ? currentUser.themePalette : null}>
         <section
           style={{ ...getBackgroundStyle(), ...getTypographyStyles() }}
-          className={`h-[100vh] w-[100vw] no-scrollbar overflow-auto relative ${currentUser?.themePalette?.type === 'animated' && currentUser.themePalette.animation === 'gradient'
-              ? 'animated-gradient'
-              : ''
+          className={`h w-[100vw] no-scrollbar overflow-auto relative ${currentUser?.themePalette?.type === 'animated' && currentUser.themePalette.animation === 'gradient'
+            ? 'animated-gradient'
+            : ''
             }`}
         >
           {shouldShowOverlay() && (
@@ -158,7 +162,7 @@ const PreviewMobile = ({ close }) => {
           <div className={getContainerClasses()}>
             <Avatar.Root
               className="inline-flex h-[70px] w-[70px] border-2 border-blue-300
-						items-center justify-center overflow-hidden rounded-full align-middle lg:w-[96px] lg:h-[96px]"
+              items-center justify-center overflow-hidden rounded-full align-middle lg:w-[96px] lg:h-[96px]"
             >
               <Avatar.Image
                 className="h-full w-full rounded-[inherit] object-cover"
@@ -174,14 +178,14 @@ const PreviewMobile = ({ close }) => {
               </Avatar.Fallback>
             </Avatar.Root>
             <p
-              style={{ color: theme.accent }}
+              style={{ color: theme.accent, fontWeight: 'var(--heading-weight)' }}
               className="mt-4 mb-2 text-sm font-bold text-center text-white lg:text-xl lg:mt-4"
             >
               {currentUser?.name}
             </p>
             {currentUser?.bio && (
               <p
-                style={{ color: theme.accent }}
+                style={{ color: theme.accent, fontWeight: 'var(--body-weight)' }}
                 className="w-[150px] truncate text-center text-sm mt-1 mb-4 lg:text-xl lg:mb-4 lg:w-[500px]"
               >
                 {currentUser?.bio}
@@ -271,13 +275,13 @@ const PreviewMobile = ({ close }) => {
               </p>
             </footer>
           )}
-          <div className="rounded-full bottom-[1rem] absolute left-1/2 transform -translate-x-1/2 lg:hidden">
+          <div className="absolute rounded-full top-2 right-2 transform-translate-x-1/2 lg:hidden">
             <button
               onClick={close}
               style={{ background: `${theme.neutral}` }}
               className="flex justify-center items-center w-[45px] h-[45px] rounded-full bg-gray-500 text-black text-center font-bold text-lg shadow-lg hover:bg-slate-600"
             >
-              <X color={theme.primary} size={30} />
+              <X color="white" size={30} />
             </button>
           </div>
         </section>

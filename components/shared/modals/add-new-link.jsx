@@ -16,6 +16,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [isSocial, setIsSocial] = useState(false);
+  const [showFavicon, setShowFavicon] = useState(true); // Default to true
   const [sectionId, setSectionId] = useState(selectedSectionId);
   const [urlError, setUrlError] = useState(false);
 
@@ -29,13 +30,24 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
   const order = userLinks?.length;
 
   const addLinkMutation = useMutation(
-    async ({ title, url, order, sectionId }) => {
+    async ({ title, url, order, isSocial, sectionId, showFavicon }) => {
+      // Add console log for debugging
+      console.log('Adding link with data:', {
+        title,
+        url,
+        order,
+        isSocial: isSocial === true ? 'true' : 'false',
+        sectionId,
+        showFavicon: showFavicon === true ? 'true' : 'false',
+      });
+
       await axios.post('/api/links', {
         title,
         url,
         order,
         isSocial,
         sectionId,
+        showFavicon,
       });
     },
     {
@@ -45,6 +57,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
         setTitle('');
         setUrl('');
         setIsSocial(false);
+        setShowFavicon(true);
         setSectionId(selectedSectionId);
         signalIframe();
       },
@@ -57,12 +70,14 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
       return;
     }
     await toast.promise(
-      addLinkMutation.mutateAsync({ 
-        title, 
-        url, 
-        order, 
-        sectionId: sectionId || null 
-      }), 
+      addLinkMutation.mutateAsync({
+        title,
+        url,
+        order,
+        isSocial,
+        showFavicon,
+        sectionId: sectionId || null,
+      }),
       {
         loading: 'Adding link',
         success: 'Link added successfully',
@@ -82,14 +97,14 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
   return (
     <>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 backdrop-blur-sm bg-gray-800 bg-opacity-50 w-full" />
+        <Dialog.Overlay className="fixed inset-0 w-full bg-gray-800 bg-opacity-50 backdrop-blur-sm" />
         <Dialog.Content className="contentShow fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 sm:p-8 lg:max-w-3xl w-[350px] sm:w-[500px] shadow-lg md:max-w-lg max-md:max-w-lg focus:outline-none">
-          <div className="flex flex-row justify-between items-center mb-4">
-            <Dialog.Title className="text-xl text-center font-medium mb-2 sm:mb-0 sm:mr-4">
+          <div className="flex flex-row items-center justify-between mb-4">
+            <Dialog.Title className="mb-2 text-xl font-medium text-center sm:mb-0 sm:mr-4">
               Create a new Link
             </Dialog.Title>
-            <Dialog.Close className="flex flex-end justify-end">
-              <div className="p-2 rounded-full flex justify-center items-center bg-gray-100 hover:bg-gray-300">
+            <Dialog.Close className="flex justify-end flex-end">
+              <div className="flex items-center justify-center p-2 bg-gray-100 rounded-full hover:bg-gray-300">
                 <Image priority src={closeSVG} alt="close" />
               </div>
             </Dialog.Close>
@@ -99,7 +114,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none focus:shadow-outline"
+                className="block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border appearance-none rounded-2xl focus:outline-none focus:shadow-outline"
                 id="name"
                 type="text"
                 placeholder="Title"
@@ -109,15 +124,14 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
               <input
                 value={url}
                 onChange={handleUrlChange}
-                className={`block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none ${
-                  urlError ? 'border-red-500' : 'focus:shadow-outline'
-                }`}
+                className={`block w-full h-10 px-4 py-6 mb-2 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none ${urlError ? 'border-red-500' : 'focus:shadow-outline'
+                  }`}
                 id="url"
                 type="url"
                 placeholder="URL"
               />
               {urlError && (
-                <small className="text-red-500 text-sm">
+                <small className="text-sm text-red-500">
                   Enter a valid URL (ex: https://hello.com)
                 </small>
               )}
@@ -129,7 +143,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
                 <select
                   value={sectionId || ''}
                   onChange={(e) => setSectionId(e.target.value || null)}
-                  className="block w-full h-12 px-4 py-3 leading-tight text-gray-700 border rounded-2xl appearance-none focus:outline-none focus:shadow-outline bg-white"
+                  className="block w-full h-12 px-4 py-3 leading-tight text-gray-700 bg-white border appearance-none rounded-2xl focus:outline-none focus:shadow-outline"
                 >
                   <option value="">No Section (General Links)</option>
                   {userSections.map((section) => (
@@ -141,7 +155,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
               </div>
             )}
 
-            <div className="p-2 relative flex justify-between gap-2 text-gray-800 my-4">
+            <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
               <TooltipWrapper
                 title="Twitter, Instagram, LinkedIn, etc"
                 component={
@@ -159,17 +173,33 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
               </Switch.Root>
             </div>
 
+            {/* Add show favicon toggle */}
+            <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
+              <div>
+                <h3 className="text-md lg:text-lg">Show website icon</h3>
+                <p className="text-xs text-gray-500">
+                  Display the website's favicon next to the link title
+                </p>
+              </div>
+              <Switch.Root
+                checked={showFavicon}
+                onCheckedChange={() => setShowFavicon(!showFavicon)}
+                className="w-[39px] h-[21px] bg-[#E4E4E7] rounded-full relative focus:shadow-black border border-slate-200 data-[state=checked]:bg-slate-900 outline-none cursor-default lg:w-[42px] lg:h-[25px]"
+              >
+                <Switch.Thumb className="block w-[17px] h-[17px] bg-white rounded-full shadow-[0_2px_2px] transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px] lg:w-[21px] lg:h-[21px]" />
+              </Switch.Root>
+            </div>
+
             <Dialog.Close asChild>
               <button
                 onClick={submitLink}
                 disabled={urlError}
                 className={`inline-block w-full px-4 py-4 leading-none 
                      			 text-lg mt-2 text-white rounded-3xl 
-                      			${
-                              !urlError
-                                ? 'bg-slate-800 hover:bg-slate-900'
-                                : 'bg-slate-500'
-                            }`}
+                      			${!urlError
+                    ? 'bg-slate-800 hover:bg-slate-900'
+                    : 'bg-slate-500'
+                  }`}
               >
                 Create Link{' '}
                 <span role="img" aria-label="sparkling star">

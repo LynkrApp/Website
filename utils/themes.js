@@ -2,203 +2,232 @@ export const imageThemes = [
   {
     name: 'Galaxy',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(0,0,0,0.2)', '#FFFFFF', '#9333EA'],
     overlay: 'rgba(0,0,0,0.3)',
   },
   {
     name: 'Mountain',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#059669'],
     overlay: 'rgba(0,0,0,0.4)',
   },
   {
     name: 'Ocean Wave',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(0,123,191,0.2)', '#FFFFFF', '#0EA5E9'],
     overlay: 'rgba(0,50,100,0.3)',
   },
   {
     name: 'Forest',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(34,197,94,0.2)', '#FFFFFF', '#22C55E'],
     overlay: 'rgba(0,50,0,0.4)',
   },
   {
     name: 'City Night',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(0,0,0,0.3)', '#FFFFFF', '#F59E0B'],
     overlay: 'rgba(0,0,0,0.5)',
   },
   {
     name: 'Desert',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(251,146,60,0.2)', '#FFFFFF', '#EA580C'],
     overlay: 'rgba(120,53,15,0.3)',
   },
   {
     name: 'Northern Lights',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(34,197,94,0.2)', '#FFFFFF', '#10B981'],
     overlay: 'rgba(0,30,60,0.4)',
   },
   {
     name: 'Sunset Beach',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(251,146,60,0.2)', '#FFFFFF', '#F97316'],
     overlay: 'rgba(120,53,15,0.3)',
   },
   {
     name: 'Neon City',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(236,72,153,0.2)', '#FFFFFF', '#EC4899'],
     overlay: 'rgba(0,0,0,0.5)',
   },
   {
     name: 'Tropical Paradise',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(20,184,166,0.2)', '#FFFFFF', '#14B8A6'],
     overlay: 'rgba(0,50,50,0.3)',
   },
   {
     name: 'Misty Lake',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(59,130,246,0.2)', '#FFFFFF', '#3B82F6'],
     overlay: 'rgba(30,58,138,0.3)',
   },
   {
     name: 'Cherry Blossoms',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(251,113,133,0.2)', '#1F2937', '#FB7185'],
     overlay: 'rgba(255,255,255,0.2)',
   },
   {
     name: 'Autumn Forest',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1507041957456-9c397ce39c97?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1507041957456-9c397ce39c97?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(251,146,60,0.2)', '#FFFFFF', '#FB923C'],
     overlay: 'rgba(154,52,18,0.3)',
   },
   {
     name: 'Snowy Mountain',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1551524164-6cf2ac8ec602?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1551524164-6cf2ac8ec602?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(148,163,184,0.2)', '#1F2937', '#94A3B8'],
     overlay: 'rgba(255,255,255,0.1)',
   },
   {
     name: 'Lavender Field',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1499002238440-d264edd596ec?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(168,85,247,0.2)', '#FFFFFF', '#A855F7'],
     overlay: 'rgba(88,28,135,0.2)',
   },
   {
     name: 'Urban Skyline',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(0,0,0,0.3)', '#FFFFFF', '#6366F1'],
     overlay: 'rgba(0,0,0,0.4)',
   },
   {
     name: 'Cosmic Nebula',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1446776877081-d282a0f896e2?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(147,51,234,0.2)', '#FFFFFF', '#9333EA'],
     overlay: 'rgba(0,0,0,0.4)',
   },
   {
     name: 'Golden Wheat',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(245,158,11,0.2)', '#1F2937', '#F59E0B'],
     overlay: 'rgba(180,83,9,0.2)',
   },
   {
     name: 'Jungle Waterfall',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(34,197,94,0.2)', '#FFFFFF', '#22C55E'],
     overlay: 'rgba(0,100,0,0.3)',
   },
   {
     name: 'Ice Cave',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(59,130,246,0.2)', '#FFFFFF', '#3B82F6'],
     overlay: 'rgba(30,64,175,0.3)',
   },
   {
     name: 'Volcanic Landscape',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(239,68,68,0.2)', '#FFFFFF', '#EF4444'],
     overlay: 'rgba(127,29,29,0.4)',
   },
   {
     name: 'Abstract Art',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(168,85,247,0.2)', '#FFFFFF', '#A855F7'],
     overlay: 'rgba(0,0,0,0.3)',
   },
   {
     name: 'Moonlit Night',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1502134249126-9f3755a50d78?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(148,163,184,0.2)', '#FFFFFF', '#94A3B8'],
     overlay: 'rgba(15,23,42,0.5)',
   },
   {
     name: 'Coral Reef',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1583212292454-1fe6229603b7?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(6,182,212,0.2)', '#FFFFFF', '#06B6D4'],
     overlay: 'rgba(0,100,150,0.3)',
   },
   {
     name: 'Rustic Barn',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1500076656116-558758c991c1?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1500076656116-558758c991c1?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(180,83,9,0.2)', '#FFFFFF', '#B45309'],
     overlay: 'rgba(120,53,15,0.3)',
   },
   {
     name: 'Sakura Garden',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(244,114,182,0.2)', '#1F2937', '#F472B6'],
     overlay: 'rgba(255,255,255,0.1)',
   },
   {
     name: 'Ancient Temple',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1528127269322-539801943592?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1528127269322-539801943592?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(180,83,9,0.2)', '#FFFFFF', '#B45309'],
     overlay: 'rgba(0,0,0,0.4)',
   },
   {
     name: 'Electric Storm',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1605727216801-e27ce1d0cc28?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(99,102,241,0.2)', '#FFFFFF', '#6366F1'],
     overlay: 'rgba(0,0,0,0.5)',
   },
   {
     name: 'Minimalist Waves',
     type: 'image',
-    backgroundImage: 'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1920&h=1080&fit=crop',
+    backgroundImage:
+      'https://images.unsplash.com/photo-1439066615861-d1af74d74000?w=1920&h=1080&fit=crop',
     palette: ['transparent', 'rgba(14,165,233,0.2)', '#FFFFFF', '#0EA5E9'],
     overlay: 'rgba(2,132,199,0.2)',
   },
@@ -238,31 +267,36 @@ export const gradientThemes = [
   {
     name: 'Aurora Borealis',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #00c6ff 0%, #0072ff 50%, #7b68ee 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #00c6ff 0%, #0072ff 50%, #7b68ee 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#0072FF'],
   },
   {
     name: 'Cotton Candy',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #ffeaff 0%, #ff9a9e 50%, #fecfef 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #ffeaff 0%, #ff9a9e 50%, #fecfef 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#1F2937', '#FF6B9D'],
   },
   {
     name: 'Neon Dreams',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #12c2e9 0%, #c471ed 50%, #f64f59 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #12c2e9 0%, #c471ed 50%, #f64f59 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#C471ED'],
   },
   {
     name: 'Cosmic',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #2c1810 0%, #8b008b 50%, #4b0082 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #2c1810 0%, #8b008b 50%, #4b0082 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#8B008B'],
   },
   {
     name: 'Golden Hour',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff8a80 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ff8a80 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#1F2937', '#FF8A80'],
   },
   {
@@ -274,7 +308,8 @@ export const gradientThemes = [
   {
     name: 'Electric Blue',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #0052d4 0%, #4364f7 50%, #6fb1fc 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #0052d4 0%, #4364f7 50%, #6fb1fc 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#4364F7'],
   },
   {
@@ -286,13 +321,15 @@ export const gradientThemes = [
   {
     name: 'Dark Steel',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#34495E'],
   },
   {
     name: 'Rainbow',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #ff0844 0%, #ffb199 25%, #68e0cf 50%, #b388ff 75%, #ff0844 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #ff0844 0%, #ffb199 25%, #68e0cf 50%, #b388ff 75%, #ff0844 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#FF0844'],
   },
   {
@@ -304,13 +341,15 @@ export const gradientThemes = [
   {
     name: 'Deep Ocean',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 50%, #1e88e5 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #2196f3 0%, #21cbf3 50%, #1e88e5 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#21CBF3'],
   },
   {
     name: 'Lavender Dream',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #e1bee7 0%, #f3e5f5 50%, #ce93d8 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #e1bee7 0%, #f3e5f5 50%, #ce93d8 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#1F2937', '#CE93D8'],
   },
   {
@@ -328,31 +367,36 @@ export const gradientThemes = [
   {
     name: 'Midnight Blue',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #2980b9 0%, #6bb6ff 50%, #3742fa 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #2980b9 0%, #6bb6ff 50%, #3742fa 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#6BB6FF'],
   },
   {
     name: 'Rose Gold',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #4facfe 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#F5576C'],
   },
   {
     name: 'Northern Lights',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #00f260 0%, #0575e6 50%, #021b79 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #00f260 0%, #0575e6 50%, #021b79 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#0575E6'],
   },
   {
     name: 'Warm Flame',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#1F2937', '#FF9A9E'],
   },
   {
     name: 'Cool Blues',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #2196f3 0%, #3f51b5 50%, #673ab7 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #2196f3 0%, #3f51b5 50%, #673ab7 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#3F51B5'],
   },
   {
@@ -364,19 +408,22 @@ export const gradientThemes = [
   {
     name: 'Cyberpunk',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #FF006E 0%, #8338EC 50%, #3A86FF 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #FF006E 0%, #8338EC 50%, #3A86FF 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#FF006E'],
   },
   {
     name: 'Solar Flare',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #FFA500 0%, #FF4500 50%, #DC143C 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #FFA500 0%, #FF4500 50%, #DC143C 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#FFA500'],
   },
   {
     name: 'Deep Space',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #0F0F23 0%, #2E1065 50%, #9333EA 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #0F0F23 0%, #2E1065 50%, #9333EA 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#9333EA'],
   },
   {
@@ -388,31 +435,36 @@ export const gradientThemes = [
   {
     name: 'Magic Hour',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #FF8A80 0%, #FFD54F 50%, #81C784 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #FF8A80 0%, #FFD54F 50%, #81C784 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#1F2937', '#FFD54F'],
   },
   {
     name: 'Arctic Aurora',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #00E5FF 0%, #3F51B5 50%, #9C27B0 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #00E5FF 0%, #3F51B5 50%, #9C27B0 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#00E5FF'],
   },
   {
     name: 'Molten Lava',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #8B0000 0%, #FF4500 50%, #FFD700 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #8B0000 0%, #FF4500 50%, #FFD700 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#FF4500'],
   },
   {
     name: 'Vintage Film',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#D2691E'],
   },
   {
     name: 'Electric Storm',
     type: 'gradient',
-    backgroundImage: 'linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%)',
+    backgroundImage:
+      'linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%)',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#16213E'],
   },
 ];
@@ -422,7 +474,8 @@ export const patternThemes = [
   {
     name: 'Geometric Dots',
     type: 'pattern',
-    backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)',
+    backgroundImage:
+      'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)',
     backgroundSize: '20px 20px',
     backgroundColor: '#1F2937',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#3B82F6'],
@@ -430,7 +483,8 @@ export const patternThemes = [
   {
     name: 'Diagonal Stripes',
     type: 'pattern',
-    backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)',
+    backgroundImage:
+      'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px)',
     backgroundColor: '#374151',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#10B981'],
   },
@@ -465,14 +519,16 @@ export const patternThemes = [
   {
     name: 'Crosshatch',
     type: 'pattern',
-    backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
+    backgroundImage:
+      'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 4px)',
     backgroundColor: '#2D3748',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#4299E1'],
   },
   {
     name: 'Polka Dots',
     type: 'pattern',
-    backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 2px, transparent 0)',
+    backgroundImage:
+      'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.2) 2px, transparent 0)',
     backgroundSize: '24px 24px',
     backgroundColor: '#553C9A',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#9F7AEA'],
@@ -480,7 +536,8 @@ export const patternThemes = [
   {
     name: 'Zigzag',
     type: 'pattern',
-    backgroundImage: 'linear-gradient(135deg, #667eea 25%, transparent 25%), linear-gradient(225deg, #667eea 25%, transparent 25%), linear-gradient(45deg, #667eea 25%, transparent 25%), linear-gradient(315deg, #667eea 25%, #764ba2 25%)',
+    backgroundImage:
+      'linear-gradient(135deg, #667eea 25%, transparent 25%), linear-gradient(225deg, #667eea 25%, transparent 25%), linear-gradient(45deg, #667eea 25%, transparent 25%), linear-gradient(315deg, #667eea 25%, #764ba2 25%)',
     backgroundSize: '16px 16px',
     backgroundColor: '#764ba2',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#667EEA'],
@@ -502,7 +559,8 @@ export const patternThemes = [
   {
     name: 'Carbon Fiber',
     type: 'pattern',
-    backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0), radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 1px, transparent 0)',
+    backgroundImage:
+      'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.1) 1px, transparent 0), radial-gradient(circle at 10px 10px, rgba(255,255,255,0.05) 1px, transparent 0)',
     backgroundSize: '20px 20px, 40px 40px',
     backgroundColor: '#1A1A1A',
     palette: ['transparent', 'rgba(255,255,255,0.05)', '#FFFFFF', '#4A5568'],
@@ -517,7 +575,8 @@ export const patternThemes = [
   {
     name: 'Tech Grid',
     type: 'pattern',
-    backgroundImage: 'linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)',
+    backgroundImage:
+      'linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)',
     backgroundSize: '25px 25px',
     backgroundColor: '#0A0E27',
     palette: ['transparent', 'rgba(0,255,255,0.1)', '#00FFFF', '#00BCD4'],
@@ -525,7 +584,8 @@ export const patternThemes = [
   {
     name: 'Neon Maze',
     type: 'pattern',
-    backgroundImage: 'linear-gradient(90deg, rgba(0,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,0,255,0.2) 1px, transparent 1px)',
+    backgroundImage:
+      'linear-gradient(90deg, rgba(0,255,255,0.2) 1px, transparent 1px), linear-gradient(rgba(255,0,255,0.2) 1px, transparent 1px)',
     backgroundSize: '15px 15px',
     backgroundColor: '#0D0D0D',
     palette: ['transparent', 'rgba(0,255,255,0.1)', '#00FFFF', '#FF00FF'],
@@ -568,7 +628,8 @@ export const patternThemes = [
   {
     name: 'Digital Glitch',
     type: 'pattern',
-    backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,0,100,0.1) 0px, transparent 2px, rgba(0,255,255,0.1) 4px, transparent 6px)',
+    backgroundImage:
+      'repeating-linear-gradient(0deg, rgba(255,0,100,0.1) 0px, transparent 2px, rgba(0,255,255,0.1) 4px, transparent 6px)',
     backgroundSize: '100% 8px',
     backgroundColor: '#0A0A0A',
     palette: ['transparent', 'rgba(255,0,100,0.1)', '#00FFFF', '#FF0064'],
@@ -576,7 +637,8 @@ export const patternThemes = [
   {
     name: 'Starfield',
     type: 'pattern',
-    backgroundImage: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 1px, transparent 1px), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.6) 1px, transparent 1px), radial-gradient(circle at 40% 40%, rgba(255,255,255,0.4) 1px, transparent 1px)',
+    backgroundImage:
+      'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.8) 1px, transparent 1px), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.6) 1px, transparent 1px), radial-gradient(circle at 40% 40%, rgba(255,255,255,0.4) 1px, transparent 1px)',
     backgroundSize: '40px 40px, 60px 60px, 80px 80px',
     backgroundColor: '#0B1426',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#3B82F6'],
@@ -591,7 +653,8 @@ export const patternThemes = [
   {
     name: 'Circuit Board',
     type: 'pattern',
-    backgroundImage: 'linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px), linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px), radial-gradient(circle at 10px 10px, rgba(0,255,0,0.3) 2px, transparent 2px)',
+    backgroundImage:
+      'linear-gradient(90deg, rgba(0,255,0,0.1) 1px, transparent 1px), linear-gradient(rgba(0,255,0,0.1) 1px, transparent 1px), radial-gradient(circle at 10px 10px, rgba(0,255,0,0.3) 2px, transparent 2px)',
     backgroundSize: '20px 20px, 20px 20px, 40px 40px',
     backgroundColor: '#0F172A',
     palette: ['transparent', 'rgba(0,255,0,0.1)', '#00FF00', '#22C55E'],
@@ -599,7 +662,8 @@ export const patternThemes = [
   {
     name: 'Retro Waves',
     type: 'pattern',
-    backgroundImage: 'repeating-linear-gradient(45deg, rgba(255,105,180,0.3) 0px, transparent 10px, rgba(0,191,255,0.3) 20px, transparent 30px)',
+    backgroundImage:
+      'repeating-linear-gradient(45deg, rgba(255,105,180,0.3) 0px, transparent 10px, rgba(0,191,255,0.3) 20px, transparent 30px)',
     backgroundSize: '40px 40px',
     backgroundColor: '#1A0B3D',
     palette: ['transparent', 'rgba(255,105,180,0.2)', '#FFFFFF', '#FF69B4'],
@@ -621,7 +685,8 @@ export const patternThemes = [
   {
     name: 'Nordic Minimalist',
     type: 'pattern',
-    backgroundImage: 'linear-gradient(45deg, rgba(156,163,175,0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(156,163,175,0.1) 25%, transparent 25%)',
+    backgroundImage:
+      'linear-gradient(45deg, rgba(156,163,175,0.1) 25%, transparent 25%), linear-gradient(-45deg, rgba(156,163,175,0.1) 25%, transparent 25%)',
     backgroundSize: '30px 30px',
     backgroundColor: '#F9FAFB',
     palette: ['transparent', 'rgba(156,163,175,0.1)', '#1F2937', '#6B7280'],
@@ -759,7 +824,8 @@ export const typographyThemes = [
   {
     name: 'Professional Source Sans',
     type: 'typography',
-    fontFamily: 'Source Sans Pro, -apple-system, BlinkMacSystemFont, sans-serif',
+    fontFamily:
+      'Source Sans Pro, -apple-system, BlinkMacSystemFont, sans-serif',
     headingWeight: '600',
     bodyWeight: '400',
     letterSpacing: '-0.01em',
@@ -867,15 +933,17 @@ export const layoutThemes = [
     cardStyle: 'rounded',
     linkSpacing: '1rem',
     containerWidth: 'max-w-md',
+    displayMode: 'stacked',
   },
   {
     name: 'Left Aligned Modern',
-    type: 'layout', 
+    type: 'layout',
     alignment: 'left',
     spacing: 'tight',
     cardStyle: 'minimal',
     linkSpacing: '0.75rem',
     containerWidth: 'max-w-lg',
+    displayMode: 'stacked',
   },
   {
     name: 'Wide Spread',
@@ -885,6 +953,7 @@ export const layoutThemes = [
     cardStyle: 'card',
     linkSpacing: '1.5rem',
     containerWidth: 'max-w-2xl',
+    displayMode: 'stacked',
   },
   {
     name: 'Compact Grid',
@@ -894,6 +963,47 @@ export const layoutThemes = [
     cardStyle: 'pill',
     linkSpacing: '0.5rem',
     containerWidth: 'max-w-sm',
+    displayMode: 'stacked',
+  },
+  {
+    name: 'Tabbed Sections',
+    type: 'layout',
+    alignment: 'center',
+    spacing: 'normal',
+    cardStyle: 'rounded',
+    linkSpacing: '0.75rem',
+    containerWidth: 'max-w-md',
+    displayMode: 'tabbed',
+  },
+  {
+    name: 'Grid Layout',
+    type: 'layout',
+    alignment: 'center',
+    spacing: 'normal',
+    cardStyle: 'rounded',
+    linkSpacing: '0.75rem',
+    containerWidth: 'max-w-xl',
+    displayMode: 'grid',
+  },
+  {
+    name: 'Minimalist',
+    type: 'layout',
+    alignment: 'center',
+    spacing: 'tight',
+    cardStyle: 'minimal',
+    linkSpacing: '0.5rem',
+    containerWidth: 'max-w-xs',
+    displayMode: 'stacked',
+  },
+  {
+    name: 'Sidebar Layout',
+    type: 'layout',
+    alignment: 'left',
+    spacing: 'normal',
+    cardStyle: 'rounded',
+    linkSpacing: '0.75rem',
+    containerWidth: 'max-w-2xl',
+    displayMode: 'sidebar',
   },
 ];
 
@@ -912,7 +1022,8 @@ export const animatedThemes = [
     name: 'Moving Gradient',
     type: 'animated',
     animation: 'gradient',
-    backgroundImage: 'linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)',
+    backgroundImage:
+      'linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)',
     backgroundSize: '400% 400%',
     animationDuration: '15s',
     palette: ['transparent', 'rgba(255,255,255,0.1)', '#FFFFFF', '#E73C7E'],
@@ -1076,7 +1187,12 @@ export const animatedThemes = [
     animation: 'typing',
     backgroundColor: '#000000',
     textColor: '#00FF00',
-    phrases: ['SYSTEM INITIALIZING...', 'LOADING MODULES...', 'BOOT COMPLETE', 'WELCOME USER'],
+    phrases: [
+      'SYSTEM INITIALIZING...',
+      'LOADING MODULES...',
+      'BOOT COMPLETE',
+      'WELCOME USER',
+    ],
     palette: ['#000000', 'rgba(0,255,0,0.1)', '#00FF00', '#00AA00'],
   },
   {
@@ -1094,7 +1210,12 @@ export const animatedThemes = [
     animation: 'typing',
     backgroundColor: '#0D1117',
     textColor: '#FFD700',
-    phrases: ['ACCESSING DATABASE...', 'DECRYPTING...', 'ACCESS GRANTED', 'WELCOME BACK'],
+    phrases: [
+      'ACCESSING DATABASE...',
+      'DECRYPTING...',
+      'ACCESS GRANTED',
+      'WELCOME BACK',
+    ],
     palette: ['#0D1117', 'rgba(255,215,0,0.1)', '#FFD700', '#FFA500'],
   },
   {
@@ -1157,7 +1278,12 @@ export const animatedThemes = [
     animation: 'typing',
     backgroundColor: '#1A1A1A',
     textColor: '#00FF41',
-    phrases: ['npm install...', 'Building project...', 'Server running...', 'Ready! 🚀'],
+    phrases: [
+      'npm install...',
+      'Building project...',
+      'Server running...',
+      'Ready! 🚀',
+    ],
     palette: ['#1A1A1A', 'rgba(0,255,65,0.1)', '#00FF41', '#00AA22'],
   },
   {
@@ -1185,7 +1311,7 @@ export const buttonStyles = [
   },
   {
     name: 'Fill Rounded',
-    type: 'button', 
+    type: 'button',
     css: ' rounded-md',
     borderRadius: '0.375rem',
     shadow: '',

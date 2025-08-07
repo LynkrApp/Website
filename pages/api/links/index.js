@@ -9,7 +9,17 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'POST') {
       const { currentUser } = await serverAuth(req, res);
-      const { title, url, order, isSocial, sectionId } = req.body;
+      const { title, url, order, isSocial, sectionId, showFavicon } = req.body;
+
+      // Log the received data for debugging
+      console.log('Creating link with data:', {
+        title,
+        url,
+        order,
+        isSocial,
+        sectionId,
+        showFavicon,
+      });
 
       const link = await db.link.create({
         data: {
@@ -17,7 +27,8 @@ export default async function handler(req, res) {
           url,
           order,
           userId: currentUser.id,
-          isSocial,
+          isSocial: isSocial === true, // Ensure boolean conversion
+          showFavicon: showFavicon !== undefined ? Boolean(showFavicon) : true, // Ensure proper boolean conversion with default
           ...(sectionId && { sectionId }),
         },
       });

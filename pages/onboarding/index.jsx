@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { TinyLoader } from '@/components/utils/tiny-loader';
@@ -6,14 +6,31 @@ import { useRouter } from 'next/router';
 import Confetti from 'react-dom-confetti';
 import Balancer from 'react-wrap-balancer';
 import { AuthLayout } from '@/components/layout/BaseLayout';
+import { useSession } from 'next-auth/react';
 
 const Onboarding = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [handle, setHandle] = useState('');
   const [handleTaken, setHandleTaken] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
+  const { data: session, status } = useSession();
 
   const router = useRouter();
+
+  // Redirect users who already have handles
+  useEffect(() => {
+    if (status === 'loading') return;
+
+    if (!session) {
+      router.replace('/login');
+      return;
+    }
+
+    if (session?.user?.handle) {
+      // User already has a handle, redirect to admin
+      router.replace('/admin');
+    }
+  }, [session, status, router]);
 
   const handleAddHandle = useCallback(
     async (e) => {
@@ -30,9 +47,11 @@ const Onboarding = () => {
         if (response.status === 200) {
           setIsExploding(true);
           toast.success(`${handle} is yours 🎉`);
+          // Update the timeout to give enough time for the confetti animation
+          // but still redirect to the dashboard (/admin)
           setTimeout(() => {
             router.push('/admin');
-          }, 1500);
+          }, 2000);
         }
       } catch (error) {
         setHandleTaken(true);
