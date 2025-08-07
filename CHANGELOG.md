@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ Updated navigation bar to match the slate theme of the footer
 - ✨ Added version display with git hash in the footer
 - ✨ Implemented changelog API for dynamic version history
+- ✨ Implemented a new "Tabbed Sections" layouts that breaks link sections into tabs
 - ✨ Improved footer layout with better grid structure and mobile responsiveness
 - ✨ Created glassmorphic tabbed sections component for better content organization
 - ✨ Enhanced social cards component with improved sizing and responsiveness

@@ -14,7 +14,7 @@ const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close
   const [newTitle, setNewTitle] = useState(title || '');
   const [newUrl, setNewUrl] = useState(url || '');
   const [newSectionId, setNewSectionId] = useState(sectionId);
-  const [newShowFavicon, setNewShowFavicon] = useState(showFavicon);
+  const [newShowFavicon, setNewShowFavicon] = useState(showFavicon === true ? 'true' : 'false');
   const [newIsSocial, setNewIsSocial] = useState(isSocial);
 
   const [urlError, setUrlError] = useState(false);
@@ -26,15 +26,6 @@ const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close
 
   const editMutation = useMutation(
     async ({ newTitle, newUrl, newSectionId, newIsSocial, newShowFavicon }) => {
-      // Log what we're sending for debugging
-      console.log('Sending to API:', {
-        newTitle,
-        newUrl,
-        sectionId: newSectionId,
-        isSocial: newIsSocial,
-        showFavicon: newShowFavicon
-      });
-
       await axios.patch(`/api/links/${id}`, {
         newTitle,
         newUrl,
@@ -58,7 +49,7 @@ const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close
     setNewUrl(url || '');
     setNewSectionId(sectionId);
     setNewIsSocial(isSocial);
-    setNewShowFavicon(showFavicon);
+    setNewShowFavicon(showFavicon === 'true' ? 'true' : 'false');
 
     // Log received props for debugging
     console.log('EditLinkModal received props:', {
@@ -66,8 +57,8 @@ const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close
       title,
       url,
       sectionId,
-      isSocial: isSocial === true ? 'true' : 'false',
-      showFavicon: showFavicon === true ? 'true' : 'false'
+      isSocial: isSocial === 'true' ? 'true' : 'false',
+      showFavicon: showFavicon === 'true' ? 'true' : 'false'
     });
   }, [id, title, url, sectionId, isSocial, showFavicon]);
 
@@ -174,37 +165,22 @@ const EditLinkModal = ({ id, title, url, sectionId, isSocial, showFavicon, close
                 </div>
               )}
 
-              {/* Toggle for is social media link */}
-              <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
-                <div>
-                  <h3 className="text-md lg:text-lg">Social media link</h3>
-                  <p className="text-xs text-gray-500">
-                    Is this a social media platform link?
-                  </p>
-                </div>
-                <Switch.Root
-                  checked={newIsSocial}
-                  onCheckedChange={setNewIsSocial}
-                  className={switchRootClass}
-                >
-                  <Switch.Thumb className={switchThumbClass} />
-                </Switch.Root>
-              </div>
-
               {/* Toggle for showing favicon */}
               <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
                 <div>
-                  <h3 className="text-md lg:text-lg">Show website icon</h3>
+                  <h3 className="text-md lg:text-lg">Show website icon (Coming Soon)</h3>
                   <p className="text-xs text-gray-500">
-                    Display the website's favicon next to the link title
+                    Display the website's favicon next to the link title.
+                    <br />NOTE: this option is currently true by default.
                   </p>
                 </div>
                 <Switch.Root
                   checked={newShowFavicon}
                   onCheckedChange={setNewShowFavicon}
                   className={switchRootClass}
+                  disabled
                 >
-                  <Switch.Thumb className={switchThumbClass} />
+                  <Switch.Thumb className={switchThumbClass} disabled />
                 </Switch.Root>
               </div>
 

@@ -34,8 +34,8 @@ const LinkCard = (props) => {
         ref={setNodeRef}
         style={style}
         className={`flex bg-white items-center p-2 rounded-lg drop-shadow-md my-5 transition-all duration-200 ${isDragging || props.isDragging
-            ? 'shadow-2xl scale-105 rotate-2 z-50'
-            : 'hover:shadow-lg'
+          ? 'shadow-2xl scale-105 rotate-2 z-50'
+          : 'hover:shadow-lg'
           }`}
       >
         <div
