@@ -16,6 +16,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk link import/export
 - Link scheduling
 
+## [0.2.4] - 2025-08-08
+
+### 🚀 New Features
+
+- ✨ Update the codebase to use TypeScript
+- ✨ Formating changes
+- ✨ Added New CLI to convert Mongodb data to MySQL
+
+### 🔧 Bug Fixes
+
+- 🐛 Fixed the og
+
 ## [0.2.0] - 2025-08-07
 
 ### 🚀 New Features

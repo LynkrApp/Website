@@ -3,13 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider     = "mongodb"
-  url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  id               String     @id @default(cuid())
   name             String?
   handle           String?    @unique
   bio              String?
@@ -35,13 +34,13 @@ model User {
 }
 
 model Section {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(cuid())
   name      String
   order     Int      @default(0)
   visible   Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userId    String   @db.ObjectId
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   links     Link[]
 
@@ -49,8 +48,8 @@ model Section {
 }
 
 model Account {
-  id                 String  @id @default(cuid()) @map("_id")
-  userId             String  @db.ObjectId
+  id                 String  @id @default(cuid())
+  userId             String
   type               String
   provider           String
   providerAccountId  String
@@ -70,7 +69,7 @@ model Account {
 }
 
 model Link {
-  id          String      @id @default(auto()) @map("_id") @db.ObjectId
+  id          String      @id @default(cuid())
   title       String
   url         String
   archived    Boolean     @default(false)
@@ -81,8 +80,8 @@ model Link {
   clicks      Int         @default(0) // number of clicks
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  userId      String      @db.ObjectId
-  sectionId   String?     @db.ObjectId
+  userId      String
+  sectionId   String?
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   section     Section?    @relation(fields: [sectionId], references: [id], onDelete: SetNull)
   linkClicks  LinkClick[] // Relation to LinkClick model
@@ -92,9 +91,9 @@ model Link {
 }
 
 model LinkingToken {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @id @default(cuid())
   token     String   @unique
-  userId    String   @db.ObjectId
+  userId    String
   provider  String
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -104,8 +103,8 @@ model LinkingToken {
 
 // Analytics Models
 model PageView {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  userId    String
   timestamp DateTime @default(now())
   referer   String?
   userAgent String?
@@ -116,8 +115,8 @@ model PageView {
 }
 
 model LinkClick {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  linkId    String   @db.ObjectId
+  id        String   @id @default(cuid())
+  linkId    String
   timestamp DateTime @default(now())
   referer   String?
   userAgent String?
