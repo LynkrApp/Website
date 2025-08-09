@@ -10,6 +10,21 @@ import { spawnSync } from 'node:child_process';
 
 type AnyDoc = Record<string, any>;
 
+function extractDbNameFromUri(uri: string | undefined): string | undefined {
+  if (!uri) return undefined;
+  try {
+    // Matches mongodb://host/dbname or mongodb+srv://host/dbname
+    const match = uri.match(/^mongodb(?:\+srv)?:\/\/[^/]+\/(.+?)(?:\?|$)/i);
+    if (match && match[1]) {
+      const dbFromPath = decodeURIComponent(match[1]);
+      return dbFromPath;
+    }
+  } catch {
+    // ignore parse errors
+  }
+  return undefined;
+}
+
 function toStringId(value: any): string | null {
   if (!value) return null;
   if (typeof value === 'string') return value;
@@ -56,6 +71,49 @@ function toBool(value: any): boolean | undefined {
   return Boolean(value);
 }
 
+async function makeUniqueHandle(
+  prisma: PrismaClient,
+  desiredHandle: string | null | undefined,
+  legacyId: string,
+  selfId?: string
+): Promise<string | null> {
+  if (!desiredHandle) return null;
+  let base = String(desiredHandle);
+  // Avoid whitespace-only
+  base = base.trim();
+  if (!base) return null;
+
+  // First try exact handle
+  const found = await prisma.user.findUnique({ where: { handle: base } });
+  if (!found || (selfId && found.id === selfId)) return base;
+
+  const suffix = legacyId.slice(-6);
+  let candidate = `${base}-${suffix}`;
+  let attempt = 1;
+  // Loop until unique or matches self
+  // In practice this should converge quickly
+  while (true) {
+    const f = await prisma.user.findUnique({ where: { handle: candidate } });
+    if (!f || (selfId && f.id === selfId)) return candidate;
+    attempt += 1;
+    candidate = `${base}-${suffix}-${attempt}`;
+  }
+}
+
+async function makeUniqueEmail(
+  prisma: PrismaClient,
+  desiredEmail: string | null | undefined,
+  selfId?: string
+): Promise<string | null> {
+  if (!desiredEmail) return null;
+  const email = String(desiredEmail).trim();
+  if (!email) return null;
+  const found = await prisma.user.findUnique({ where: { email } });
+  if (!found || (selfId && found.id === selfId)) return email;
+  // Conflict: return null to satisfy unique constraint without fabricating emails
+  return null;
+}
+
 async function pushPrismaSchema(): Promise<void> {
   const commands = [
     ['bunx', ['prisma', 'db', 'push', '--skip-generate']],
@@ -93,7 +151,61 @@ async function main() {
   try {
     console.log('Connecting to MongoDB...');
     await mongo.connect();
-    const db = mongo.db();
+    // Resolve correct database (the screenshot shows a DB named "linkcord")
+    const candidateDbNames: string[] = Array.from(
+      new Set(
+        [
+          process.env.MONGODB_DB,
+          process.env.MONGODB_DATABASE,
+          process.env.MONGO_DB,
+          process.env.DB_NAME,
+          extractDbNameFromUri(mongoUrl),
+          'linkcord', // common legacy name used by this project
+        ].filter(Boolean) as string[]
+      )
+    );
+
+    let db = mongo.db();
+    // Try to pick an existing DB by name if visible
+    try {
+      const admin = mongo.db().admin();
+      const dbList = (await admin.listDatabases()) as any;
+      const existing = new Set<string>(
+        (dbList?.databases || []).map((d: any) => String(d.name))
+      );
+      for (const name of candidateDbNames) {
+        if (existing.has(name)) {
+          db = mongo.db(name);
+          break;
+        }
+      }
+    } catch {
+      // If we cannot list databases (limited permissions), probe candidates by listing collections
+      for (const name of candidateDbNames) {
+        try {
+          const probe = mongo.db(name);
+          const cols = await probe.listCollections().toArray();
+          if (cols.length > 0) {
+            db = probe;
+            break;
+          }
+        } catch {
+          // ignore and continue probing
+        }
+      }
+    }
+
+    console.log(`Using MongoDB database: ${db.databaseName}`);
+    try {
+      const existingCollections = await db.listCollections().toArray();
+      console.log(
+        `Found collections: ${
+          existingCollections.map((c) => c.name).join(', ') || '(none)'
+        }`
+      );
+    } catch {
+      // ignore listing errors
+    }
 
     // Helper to get a collection by common variants of model names
     const getCollection = async (candidates: string[]) => {
@@ -106,74 +218,138 @@ async function main() {
       return db.collection(candidates[0]);
     };
 
-    // 1) Users
+    // Build ID maps (legacy Mongo ObjectId hex -> new cuid)
+    const userIdMap = new Map<string, string>();
+    const sectionIdMap = new Map<string, string>();
+    const linkIdMap = new Map<string, string>();
+
+    // 1) Users (assign new cuid, store legacyObjectId)
     const usersCol = await getCollection(['User', 'users', 'user']);
     const users = await usersCol.find({}).toArray();
     console.log(`Migrating Users: ${users.length}`);
     for (const raw of users) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, []);
-      const create: Prisma.UserUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
-        name: d.name ?? null,
-        handle: d.handle ?? null,
-        bio: d.bio ?? null,
-        image: d.image ?? null,
-        email: d.email ?? null,
-        emailVerified: toDate(d.emailVerified),
-        totalViews: toInt(d.totalViews) ?? 0,
-        createdAt: toDate(d.createdAt) ?? new Date(),
-        updatedAt: toDate(d.updatedAt) ?? new Date(),
-        linksLocation: d.linksLocation ?? 'top',
-        themePalette: d.themePalette ?? undefined,
-        buttonStyle: d.buttonStyle ?? 'rounded-md',
-        typographyTheme: d.typographyTheme ?? undefined,
-        layoutTheme: d.layoutTheme ?? undefined,
-        buttonStyleTheme: d.buttonStyleTheme ?? undefined,
-        ogStyles: d.ogStyles ?? undefined,
-      } as any;
-      const update: Prisma.UserUncheckedUpdateInput = {
-        name: create.name,
-        handle: create.handle,
-        bio: create.bio,
-        image: create.image,
-        email: create.email,
-        emailVerified: create.emailVerified ?? null,
-        totalViews: create.totalViews,
-        updatedAt: new Date(),
-        linksLocation: create.linksLocation,
-        themePalette: create.themePalette as any,
-        buttonStyle: create.buttonStyle,
-        typographyTheme: create.typographyTheme as any,
-        layoutTheme: create.layoutTheme as any,
-        buttonStyleTheme: create.buttonStyleTheme as any,
-        ogStyles: create.ogStyles as any,
-      };
-      await prisma.user.upsert({ where: { id: create.id }, create, update });
+      const existing = await (prisma.user as any).findUnique({
+        where: { legacyObjectId: legacyId },
+      });
+
+      if (existing) {
+        const handle = await makeUniqueHandle(
+          prisma,
+          d.handle ?? null,
+          legacyId,
+          existing.id
+        );
+        const email = await makeUniqueEmail(
+          prisma,
+          d.email ?? null,
+          existing.id
+        );
+        const updated = await (prisma.user as any).update({
+          where: { id: existing.id },
+          data: {
+            name: d.name ?? null,
+            handle,
+            bio: d.bio ?? null,
+            image: d.image ?? null,
+            email,
+            emailVerified: toDate(d.emailVerified) ?? null,
+            totalViews: toInt(d.totalViews) ?? existing.totalViews ?? 0,
+            updatedAt: new Date(),
+            linksLocation: d.linksLocation ?? existing.linksLocation ?? 'top',
+            themePalette: d.themePalette ?? undefined,
+            buttonStyle: d.buttonStyle ?? existing.buttonStyle ?? 'rounded-md',
+            typographyTheme: d.typographyTheme ?? undefined,
+            layoutTheme: d.layoutTheme ?? undefined,
+            buttonStyleTheme: d.buttonStyleTheme ?? undefined,
+            ogStyles: d.ogStyles ?? undefined,
+          },
+        });
+        userIdMap.set(legacyId, updated.id);
+      } else {
+        const handle = await makeUniqueHandle(
+          prisma,
+          d.handle ?? null,
+          legacyId
+        );
+        const email = await makeUniqueEmail(prisma, d.email ?? null);
+        const created = await (prisma.user as any).create({
+          data: {
+            legacyObjectId: legacyId,
+            name: d.name ?? null,
+            handle,
+            bio: d.bio ?? null,
+            image: d.image ?? null,
+            email,
+            emailVerified: toDate(d.emailVerified),
+            totalViews: toInt(d.totalViews) ?? 0,
+            createdAt: toDate(d.createdAt) ?? new Date(),
+            updatedAt: toDate(d.updatedAt) ?? new Date(),
+            linksLocation: d.linksLocation ?? 'top',
+            themePalette: d.themePalette ?? undefined,
+            buttonStyle: d.buttonStyle ?? 'rounded-md',
+            typographyTheme: d.typographyTheme ?? undefined,
+            layoutTheme: d.layoutTheme ?? undefined,
+            buttonStyleTheme: d.buttonStyleTheme ?? undefined,
+            ogStyles: d.ogStyles ?? undefined,
+          },
+        });
+        userIdMap.set(legacyId, created.id);
+      }
     }
 
     // 2) Sections
+    // Build helper maps to later infer ownership for Links
+    const sectionLegacyToUserNewId = new Map<string, string>();
+    const firstSectionByUserId = new Map<string, string>();
+    const minOrderByUserId = new Map<string, number>();
     const sectionsCol = await getCollection(['Section', 'sections', 'section']);
     const sections = await sectionsCol.find({}).toArray();
     console.log(`Migrating Sections: ${sections.length}`);
     for (const raw of sections) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['userId']);
-      const create: Prisma.SectionUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
+      const legacyUserId = d.userId ? String(d.userId) : undefined;
+      const mappedUserId = legacyUserId
+        ? userIdMap.get(legacyUserId)
+        : undefined;
+      if (!mappedUserId) {
+        console.warn(
+          `Skipping Section without resolvable userId (legacy _id: ${legacyId}, legacy userId: ${legacyUserId})`
+        );
+        continue;
+      }
+      const create: any = {
+        legacyObjectId: legacyId,
         name: d.name ?? 'Untitled',
         order: toInt(d.order) ?? 0,
         visible: d.visible !== undefined ? !!d.visible : true,
         createdAt: toDate(d.createdAt) ?? new Date(),
         updatedAt: toDate(d.updatedAt) ?? new Date(),
-        userId: String(d.userId),
+        userId: mappedUserId,
       };
-      const update: Prisma.SectionUncheckedUpdateInput = {
+      const update: any = {
         name: create.name,
         order: create.order,
         visible: create.visible,
         updatedAt: new Date(),
         userId: create.userId,
       };
-      await prisma.section.upsert({ where: { id: create.id }, create, update });
+      const saved = await (prisma.section as any).upsert({
+        where: { legacyObjectId: legacyId },
+        create,
+        update,
+      });
+
+      // Populate helper maps
+      sectionIdMap.set(legacyId, saved.id);
+      sectionLegacyToUserNewId.set(legacyId, saved.userId);
+      const currentMin = minOrderByUserId.get(saved.userId);
+      if (currentMin === undefined || (create.order ?? 0) < currentMin) {
+        minOrderByUserId.set(saved.userId, create.order ?? 0);
+        firstSectionByUserId.set(saved.userId, saved.id);
+      }
     }
 
     // 3) Accounts
@@ -181,10 +357,21 @@ async function main() {
     const accounts = await accountsCol.find({}).toArray();
     console.log(`Migrating Accounts: ${accounts.length}`);
     for (const raw of accounts) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['userId']);
-      const create: Prisma.AccountUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
-        userId: String(d.userId),
+      const legacyUserId = d.userId ? String(d.userId) : undefined;
+      const mappedUserId = legacyUserId
+        ? userIdMap.get(legacyUserId)
+        : undefined;
+      if (!mappedUserId) {
+        console.warn(
+          `Skipping Account without resolvable userId (legacy _id: ${legacyId}, legacy userId: ${legacyUserId})`
+        );
+        continue;
+      }
+      const data: any = {
+        legacyObjectId: legacyId,
+        userId: mappedUserId,
         type: d.type ?? '',
         provider: d.provider ?? '',
         providerAccountId: d.providerAccountId ?? '',
@@ -198,9 +385,38 @@ async function main() {
         oauth_token_secret: d.oauth_token_secret ?? null,
         oauth_token: d.oauth_token ?? null,
       };
-      const update: Prisma.AccountUncheckedUpdateInput = { ...create } as any;
-      delete (update as any).id;
-      await prisma.account.upsert({ where: { id: create.id }, create, update });
+
+      const existingByCompound = await (prisma.account as any).findUnique({
+        where: {
+          provider_providerAccountId: {
+            provider: data.provider,
+            providerAccountId: data.providerAccountId,
+          },
+        } as any,
+      });
+      if (existingByCompound) {
+        await (prisma.account as any).update({
+          where: { id: existingByCompound.id },
+          data: {
+            ...data,
+            legacyObjectId: existingByCompound.legacyObjectId ?? legacyId,
+          },
+        });
+        continue;
+      }
+
+      const existingByLegacy = await (prisma.account as any).findUnique({
+        where: { legacyObjectId: legacyId },
+      });
+      if (existingByLegacy) {
+        await (prisma.account as any).update({
+          where: { id: existingByLegacy.id },
+          data,
+        });
+      } else {
+        await (prisma.account as any).create({ data });
+      }
+      // no map needed for relations
     }
 
     // 4) Links
@@ -208,9 +424,62 @@ async function main() {
     const links = await linksCol.find({}).toArray();
     console.log(`Migrating Links: ${links.length}`);
     for (const raw of links) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['userId', 'sectionId']);
-      const create: Prisma.LinkUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
+      // Infer legacy userId if missing, using common alternative fields or via section ownership
+      let inferredLegacyUserId: string | undefined = d.userId
+        ? String(d.userId)
+        : undefined;
+      if (!inferredLegacyUserId) {
+        const altUserIdFields = [
+          'user',
+          'ownerId',
+          'owner',
+          'uid',
+          'user_id',
+          'userID',
+          'createdBy',
+        ];
+        for (const field of altUserIdFields) {
+          if (raw && field in raw) {
+            const asString = toStringId((raw as AnyDoc)[field]);
+            if (asString) {
+              inferredLegacyUserId = asString;
+              break;
+            }
+          }
+        }
+      }
+      // Resolve new user id
+      const inferredLegacySectionId: string | null | undefined = d.sectionId
+        ? String(d.sectionId)
+        : undefined;
+      let newUserId: string | undefined = undefined;
+      if (inferredLegacyUserId) newUserId = userIdMap.get(inferredLegacyUserId);
+      if (!newUserId && inferredLegacySectionId) {
+        newUserId = sectionLegacyToUserNewId.get(
+          String(inferredLegacySectionId)
+        );
+      }
+
+      // Resolve new section id
+      let newSectionId: string | null | undefined = undefined;
+      if (inferredLegacySectionId) {
+        newSectionId =
+          sectionIdMap.get(String(inferredLegacySectionId)) ?? null;
+      }
+      if (!newSectionId && newUserId) {
+        newSectionId = firstSectionByUserId.get(String(newUserId)) ?? null;
+      }
+
+      if (!newUserId) {
+        console.warn(
+          `Skipping Link without resolvable userId (legacy _id: ${legacyId})`
+        );
+        continue;
+      }
+      const create: any = {
+        legacyObjectId: legacyId,
         title: d.title ?? 'Untitled',
         url: d.url ?? '',
         archived: d.archived !== undefined ? !!d.archived : false,
@@ -220,10 +489,10 @@ async function main() {
         clicks: toInt(d.clicks) ?? 0,
         createdAt: toDate(d.createdAt) ?? new Date(),
         updatedAt: toDate(d.updatedAt) ?? new Date(),
-        userId: String(d.userId),
-        sectionId: d.sectionId ? String(d.sectionId) : null,
+        userId: String(newUserId),
+        sectionId: newSectionId ? String(newSectionId) : null,
       };
-      const update: Prisma.LinkUncheckedUpdateInput = {
+      const update: any = {
         title: create.title,
         url: create.url,
         archived: create.archived,
@@ -235,7 +504,12 @@ async function main() {
         userId: create.userId,
         sectionId: create.sectionId,
       };
-      await prisma.link.upsert({ where: { id: create.id }, create, update });
+      const saved = await (prisma.link as any).upsert({
+        where: { legacyObjectId: legacyId },
+        create,
+        update,
+      });
+      linkIdMap.set(legacyId, saved.id);
     }
 
     // 5) LinkingTokens
@@ -247,23 +521,38 @@ async function main() {
     const linkingTokens = await linkingTokensCol.find({}).toArray();
     console.log(`Migrating LinkingTokens: ${linkingTokens.length}`);
     for (const raw of linkingTokens) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['userId']);
-      const create: Prisma.LinkingTokenUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
+      const legacyUserId = d.userId ? String(d.userId) : undefined;
+      const mappedUserId = legacyUserId
+        ? userIdMap.get(legacyUserId)
+        : undefined;
+      if (!mappedUserId) {
+        console.warn(
+          `Skipping LinkingToken without resolvable userId (legacy _id: ${legacyId}, legacy userId: ${legacyUserId})`
+        );
+        continue;
+      }
+      const create: any = {
+        legacyObjectId: legacyId,
         token: d.token ?? '',
-        userId: String(d.userId),
+        userId: mappedUserId,
         provider: d.provider ?? '',
         expiresAt: toDate(d.expiresAt) ?? new Date(),
         createdAt: toDate(d.createdAt) ?? new Date(),
       };
-      const update: Prisma.LinkingTokenUncheckedUpdateInput = {
+      const update: any = {
         token: create.token,
         userId: create.userId,
         provider: create.provider,
         expiresAt: create.expiresAt,
         createdAt: create.createdAt,
       };
-      await prisma.linkingToken.upsert({ where: { id: create.id }, create, update });
+      await (prisma.linkingToken as any).upsert({
+        where: { legacyObjectId: legacyId },
+        create,
+        update,
+      });
     }
 
     // 6) PageViews
@@ -275,10 +564,21 @@ async function main() {
     const pageViews = await pageViewsCol.find({}).toArray();
     console.log(`Migrating PageViews: ${pageViews.length}`);
     for (const raw of pageViews) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['userId']);
-      const create: Prisma.PageViewUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
-        userId: String(d.userId),
+      const legacyUserId = d.userId ? String(d.userId) : undefined;
+      const mappedUserId = legacyUserId
+        ? userIdMap.get(legacyUserId)
+        : undefined;
+      if (!mappedUserId) {
+        console.warn(
+          `Skipping PageView without resolvable userId (legacy _id: ${legacyId}, legacy userId: ${legacyUserId})`
+        );
+        continue;
+      }
+      const create: any = {
+        legacyObjectId: legacyId,
+        userId: mappedUserId,
         timestamp: toDate(d.timestamp) ?? new Date(),
         referer: d.referer ?? null,
         userAgent: d.userAgent ?? null,
@@ -286,9 +586,13 @@ async function main() {
         country: d.country ?? null,
         device: d.device ?? null,
       };
-      const update: Prisma.PageViewUncheckedUpdateInput = { ...create } as any;
-      delete (update as any).id;
-      await prisma.pageView.upsert({ where: { id: create.id }, create, update });
+      const update: any = { ...create };
+      delete (update as any).legacyObjectId;
+      await (prisma.pageView as any).upsert({
+        where: { legacyObjectId: legacyId },
+        create,
+        update,
+      });
     }
 
     // 7) LinkClicks
@@ -300,10 +604,21 @@ async function main() {
     const linkClicks = await linkClicksCol.find({}).toArray();
     console.log(`Migrating LinkClicks: ${linkClicks.length}`);
     for (const raw of linkClicks) {
+      const legacyId = toStringId((raw as AnyDoc)._id)!;
       const d = normalizeIds(raw, ['linkId']);
-      const create: Prisma.LinkClickUncheckedCreateInput = {
-        id: d.id ?? toStringId(d._id)!,
-        linkId: String(d.linkId),
+      const legacyLinkId = d.linkId ? String(d.linkId) : undefined;
+      const mappedLinkId = legacyLinkId
+        ? linkIdMap.get(legacyLinkId)
+        : undefined;
+      if (!mappedLinkId) {
+        console.warn(
+          `Skipping LinkClick without resolvable linkId (legacy _id: ${legacyId}, legacy linkId: ${legacyLinkId})`
+        );
+        continue;
+      }
+      const create: any = {
+        legacyObjectId: legacyId,
+        linkId: mappedLinkId,
         timestamp: toDate(d.timestamp) ?? new Date(),
         referer: d.referer ?? null,
         userAgent: d.userAgent ?? null,
@@ -311,9 +626,13 @@ async function main() {
         country: d.country ?? null,
         device: d.device ?? null,
       };
-      const update: Prisma.LinkClickUncheckedUpdateInput = { ...create } as any;
-      delete (update as any).id;
-      await prisma.linkClick.upsert({ where: { id: create.id }, create, update });
+      const update: any = { ...create };
+      delete (update as any).legacyObjectId;
+      await (prisma.linkClick as any).upsert({
+        where: { legacyObjectId: legacyId },
+        create,
+        update,
+      });
     }
 
     console.log('Migration completed successfully.');

@@ -8,41 +8,44 @@ datasource db {
 }
 
 model User {
-  id               String     @id @default(cuid())
+  id               String         @id @default(cuid())
   name             String?
-  handle           String?    @unique
-  bio              String?
-  image            String?
-  email            String?    @unique
+  handle           String?        @unique
+  bio              String?        @db.Text
+  image            String?        @db.MediumText
+  email            String?        @unique
   emailVerified    DateTime?
-  totalViews       Int        @default(0)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  linksLocation    String?    @default("top")
-  themePalette     Json?      @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
-  buttonStyle      String     @default("rounded-md")
-  typographyTheme  Json?      @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
-  layoutTheme      Json?      @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
-  buttonStyleTheme Json?      @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
+  totalViews       Int            @default(0)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  linksLocation    String?        @default("top")
+  themePalette     Json?          @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
+  buttonStyle      String         @default("rounded-md")
+  typographyTheme  Json?          @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
+  layoutTheme      Json?          @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
+  buttonStyleTheme Json?          @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
   ogStyles         Json?
+  legacyObjectId   String?        @unique
   accounts         Account[]
   links            Link[]
   pageViews        PageView[]
   sections         Section[]
+  linkingTokens    LinkingToken[]
 
   @@unique([handle, email])
 }
 
 model Section {
-  id        String   @id @default(cuid())
-  name      String
-  order     Int      @default(0)
-  visible   Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  userId    String
-  links     Link[]
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  name           String
+  order          Int      @default(0)
+  visible        Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  userId         String
+  legacyObjectId String?  @unique
+  links          Link[]
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
@@ -53,15 +56,16 @@ model Account {
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?
-  access_token       String?
+  refresh_token      String? @db.MediumText
+  access_token       String? @db.MediumText
   expires_at         Int?
   token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
-  oauth_token_secret String?
-  oauth_token        String?
+  scope              String? @db.MediumText
+  id_token           String? @db.MediumText
+  session_state      String? @db.MediumText
+  oauth_token_secret String? @db.MediumText
+  oauth_token        String? @db.MediumText
+  legacyObjectId     String? @unique
   user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
@@ -69,61 +73,66 @@ model Account {
 }
 
 model Link {
-  id          String      @id @default(cuid())
-  title       String
-  url         String
-  archived    Boolean     @default(false)
-  order       Int?        @default(0)
-  isSocial    Boolean     @default(false)
-  showFavicon Boolean     @default(true)
-  clicks      Int         @default(0)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  userId      String
-  sectionId   String?
-  section     Section?    @relation(fields: [sectionId], references: [id])
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  linkClicks  LinkClick[]
+  id             String      @id @default(cuid())
+  title          String
+  url            String      @db.Text
+  archived       Boolean     @default(false)
+  order          Int?        @default(0)
+  isSocial       Boolean     @default(false)
+  showFavicon    Boolean     @default(true)
+  clicks         Int         @default(0)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  userId         String
+  sectionId      String?
+  legacyObjectId String?     @unique
+  section        Section?    @relation(fields: [sectionId], references: [id])
+  user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  linkClicks     LinkClick[]
 
   @@index([userId])
   @@index([sectionId])
 }
 
 model LinkingToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  provider  String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+  id             String   @id @default(cuid())
+  token          String   @unique
+  userId         String
+  provider       String
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  legacyObjectId String?  @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }
 
 model PageView {
-  id        String   @id @default(cuid())
-  userId    String
-  timestamp DateTime @default(now())
-  referer   String?
-  userAgent String?
-  ipAddress String?
-  country   String?
-  device    String?
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  userId         String
+  timestamp      DateTime @default(now())
+  referer        String?  @db.Text
+  userAgent      String?  @db.Text
+  ipAddress      String?
+  country        String?
+  device         String?
+  legacyObjectId String?  @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "PageView_userId_fkey")
 }
 
 model LinkClick {
-  id        String   @id @default(cuid())
-  linkId    String
-  timestamp DateTime @default(now())
-  referer   String?
-  userAgent String?
-  ipAddress String?
-  country   String?
-  device    String?
-  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  id             String   @id @default(cuid())
+  linkId         String
+  timestamp      DateTime @default(now())
+  referer        String?
+  userAgent      String?
+  ipAddress      String?
+  country        String?
+  device         String?
+  legacyObjectId String?  @unique
+  link           Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
   @@index([linkId], map: "LinkClick_linkId_fkey")
 }

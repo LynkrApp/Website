@@ -114,7 +114,7 @@ const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
 
       trackPageView();
     }
-  }, [user?.handle]);
+  }, [effectiveHandle, user?.handle]);
 
   if (isUserLoading) {
     return (
