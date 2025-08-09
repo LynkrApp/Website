@@ -9,7 +9,7 @@ import { AuthLayout } from '@/components/layout/BaseLayout';
 import { useSession } from 'next-auth/react';
 import { UserPen } from 'lucide-react';
 
-const Onboarding = () => {
+const Onboarding = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [handle, setHandle] = useState('');
   const [handleTaken, setHandleTaken] = useState(false);
