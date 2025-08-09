@@ -11,6 +11,8 @@ import { useSession } from 'next-auth/react';
 const Onboarding = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [handle, setHandle] = useState('');
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
   const [handleTaken, setHandleTaken] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
   const { data: session, status } = useSession();
@@ -42,7 +44,7 @@ const Onboarding = () => {
         return;
       }
       try {
-        const response = await axios.patch('/api/edit', { handle: handle });
+        const response = await axios.patch('/api/edit', { username: username, bio: bio, handle: handle });
         setIsLoading(false);
         if (response.status === 200) {
           setIsExploding(true);
@@ -61,7 +63,7 @@ const Onboarding = () => {
         setIsLoading(false);
       }
     },
-    [handle, router]
+    [username, bio, handle, router]
   );
 
   const config = {
@@ -79,9 +81,15 @@ const Onboarding = () => {
   };
 
   const handleOnChange = (event) => {
-    const value = event.target.value;
-    setHandle(value);
-    setHandleTaken(false);
+    const { id, value } = event.target;
+    if (id === 'handle') {
+      setHandle(value);
+      setHandleTaken(false);
+    } else if (id === 'username') {
+      setUsername(value);
+    } else if (id === 'bio') {
+      setBio(value);
+    }
   };
 
   return (
@@ -105,7 +113,7 @@ const Onboarding = () => {
         </div>
 
         <form onSubmit={handleAddHandle} className="space-y-6">
-          <div>
+        <div>
             <div className="flex items-center justify-between">
               <label
                 htmlFor="handle"
@@ -130,6 +138,48 @@ const Onboarding = () => {
                 {handle} is not available
               </small>
             )}
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-gray-700"
+              >
+                Username (Optional)
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                id="username"
+                placeholder="ex: codemeapixel"
+                value={username}
+                onChange={handleOnChange}
+                type="text"
+                className="block w-full px-3 py-2 border border-gray-400 rounded-md ring-offset-gray-200 focus-visible:ring-1 sm:text-sm focus:outline-none focus-visible:ring-offset-2 sm:leading-6"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium leading-6 text-gray-700"
+              >
+                Bio (optional)
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                id="bio"
+                placeholder="ex: I am cool"
+                value={bio}
+                onChange={handleOnChange}
+                type="text"
+                className="block w-full px-3 py-2 border border-gray-400 rounded-md ring-offset-gray-200 focus-visible:ring-1 sm:text-sm focus:outline-none focus-visible:ring-offset-2 sm:leading-6"
+              />
+            </div>
           </div>
 
           <button
