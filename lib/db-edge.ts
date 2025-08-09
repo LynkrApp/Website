@@ -7,8 +7,16 @@
 export async function getUserForOG(username: string): Promise<any | null> {
   // Using environment variables to construct the internal API URL
   // This approach calls our own API from within the edge function
-  const baseUrl = 'https://lynkr.link';
-  const url = `${baseUrl}/api/internal/user?handle=${encodeURIComponent(username)}&og=true&includeAnalytics=true`;
+  const baseUrl =
+    process.env.NEXTAUTH_URL?.replace(/\/$/, '') ||
+    (process.env.NEXT_PUBLIC_BASE_URL || '').replace(/\/$/, '') ||
+    (process.env.NEXT_PUBLIC_SITE_DOMAIN
+      ? `https://${process.env.NEXT_PUBLIC_SITE_DOMAIN}`
+      : '');
+
+  const url = `${baseUrl}/api/internal/user?handle=${encodeURIComponent(
+    username
+  )}&og=true&includeAnalytics=true`;
 
   try {
     const res = await fetch(url, {

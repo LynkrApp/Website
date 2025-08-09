@@ -10,7 +10,9 @@ export const config = {
 // Helper function to ensure text isn't too long
 const truncateText = (text: string | null | undefined, maxLength: number) => {
   if (!text) return '';
-  return text.length > maxLength ? text.substring(0, maxLength - 3) + '...' : text;
+  return text.length > maxLength
+    ? text.substring(0, maxLength - 3) + '...'
+    : text;
 };
 
 export default async function handler(req: NextRequest) {
@@ -21,7 +23,8 @@ export default async function handler(req: NextRequest) {
     // Default styles that match the home page hero gradient
     const defaultStyles = {
       backgroundType: 'gradient',
-      backgroundGradient: 'linear-gradient(to bottom right, #0f172a, #1e293b, #376878)',
+      backgroundGradient:
+        'linear-gradient(to bottom right, #0f172a, #1e293b, #376878)',
       textColor: 'white',
       accentColor: '#3b82f6',
       showAvatar: true,
@@ -34,7 +37,7 @@ export default async function handler(req: NextRequest) {
       const user = await getUserForOG(username);
 
       if (!user) {
-        return new ImageResponse(
+        const response = new ImageResponse(
           (
             <div
               style={{
@@ -54,10 +57,15 @@ export default async function handler(req: NextRequest) {
           ),
           { width: 1200, height: 630 }
         );
+        response.headers.set('Content-Type', 'image/png');
+        response.headers.set('Cache-Control', 'public, max-age=86400');
+        return response;
       }
 
       // Merge default styles with user custom OG styles
-      const styles = user.ogStyles ? { ...defaultStyles, ...user.ogStyles } : defaultStyles;
+      const styles = user.ogStyles
+        ? { ...defaultStyles, ...user.ogStyles }
+        : defaultStyles;
 
       // If the user's theme has colors, use those for styling
       if (user.themePalette?.palette && !styles.backgroundGradient) {
@@ -76,9 +84,10 @@ export default async function handler(req: NextRequest) {
       const viewCount = user._count?.pageViews || 0;
 
       // Calculate total clicks across all links
-      const totalClicks = user.links?.reduce((sum, link) => sum + (link.clicks || 0), 0) || 0;
+      const totalClicks =
+        user.links?.reduce((sum, link) => sum + (link.clicks || 0), 0) || 0;
 
-      return new ImageResponse(
+      const response = new ImageResponse(
         (
           <div
             style={{
@@ -88,7 +97,10 @@ export default async function handler(req: NextRequest) {
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
-              background: styles.backgroundType === 'gradient' ? styles.backgroundGradient : styles.backgroundColor,
+              background:
+                styles.backgroundType === 'gradient'
+                  ? styles.backgroundGradient
+                  : styles.backgroundColor,
               padding: '40px',
               position: 'relative', // Add position relative to parent
             }}
@@ -289,10 +301,13 @@ export default async function handler(req: NextRequest) {
           height: 630,
         }
       );
+      response.headers.set('Content-Type', 'image/png');
+      response.headers.set('Cache-Control', 'public, max-age=86400');
+      return response;
     }
 
     // Default OG image when no username is provided
-    return new ImageResponse(
+    const response = new ImageResponse(
       (
         <div
           style={{
@@ -303,7 +318,8 @@ export default async function handler(req: NextRequest) {
             justifyContent: 'center',
             letterSpacing: '-.02em',
             fontWeight: 700,
-            backgroundImage: 'linear-gradient(to bottom right, #0f172a, #1e293b, #376878)',
+            backgroundImage:
+              'linear-gradient(to bottom right, #0f172a, #1e293b, #376878)',
           }}
         >
           <div
@@ -350,7 +366,11 @@ export default async function handler(req: NextRequest) {
               lineHeight: 1.4,
             }}
           >
-            <span>Create beautiful, organized link pages that drive engagement and grow your audience. Free, open source, and packed with powerful features.</span>
+            <span>
+              Create beautiful, organized link pages that drive engagement and
+              grow your audience. Free, open source, and packed with powerful
+              features.
+            </span>
           </div>
         </div>
       ),
@@ -359,9 +379,12 @@ export default async function handler(req: NextRequest) {
         height: 630,
       }
     );
+    response.headers.set('Content-Type', 'image/png');
+    response.headers.set('Cache-Control', 'public, max-age=86400');
+    return response;
   } catch (error) {
     console.error('OG Error:', error);
-    return new ImageResponse(
+    const response = new ImageResponse(
       (
         <div
           style={{
@@ -384,5 +407,8 @@ export default async function handler(req: NextRequest) {
         height: 630,
       }
     );
+    response.headers.set('Content-Type', 'image/png');
+    response.headers.set('Cache-Control', 'public, max-age=86400');
+    return response;
   }
 }

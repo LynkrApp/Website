@@ -19,11 +19,11 @@ model User {
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
   linksLocation    String?    @default("top")
-  themePalette     Json?
+  themePalette     Json?      @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
   buttonStyle      String     @default("rounded-md")
-  typographyTheme  Json?
-  layoutTheme      Json?
-  buttonStyleTheme Json?
+  typographyTheme  Json?      @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
+  layoutTheme      Json?      @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
+  buttonStyleTheme Json?      @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
   ogStyles         Json?
   accounts         Account[]
   links            Link[]

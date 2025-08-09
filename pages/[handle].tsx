@@ -19,17 +19,27 @@ import AnimatedBackground from '@/components/core/animated-backgrounds/animated-
 import { ProfilePageMeta } from '@/components/meta/metadata';
 import TabbedSections from '@/components/core/user-profile/tabbed-sections';
 
-const ProfilePage = () => {
+type ProfilePageProps = {
+  serverHandle?: string | null;
+};
+
+const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
   const { query } = useRouter();
   const { handle } = query;
+  const normalizedHandle =
+    typeof handle === 'string'
+      ? handle
+      : Array.isArray(handle)
+        ? handle[0]
+        : '';
+
+  const effectiveHandle = (serverHandle || normalizedHandle) as string;
 
   const {
     data: fetchedUser,
     isLoading: isUserLoading,
     isFetching: isUserFetching,
-  } = useUser(
-    typeof handle === 'string' ? handle : Array.isArray(handle) ? handle[0] : ''
-  );
+  } = useUser(effectiveHandle);
 
   const { data: userLinks, isFetching: isLinksFetching } = useLinks(
     (fetchedUser as any)?.id
@@ -90,7 +100,7 @@ const ProfilePage = () => {
 
   // Track page view when component mounts
   useEffect(() => {
-    const userHandle = user?.handle as string | undefined;
+    const userHandle = (user?.handle as string | undefined) || effectiveHandle;
     if (userHandle) {
       const trackPageView = async () => {
         try {
@@ -108,19 +118,37 @@ const ProfilePage = () => {
 
   if (isUserLoading) {
     return (
-      <Loader
-        message={'Loading...'}
-        bgColor="black"
-        textColor="text-black"
-        width={40}
-        height={40}
-        strokeWidth={2}
-      />
+      <>
+        <ProfilePageMeta
+          handle={effectiveHandle}
+          name={undefined}
+          bio={'Welcome to Lynkr'}
+          user={undefined}
+        />
+        <Loader
+          message={'Loading...'}
+          bgColor="black"
+          textColor="text-black"
+          width={40}
+          height={40}
+          strokeWidth={2}
+        />
+      </>
     );
   }
 
   if (!(user as any)?.id) {
-    return <NotFound />;
+    return (
+      <>
+        <ProfilePageMeta
+          handle={effectiveHandle}
+          name={effectiveHandle ? `@${effectiveHandle}` : undefined}
+          bio={'Welcome to Lynkr'}
+          user={undefined}
+        />
+        <NotFound />
+      </>
+    );
   }
 
   const buttonStyle = user?.buttonStyle;
@@ -231,7 +259,7 @@ const ProfilePage = () => {
   return (
     <>
       <ProfilePageMeta
-        handle={handle}
+        handle={effectiveHandle}
         name={user?.name}
         bio={user?.bio || 'Welcome to Lynkr'}
         user={user}

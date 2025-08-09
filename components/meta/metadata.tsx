@@ -34,10 +34,9 @@ export const MetaTags = ({
   // Get base URL (absolute) with robust env fallbacks
   const baseUrl = getCurrentBaseURL();
 
-  // Use dynamic OG image if handle is provided, with timestamp to prevent caching
-  const timestamp = Date.now();
+  // Use dynamic OG image if handle is provided (stable URL without cache-busting)
   const ogImage = handle
-    ? `${baseUrl}/api/og?username=${encodeURIComponent(handle)}&t=${timestamp}`
+    ? `${baseUrl}/api/og?username=${encodeURIComponent(handle)}`
     : image || defaultConfig.defaultImage;
 
   // Use single canonical image URL
