@@ -51,7 +51,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
               <Link
                 key={link.href}
                 href={link.href}
-                className="font-medium text-slate-300 transition-colors hover:text-white"
+                className="font-medium transition-colors text-slate-300 hover:text-white"
               >
                 {link.label}
               </Link>
@@ -62,7 +62,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
           <div className="flex items-center gap-4">
             {/* Mobile menu button */}
             <button
-              className="p-2 text-slate-300 transition-colors rounded-lg md:hidden hover:bg-slate-800 hover:text-white"
+              className="p-2 transition-colors rounded-lg text-slate-300 md:hidden hover:bg-slate-800 hover:text-white"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle mobile menu"
             >
@@ -78,7 +78,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
               {isAuthenticated ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
-                    <button className="flex items-center gap-2 px-4 py-2 transition-colors rounded-lg text-white hover:bg-slate-800">
+                    <button className="flex items-center gap-2 px-4 py-2 text-white transition-colors rounded-lg hover:bg-slate-800">
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-600 rounded-full">
                         <UserAccountNavDesktop />
                       </div>
@@ -92,7 +92,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
                       <DropdownMenu.Item asChild>
                         <Link
                           href="/admin"
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-slate-700 text-black"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-slate-300 hover:bg-slate-700 hover:text-white"
                         >
                           <Settings className="w-4 h-4" />
                           Dashboard
@@ -122,7 +122,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
                 <>
                   <Link
                     href="/login"
-                    className="px-4 py-2 font-medium text-slate-300 transition-colors hover:text-white"
+                    className="px-4 py-2 font-medium transition-colors text-slate-300 hover:text-white"
                   >
                     Sign In
                   </Link>
@@ -140,14 +140,14 @@ const Navbar = ({ transparent = false, className = '' }) => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="absolute left-0 right-0 bg-slate-800 border-b border-slate-700 shadow-lg md:hidden top-full">
+          <div className="absolute left-0 right-0 border-b shadow-lg bg-slate-800 border-slate-700 md:hidden top-full">
             <div className="px-4 py-6 space-y-4">
               {/* Mobile Navigation Links */}
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="block py-2 font-medium text-slate-300 transition-colors hover:text-white"
+                  className="block py-2 font-medium transition-colors text-slate-300 hover:text-white"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -159,7 +159,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
                   <div className="space-y-3">
                     <Link
                       href="/admin"
-                      className="flex items-center gap-3 py-2 font-medium text-slate-300 transition-colors hover:text-white"
+                      className="flex items-center gap-3 py-2 font-medium transition-colors text-slate-300 hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       <Settings className="w-4 h-4" />
@@ -180,7 +180,7 @@ const Navbar = ({ transparent = false, className = '' }) => {
                   <div className="space-y-3">
                     <Link
                       href="/login"
-                      className="block py-2 font-medium text-slate-300 transition-colors hover:text-white"
+                      className="block py-2 font-medium transition-colors text-slate-300 hover:text-white"
                       onClick={() => setIsMobileMenuOpen(false)}
                     >
                       Sign In
