@@ -7,7 +7,7 @@ import { HomeLayout } from '@/components/layout/BaseLayout';
 import PreviewCarousel from '@/components/root/preview-carousel';
 
 /* eslint-disable @next/next/no-img-element */
-import GithubStar from '@/components/utils/github-star';
+import { CiStar } from 'react-icons/ci';
 
 import {
   Zap,
@@ -16,8 +16,10 @@ import {
   BarChart3,
   Users,
   ArrowRight,
-  Sparkles
+  Sparkles,
 } from 'lucide-react';
+
+const StarIcon = CiStar as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const Home = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -29,34 +31,40 @@ const Home = () => {
   const features = [
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Lightning Fast",
-      description: "Create your link in bio page in seconds with our intuitive interface."
+      title: 'Lightning Fast',
+      description:
+        'Create your link in bio page in seconds with our intuitive interface.',
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "100% Free & Open Source",
-      description: "No hidden fees, no locked features. Completely free forever."
+      title: '100% Free & Open Source',
+      description:
+        'No hidden fees, no locked features. Completely free forever.',
     },
     {
       icon: <Palette className="w-6 h-6" />,
-      title: "Fully Customizable",
-      description: "Choose from themes, colors, and custom buttons to match your brand."
+      title: 'Fully Customizable',
+      description:
+        'Choose from themes, colors, and custom buttons to match your brand.',
     },
     {
       icon: <BarChart3 className="w-6 h-6" />,
-      title: "Analytics Included",
-      description: "Track clicks, views, and user engagement with built-in analytics."
+      title: 'Analytics Included',
+      description:
+        'Track clicks, views, and user engagement with built-in analytics.',
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Organized Sections",
-      description: "Group your links into sections for better organization and user experience."
+      title: 'Organized Sections',
+      description:
+        'Group your links into sections for better organization and user experience.',
     },
     {
       icon: <Sparkles className="w-6 h-6" />,
-      title: "Modern Design",
-      description: "Beautiful, responsive design that looks great on all devices."
-    }
+      title: 'Modern Design',
+      description:
+        'Beautiful, responsive design that looks great on all devices.',
+    },
   ];
 
   return (
@@ -85,9 +93,15 @@ const Home = () => {
                       href="https://github.com/LynkrApp/Website"
                     >
                       <div className="text-white">
-                        <GithubStar />
+                        <StarIcon
+                          width={16}
+                          height={16}
+                          className="text-yellow"
+                        />
                       </div>{' '}
-                      <span className="group-hover:text-white transition-colors">Star us on Github</span>
+                      <span className="group-hover:text-white transition-colors">
+                        Star us on Github
+                      </span>
                     </motion.a>
                   </div>
 
@@ -100,7 +114,9 @@ const Home = () => {
                       className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl md:text-6xl"
                     >
                       <span className="block mb-2">Your links, your way</span>
-                      <span className="block text-[#14AAFF]">Beautiful & organized</span>
+                      <span className="block text-[#14AAFF]">
+                        Beautiful & organized
+                      </span>
                     </motion.h1>
                     <motion.p
                       initial={{ opacity: 0, y: 20 }}
@@ -108,8 +124,9 @@ const Home = () => {
                       transition={{ duration: 0.6, delay: 0.1 }}
                       className="max-w-md mx-auto mt-5 text-base text-slate-300 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl"
                     >
-                      Create stunning link in bio pages that capture attention and drive engagement.
-                      Completely free, open source, and packed with powerful features.
+                      Create stunning link in bio pages that capture attention
+                      and drive engagement. Completely free, open source, and
+                      packed with powerful features.
                     </motion.p>
                   </div>
 
@@ -132,7 +149,6 @@ const Home = () => {
 
             {/* Preview Carousel Section - Replacing the static preview */}
             <PreviewCarousel />
-
           </div>
 
           {/* Features Section */}
@@ -153,7 +169,8 @@ const Home = () => {
                   transition={{ duration: 0.6, delay: 0.1 }}
                   className="max-w-2xl mx-auto mt-4 text-xl text-gray-500"
                 >
-                  Powerful features that help you create professional link pages and grow your audience
+                  Powerful features that help you create professional link pages
+                  and grow your audience
                 </motion.p>
               </div>
 

@@ -7,8 +7,13 @@ import { GOOGLE_FAVICON_URL } from '@/utils/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArchiveSVG } from '@/components/utils/archive-svg';
+import { FaArchive } from 'react-icons/fa';
+
 import TooltipWrapper from '@/components/utils/tooltip';
+
+const ArchiveIcon = FaArchive as React.ComponentType<
+  React.SVGProps<SVGSVGElement>
+>;
 
 const LinkCard = (props) => {
   const {
@@ -69,7 +74,11 @@ const LinkCard = (props) => {
         ) : (
           <TooltipWrapper
             title="This link has been archived by you"
-            component={<ArchiveSVG />}
+            component={
+              <span>
+                <ArchiveIcon width={18} height={18} />
+              </span>
+            }
           />
         )}
         <div className="relative flex-1 h-full p-2">

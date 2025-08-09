@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { themes, imageThemes, gradientThemes } from '@/utils/themes';
-import { CheckMark } from '@/components/utils/checkmark';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signalIframe } from '@/utils/helpers';
+import { FaCheck } from 'react-icons/fa';
+
+const CheckIcon = FaCheck as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const ThemesPicker = () => {
   const { data: currentUser } = useCurrentUser();
@@ -116,7 +118,7 @@ const ThemesPicker = () => {
           </span>
           {selectedTheme === theme && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon width={16} height={16} />
             </span>
           )}
         </div>
@@ -145,7 +147,7 @@ const ThemesPicker = () => {
           </span>
           {selectedTheme === theme && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon width={16} height={16} />
             </span>
           )}
         </div>
@@ -179,7 +181,7 @@ const ThemesPicker = () => {
             style={{ color: theme.palette[0] }}
             className="absolute z-10 text-xs top-2 right-2 text-base-content/80"
           >
-            <CheckMark />
+            <CheckIcon width={16} height={16} />
           </span>
         )}
       </div>

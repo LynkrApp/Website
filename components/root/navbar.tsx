@@ -7,7 +7,7 @@ import { signOut } from 'next-auth/react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import UserAccountNavDesktop from '../utils/usernavbutton-desktop';
 
-const Navbar = ({ transparent = false, className = "" }) => {
+const Navbar = ({ transparent = false, className = '' }) => {
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,7 +23,9 @@ const Navbar = ({ transparent = false, className = "" }) => {
   ];
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 bg-slate-900 border-slate-800 border-b z-50 ${className}`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 bg-slate-900 border-slate-800 border-b z-50 ${className}`}
+    >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -90,7 +92,7 @@ const Navbar = ({ transparent = false, className = "" }) => {
                       <DropdownMenu.Item asChild>
                         <Link
                           href="/admin"
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-slate-300 hover:bg-slate-700 hover:text-white"
+                          className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-slate-700 text-black"
                         >
                           <Settings className="w-4 h-4" />
                           Dashboard

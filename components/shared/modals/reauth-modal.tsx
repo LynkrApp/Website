@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react';
 import { signIn, useSession } from 'next-auth/react';
 import { X, Shield, AlertTriangle } from 'lucide-react';
 import LoadingDots from '@/components/utils/loading-dots';
-import GoogleIcon from '@/components/utils/google-icon';
-import GitHubIcon from '@/components/utils/github-icon';
-import DiscordIcon from '@/components/utils/discord-icon';
+import { FaDiscord, FaGithub, FaGoogle } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -15,9 +13,9 @@ const ReAuthModal = ({ isOpen, onClose, onReAuthSuccess, providerToLink }) => {
   const [isLoadingProvider, setIsLoadingProvider] = useState(true);
 
   const providerIcons = {
-    google: GoogleIcon,
-    github: GitHubIcon,
-    discord: DiscordIcon,
+    google: FaGoogle,
+    github: FaGithub,
+    discord: FaDiscord,
   };
 
   // Fetch the user's linked accounts to determine the original provider

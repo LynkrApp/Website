@@ -39,9 +39,9 @@ export default async function handler(req, res) {
 
         return res.status(200).json(updatedUser);
       } catch (error) {
-        return new Response(`Could not update handle at this time. ${error}`, {
-          status: 500,
-        });
+        return res
+          .status(500)
+          .json({ error: `Could not update handle at this time. ${error}` });
       }
     } else if (req.method === 'DELETE') {
       await db.user.delete({

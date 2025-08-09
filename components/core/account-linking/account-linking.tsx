@@ -4,11 +4,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import LoadingDots from '@/components/utils/loading-dots';
-import GoogleIcon from '@/components/utils/google-icon';
-import GitHubIcon from '@/components/utils/github-icon';
-import DiscordIcon from '@/components/utils/discord-icon';
+import { FaDiscord, FaGithub, FaGoogle } from 'react-icons/fa';
+import React from 'react';
 import ReAuthModal from '@/components/shared/modals/reauth-modal';
 import { CheckCircle, X, Link as LinkIcon } from 'lucide-react';
+import type { IconType } from 'react-icons';
 
 const AccountLinking = () => {
   const { data: session } = useSession();
@@ -143,22 +143,22 @@ const AccountLinking = () => {
     {
       id: 'google',
       name: 'Google',
-      icon: GoogleIcon,
+      icon: FaGoogle,
       color: 'border-red-500 text-red-500 hover:bg-red-50',
     },
     {
       id: 'github',
       name: 'GitHub',
-      icon: GitHubIcon,
+      icon: FaGithub,
       color: 'border-gray-800 text-gray-800 hover:bg-gray-50',
     },
     {
       id: 'discord',
       name: 'Discord',
-      icon: DiscordIcon,
+      icon: FaDiscord,
       color: 'border-indigo-600 text-indigo-600 hover:bg-indigo-50',
     },
-  ];
+  ] as const;
 
   const handleLinkAccount = (providerId) => {
     setProviderToLink(providerId);
@@ -212,7 +212,9 @@ const AccountLinking = () => {
         <div className="space-y-4">
           {providers.map((provider) => {
             const linked = isLinked(provider.id);
-            const IconComponent = provider.icon;
+            const IconComponent = provider.icon as React.ComponentType<
+              React.SVGProps<SVGSVGElement>
+            >;
 
             return (
               <div

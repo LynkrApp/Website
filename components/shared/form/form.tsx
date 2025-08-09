@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import LoadingDots from '@/components/utils/loading-dots';
 import Link from 'next/link';
-import GoogleIcon from '@/components/utils/google-icon';
-import GitHubIcon from '@/components/utils/github-icon';
-import TwitterIcon from '@/components/utils/twitter-icon';
-import DiscordIcon from '@/components/utils/discord-icon';
+import { FaDiscord, FaGithub, FaGoogle } from 'react-icons/fa';
 import { useSearchParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -22,7 +19,18 @@ export default function Form({ type }) {
     error && toast.error(error);
   }, [searchParams]);
 
-  const isAnyLoading = isGoogleLoading || isGitHubLoading || isTwitterLoading || isDiscordLoading;
+  const isAnyLoading =
+    isGoogleLoading || isGitHubLoading || isTwitterLoading || isDiscordLoading;
+
+  const GoogleIcon = FaGoogle as React.ComponentType<
+    React.SVGProps<SVGSVGElement>
+  >;
+  const GithubIcon = FaGithub as React.ComponentType<
+    React.SVGProps<SVGSVGElement>
+  >;
+  const DiscordIcon = FaDiscord as React.ComponentType<
+    React.SVGProps<SVGSVGElement>
+  >;
 
   return (
     <div className="flex flex-col px-4 py-8 space-y-4 bg-gray-50 sm:px-16">
@@ -67,7 +75,7 @@ export default function Form({ type }) {
           <LoadingDots color="#808080" />
         ) : (
           <p className="flex items-center gap-2 font-semibold">
-            <GitHubIcon /> Continue with GitHub
+            <GithubIcon /> Continue with GitHub
           </p>
         )}
       </button>

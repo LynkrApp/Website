@@ -9,7 +9,8 @@ import {
   animatedThemes,
   buttonStyles,
 } from '@/utils/themes';
-import { CheckMark } from '@/components/utils/checkmark';
+import React from 'react';
+import { FaCheck } from 'react-icons/fa';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -17,6 +18,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { signalIframe } from '@/utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
 import OgImageEditor from '../og-customizer/og-image-editor';
+
+const CheckIcon = FaCheck as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const EnhancedThemesPicker = () => {
   const { data: currentUser } = useCurrentUser();
@@ -173,7 +176,7 @@ const EnhancedThemesPicker = () => {
     );
   };
 
-  const renderThemeCard = (theme) => {
+  const renderThemeCard = (theme: any) => {
     // Pattern themes
     if (theme.type === 'pattern') {
       return (
@@ -201,7 +204,7 @@ const EnhancedThemesPicker = () => {
           </span>
           {selectedTheme?.name === theme.name && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -244,7 +247,7 @@ const EnhancedThemesPicker = () => {
           </span>
           {selectedTheme?.name === theme.name && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -287,7 +290,7 @@ const EnhancedThemesPicker = () => {
           </div>
           {selectedTypography?.name === theme.name && (
             <span className="absolute text-blue-500 top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -329,7 +332,7 @@ const EnhancedThemesPicker = () => {
           </div>
           {selectedLayout?.name === theme.name && (
             <span className="absolute text-blue-500 top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -369,7 +372,7 @@ const EnhancedThemesPicker = () => {
           </div>
           {selectedButtonStyle?.name === theme.name && (
             <span className="absolute text-blue-500 top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -404,7 +407,7 @@ const EnhancedThemesPicker = () => {
           </span>
           {selectedTheme?.name === theme.name && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -433,7 +436,7 @@ const EnhancedThemesPicker = () => {
           </span>
           {selectedTheme?.name === theme.name && (
             <span className="absolute z-10 text-white top-2 right-2">
-              <CheckMark />
+              <CheckIcon />
             </span>
           )}
         </motion.div>
@@ -466,7 +469,7 @@ const EnhancedThemesPicker = () => {
         </span>
         {selectedTheme?.name === theme.name && (
           <span className="absolute z-10 top-2 right-2">
-            <CheckMark />
+            <CheckIcon />
           </span>
         )}
       </motion.div>

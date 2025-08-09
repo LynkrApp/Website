@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
-import ThreeDots from '../../utils/three-dots';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Edit, Trash, ArchiveIcon } from 'lucide-react';
 import * as Dialog from '@radix-ui/react-dialog';
 import EditLinkModal from '../modals/edit-link';
@@ -14,6 +14,10 @@ import CustomAlert from '../alerts/custom-alert';
 import useMediaQuery from '@/hooks/use-media-query';
 import PopoverMobile from './popover-mobile';
 import { Drawer } from 'vaul';
+
+const ThreeDotsIcon = BsThreeDotsVertical as React.ComponentType<
+  React.SVGProps<SVGSVGElement>
+>;
 
 const PopoverDesktop = ({ id, title, url, archived, sectionId }) => {
   const [isArchived, setIsArchived] = useState(archived);
@@ -117,13 +121,13 @@ const PopoverDesktop = ({ id, title, url, archived, sectionId }) => {
           shouldScaleBackground
         >
           <Drawer.Trigger>
-            <ThreeDots />
+            <ThreeDotsIcon width={20} height={20} />
           </Drawer.Trigger>
           <PopoverMobile {...mobilePopOverProps} />
         </Drawer.Root>
       ) : (
         <PopoverPrimitive.Trigger className="">
-          <ThreeDots />
+          <ThreeDotsIcon width={20} height={20} />
         </PopoverPrimitive.Trigger>
       )}
       <PopoverPrimitive.Portal>

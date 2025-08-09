@@ -7,30 +7,18 @@ import Confetti from 'react-dom-confetti';
 import Balancer from 'react-wrap-balancer';
 import { AuthLayout } from '@/components/layout/BaseLayout';
 import { useSession } from 'next-auth/react';
+import { UserPen } from 'lucide-react';
 
 const Onboarding = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [handle, setHandle] = useState('');
   const [handleTaken, setHandleTaken] = useState(false);
   const [isExploding, setIsExploding] = useState(false);
+  const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
   const { data: session, status } = useSession();
 
   const router = useRouter();
-
-  // Redirect users who already have handles
-  useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session) {
-      router.replace('/login');
-      return;
-    }
-
-    if (session?.user?.handle) {
-      // User already has a handle, redirect to admin
-      router.replace('/admin');
-    }
-  }, [session, status, router]);
 
   const handleAddHandle = useCallback(
     async (e) => {
@@ -42,7 +30,11 @@ const Onboarding = () => {
         return;
       }
       try {
-        const response = await axios.patch('/api/edit', { handle: handle });
+        const response = await axios.patch('/api/edit', {
+          handle: handle,
+          username: username,
+          bio: bio,
+        });
         setIsLoading(false);
         if (response.status === 200) {
           setIsExploding(true);
@@ -61,7 +53,7 @@ const Onboarding = () => {
         setIsLoading(false);
       }
     },
-    [handle, router]
+    [bio, handle, router, username]
   );
 
   const config: any = {
@@ -79,14 +71,20 @@ const Onboarding = () => {
   };
 
   const handleOnChange = (event) => {
-    const value = event.target.value;
-    setHandle(value);
-    setHandleTaken(false);
+    const { id, value } = event.target;
+    if (id === 'handle') {
+      setHandle(value);
+      setHandleTaken(false);
+    } else if (id === 'username') {
+      setUsername(value);
+    } else if (id === 'bio') {
+      setBio(value);
+    }
   };
 
   return (
     <AuthLayout
-      metaProps={{ title: "Choose Your Handle - Lynkr" }}
+      metaProps={{ title: 'Choose Your Handle - Lynkr' }}
       className="relative flex items-center justify-center min-h-screen"
       backgroundPattern={false}
     >
@@ -98,7 +96,7 @@ const Onboarding = () => {
 
       <div className="relative z-10 w-full max-w-sm px-6 mx-auto">
         <div className="mb-8 text-center">
-          <div className="mx-auto h-[30px] w-[30px] bg-slate-900 rounded-full mb-4" />
+          <UserPen className="w-10 h-10 mx-auto" />
           <h2 className="text-2xl font-bold leading-9 tracking-tight text-gray-900">
             <Balancer>Claim your unique handle ✨</Balancer>
           </h2>
@@ -117,7 +115,7 @@ const Onboarding = () => {
             <div className="mt-2">
               <input
                 id="handle"
-                placeholder="ex: naruto"
+                placeholder="ex: ranranaway"
                 value={handle}
                 onChange={handleOnChange}
                 type="text"
@@ -126,12 +124,50 @@ const Onboarding = () => {
               />
             </div>
             {handleTaken && (
-              <small className="text-red-500">
-                {handle} is not available
-              </small>
+              <small className="text-red-500">{handle} is not available</small>
             )}
           </div>
+          <div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="username"
+                className="block text-sm font-medium leading-6 text-gray-700"
+              >
+                Username (Optional)
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                id="username"
+                placeholder="ex: codemeapixel"
+                value={username}
+                onChange={handleOnChange}
+                type="text"
+                className="block w-full px-3 py-2 border border-gray-400 rounded-md ring-offset-gray-200 focus-visible:ring-1 sm:text-sm focus:outline-none focus-visible:ring-offset-2 sm:leading-6"
+              />
+            </div>
+          </div>
 
+          <div>
+            <div className="flex items-center justify-between">
+              <label
+                htmlFor="bio"
+                className="block text-sm font-medium leading-6 text-gray-700"
+              >
+                Bio (optional)
+              </label>
+            </div>
+            <div className="mt-2">
+              <input
+                id="bio"
+                placeholder="ex: I am cool"
+                value={bio}
+                onChange={handleOnChange}
+                type="text"
+                className="block w-full px-3 py-2 border border-gray-400 rounded-md ring-offset-gray-200 focus-visible:ring-1 sm:text-sm focus:outline-none focus-visible:ring-offset-2 sm:leading-6"
+              />
+            </div>
+          </div>
           <button
             disabled={isLoading}
             type="submit"

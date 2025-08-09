@@ -54,7 +54,7 @@ const UserAccountNavDesktop = () => {
               className="flex items-center w-full gap-2 p-3 text-sm font-medium text-gray-500 transition-all duration-75 rounded-md group hover:bg-gray-100"
             >
               <User size={17} color="gray" />
-              <h4 className="w-full truncate">{data.user.name}</h4>
+              <h4 className="w-full truncate text-black">{data.user.name}</h4>
             </Link>
             <Link
               target="_blank"

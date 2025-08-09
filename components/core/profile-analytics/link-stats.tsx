@@ -6,8 +6,10 @@ import Loader from '@/components/utils/loading-spinner';
 import { getApexDomain } from '@/utils/helpers';
 import { GOOGLE_FAVICON_URL } from '@/utils/constants';
 import { useState } from 'react';
-import StarSVG from '@/components/utils/star-svg';
+import { CiStar } from 'react-icons/ci';
 import Link from 'next/link';
+
+const StarIcon = CiStar as React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
 const LinkStats = () => {
   const { data: currentUser } = useCurrentUser();
@@ -80,7 +82,7 @@ const LinkStats = () => {
                     ))
                 ) : (
                   <div className="flex flex-col gap-2 w-[180px] mx-auto py-6">
-                    <StarSVG />
+                    <StarIcon width={20} height={20} />
                     <h2 className="text-center">
                       No links added yet{' '}
                       <span role="img" aria-label="face holding back tears">

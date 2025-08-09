@@ -18,17 +18,17 @@ model User {
   totalViews       Int        @default(0)
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
-  links            Link[]
-  sections         Section[]
   linksLocation    String?    @default("top")
-  themePalette     Json?      @default("{\"name\": \"Light\", \"type\": \"color\", \"palette\": [\"#FFFFFF\", \"#F2F2F2\", \"#1F2937\", \"#6170F8\"]}")
+  themePalette     Json?
   buttonStyle      String     @default("rounded-md")
-  typographyTheme  Json?      @default("{\"name\": \"Modern Sans\", \"type\": \"typography\", \"fontFamily\": \"Inter, -apple-system, BlinkMacSystemFont, sans-serif\", \"headingWeight\": \"700\", \"bodyWeight\": \"400\", \"letterSpacing\": \"-0.025em\", \"lineHeight\": \"1.5\"}")
-  layoutTheme      Json?      @default("{\"name\": \"Centered Classic\", \"type\": \"layout\", \"alignment\": \"center\", \"spacing\": \"normal\", \"cardStyle\": \"rounded\", \"linkSpacing\": \"1rem\", \"containerWidth\": \"max-w-md\"}")
-  buttonStyleTheme Json?      @default("{\"name\": \"Classic\", \"type\": \"button\", \"borderRadius\": \"0.5rem\", \"padding\": \"0.75rem 1.5rem\", \"shadow\": \"shadow-md\", \"hover\": \"hover:shadow-lg transform hover:-translate-y-0.5\", \"transition\": \"transition-all duration-200\"}")
+  typographyTheme  Json?
+  layoutTheme      Json?
+  buttonStyleTheme Json?
+  ogStyles         Json?
   accounts         Account[]
-  ogStyles         Json? // Used for both OG image styling and meta theme configuration
-  pageViews        PageView[] // Add the missing relation field here
+  links            Link[]
+  pageViews        PageView[]
+  sections         Section[]
 
   @@unique([handle, email])
 }
@@ -41,10 +41,10 @@ model Section {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   links     Link[]
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index(userId)
+  @@index([userId])
 }
 
 model Account {
@@ -62,10 +62,10 @@ model Account {
   session_state      String?
   oauth_token_secret String?
   oauth_token        String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId], map: "Account_userId_fkey")
 }
 
 model Link {
@@ -75,19 +75,18 @@ model Link {
   archived    Boolean     @default(false)
   order       Int?        @default(0)
   isSocial    Boolean     @default(false)
-  showFavicon Boolean     @default(true) // New field to control favicon display
-  // Link metadata
-  clicks      Int         @default(0) // number of clicks
+  showFavicon Boolean     @default(true)
+  clicks      Int         @default(0)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   userId      String
   sectionId   String?
+  section     Section?    @relation(fields: [sectionId], references: [id])
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  section     Section?    @relation(fields: [sectionId], references: [id], onDelete: SetNull)
-  linkClicks  LinkClick[] // Relation to LinkClick model
+  linkClicks  LinkClick[]
 
-  @@index(userId)
-  @@index(sectionId)
+  @@index([userId])
+  @@index([sectionId])
 }
 
 model LinkingToken {
@@ -101,7 +100,6 @@ model LinkingToken {
   @@index([userId])
 }
 
-// Analytics Models
 model PageView {
   id        String   @id @default(cuid())
   userId    String
@@ -112,6 +110,8 @@ model PageView {
   country   String?
   device    String?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "PageView_userId_fkey")
 }
 
 model LinkClick {
@@ -124,4 +124,6 @@ model LinkClick {
   country   String?
   device    String?
   link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([linkId], map: "LinkClick_linkId_fkey")
 }

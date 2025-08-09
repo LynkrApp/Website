@@ -2,21 +2,21 @@ import Link from 'next/link';
 import {
   GithubIcon,
   TwitterIcon,
-  GlobeIcon,
   Mail,
   Heart,
-  ExternalLink
+  ExternalLink,
 } from 'lucide-react';
 import Image from 'next/image';
-import DiscordIcon from '../utils/discord-icon';
 import { useState, useEffect } from 'react';
 import packageInfo from '../../package.json';
+import { FaDiscord } from 'react-icons/fa';
+import React from 'react';
 
-const Footer = ({ className = "" }) => {
+const Footer = ({ className = '' }) => {
   const currentYear = new Date().getFullYear();
   const [versionInfo, setVersionInfo] = useState({
     version: packageInfo.version || 'v0.0.0',
-    gitHash: 'dev'
+    gitHash: 'dev',
   });
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Footer = ({ className = "" }) => {
           const data = await response.json();
           setVersionInfo({
             version: packageInfo.version,
-            gitHash: data.gitHash || 'dev'
+            gitHash: data.gitHash || 'dev',
           });
         }
       } catch (error) {
@@ -44,53 +44,52 @@ const Footer = ({ className = "" }) => {
       { label: 'About Us', href: '/about' },
       { label: 'Contact Us', href: '/contact' },
       { label: 'Join our Team', href: '/careers' },
-      { label: 'Press Kit', href: '/press' }
+      { label: 'Press Kit', href: '/press' },
     ],
     extras: [
       { label: 'Follow us on Twitter', href: '/twitter' },
       { label: 'Follow us on GitHub', href: '/github' },
       { label: 'Join our Discord', href: '/discord' },
-      { label: 'View our Status', href: '/status' }
+      { label: 'View our Status', href: '/status' },
     ],
     legal: [
       { label: 'Privacy Policy', href: '/privacy' },
       { label: 'Terms of Service', href: '/terms' },
       { label: 'Cookie Policy', href: '/cookies' },
-      { label: 'GDPR Policy', href: '/gdpr' }
-    ]
+      { label: 'GDPR Policy', href: '/gdpr' },
+    ],
   };
 
-  const socialLinks = [
+  const socialLinks: {
+    label: string;
+    href: string;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    color: string;
+  }[] = [
     {
       label: 'Discord',
       href: '/discord',
-      icon: DiscordIcon,
-      color: 'hover:text-blue-600'
+      icon: FaDiscord as React.ComponentType<React.SVGProps<SVGSVGElement>>,
+      color: 'hover:text-blue-600',
     },
     {
       label: 'Twitter',
       href: '/twitter',
       icon: TwitterIcon,
-      color: 'hover:text-blue-400'
+      color: 'hover:text-blue-400',
     },
     {
       label: 'GitHub',
       href: '/github',
       icon: GithubIcon,
-      color: 'hover:text-gray-600'
-    },
-    {
-      label: 'Website',
-      href: 'https://codemeapixel.dev',
-      icon: GlobeIcon,
-      color: 'hover:text-green-500'
+      color: 'hover:text-gray-600',
     },
     {
       label: 'Email',
       href: 'mailto:hello@lynkr.link',
       icon: Mail,
-      color: 'hover:text-red-500'
-    }
+      color: 'hover:text-red-500',
+    },
   ];
 
   return (
@@ -116,8 +115,9 @@ const Footer = ({ className = "" }) => {
               <span>Lynkr</span>
             </Link>
             <p className="max-w-md mb-6 text-sm text-gray-400">
-              The ultimate free & open source link in bio platform. Create beautiful,
-              organized link pages that drive engagement and grow your audience.
+              The ultimate free & open source link in bio platform. Create
+              beautiful, organized link pages that drive engagement and grow
+              your audience.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((social) => {
@@ -197,9 +197,7 @@ const Footer = ({ className = "" }) => {
         <div className="pt-6 border-t border-slate-800">
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             <div className="flex flex-col gap-3 text-sm text-gray-400 sm:flex-row sm:items-center">
-              <span>
-                © {currentYear} Lynkr. All rights reserved.
-              </span>
+              <span>© {currentYear} Lynkr. All rights reserved.</span>
               <div className="hidden sm:flex sm:items-center sm:gap-1">
                 <span>Made with</span>
                 <Heart className="w-4 h-4 text-red-500 fill-current" />
@@ -236,7 +234,10 @@ const Footer = ({ className = "" }) => {
                 href="/changelog"
                 className="text-xs text-gray-500 transition-colors hover:text-gray-300"
               >
-                {versionInfo.version} <span className="font-mono">({versionInfo.gitHash.substring(0, 7)})</span>
+                {versionInfo.version}{' '}
+                <span className="font-mono">
+                  ({versionInfo.gitHash.substring(0, 7)})
+                </span>
               </Link>
             </div>
           </div>
