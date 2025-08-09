@@ -24,9 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✨ Formating changes
 - ✨ Added New CLI to convert Mongodb data to MySQL
 
+### ⚡ Improvements
+
+- ⚡ Everything uses React-Icons or Lucide-React insted of SVGs to provide consistency.
+
 ### 🔧 Bug Fixes
 
 - 🐛 Fixed the og
+- 🐛 Fixed API praising bugs
 
 ## [0.2.0] - 2025-08-07
 
