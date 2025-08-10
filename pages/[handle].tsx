@@ -14,7 +14,6 @@ import useLinks from '@/hooks/useLinks';
 import useSections from '@/hooks/useSections';
 import Script from 'next/script';
 import { SocialCards } from '@/components/core/user-profile/social-cards';
-import Head from 'next/head';
 import AnimatedBackground from '@/components/core/animated-backgrounds/animated-background';
 import { ProfilePageMeta } from '@/components/meta/metadata';
 import TabbedSections from '@/components/core/user-profile/tabbed-sections';

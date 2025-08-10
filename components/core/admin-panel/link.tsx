@@ -113,6 +113,11 @@ const LinkCard = (props) => {
                             </span>
                           </p>
                         </Link>
+                        {props.isNSFWLink && (
+                          <p className="text-sm text-gray-500 flex items-center space-x-1 rounded-md bg-gray-100 px-2 py-0.5 transition-all duration-75 hover:scale-105 hover:bg-blue-100 active:scale-100">
+                            18+
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

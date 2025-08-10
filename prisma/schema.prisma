@@ -89,6 +89,7 @@ model Link {
   section        Section?    @relation(fields: [sectionId], references: [id])
   user           User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   linkClicks     LinkClick[]
+  isNSFWLink     Boolean     @default(false)
 
   @@index([userId])
   @@index([sectionId])

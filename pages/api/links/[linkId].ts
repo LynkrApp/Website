@@ -16,6 +16,7 @@ export default async function handler(req, res) {
         sectionId,
         newShowFavicon,
         newIsSocial,
+        newIsNSFW
       } = req.body;
 
       // Enhanced logging for debugging
@@ -41,6 +42,7 @@ export default async function handler(req, res) {
             showFavicon: newShowFavicon === true,
           }),
           ...(newIsSocial !== undefined && { isSocial: newIsSocial === true }),
+          ...(newIsNSFW !== undefined && { isNSFWLink: newIsNSFW === true }),
         },
       });
 

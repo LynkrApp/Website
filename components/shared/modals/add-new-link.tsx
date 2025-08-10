@@ -16,6 +16,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [isSocial, setIsSocial] = useState(false);
+  const [isNSFW, setIsNSFW] = useState(false);
   const [showFavicon, setShowFavicon] = useState(true); // Default to true
   const [sectionId, setSectionId] = useState(selectedSectionId);
   const [urlError, setUrlError] = useState(false);
@@ -37,6 +38,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
       isSocial,
       sectionId,
       showFavicon,
+      isNSFW,
     }: {
       title: string;
       url: string;
@@ -44,6 +46,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
       isSocial: boolean;
       sectionId: string | null;
       showFavicon: boolean;
+      isNSFW: boolean;
     }) => {
       // Add console log for debugging
       console.log('Adding link with data:', {
@@ -53,6 +56,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
         isSocial: isSocial === true ? 'true' : 'false',
         sectionId,
         showFavicon: showFavicon === true ? 'true' : 'false',
+        isNSFW: isNSFW === true ? 'true' : 'false',
       });
 
       await axios.post('/api/links', {
@@ -62,6 +66,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
         isSocial,
         sectionId,
         showFavicon,
+        isNSFW,
       });
     },
     {
@@ -71,6 +76,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
         setTitle('');
         setUrl('');
         setIsSocial(false);
+        setIsNSFW(false);
         setShowFavicon(true);
         setSectionId(selectedSectionId);
         signalIframe();
@@ -91,6 +97,7 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
         isSocial,
         showFavicon,
         sectionId: sectionId || null,
+        isNSFW,
       }),
       {
         loading: 'Adding link',
@@ -182,6 +189,24 @@ const AddLinkModal = ({ selectedSectionId = null }) => {
               <Switch.Root
                 checked={isSocial}
                 onCheckedChange={() => setIsSocial(!isSocial)}
+                className="w-[39px] h-[21px] bg-[#E4E4E7] rounded-full relative focus:shadow-black border border-slate-200 data-[state=checked]:bg-slate-900 outline-none cursor-default lg:w-[42px] lg:h-[25px]"
+              >
+                <Switch.Thumb className="block w-[17px] h-[17px] bg-white rounded-full shadow-[0_2px_2px] transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px] lg:w-[21px] lg:h-[21px]" />
+              </Switch.Root>
+            </div>
+
+            <div className="relative flex justify-between gap-2 p-2 my-4 text-gray-800">
+              <TooltipWrapper
+                title="Twitter, Instagram, LinkedIn, etc"
+                component={
+                  <h3 className="text-md lg:text-lg">
+                    Is this a NSFW link?
+                  </h3>
+                }
+              />
+              <Switch.Root
+                checked={isNSFW}
+                onCheckedChange={() => setIsNSFW(!isNSFW)}
                 className="w-[39px] h-[21px] bg-[#E4E4E7] rounded-full relative focus:shadow-black border border-slate-200 data-[state=checked]:bg-slate-900 outline-none cursor-default lg:w-[42px] lg:h-[25px]"
               >
                 <Switch.Thumb className="block w-[17px] h-[17px] bg-white rounded-full shadow-[0_2px_2px] transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px] lg:w-[21px] lg:h-[21px]" />
