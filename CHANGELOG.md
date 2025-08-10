@@ -186,7 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Technical Features**
   - Server-side rendering with Next.js 13
-  - PostgreSQL database with Prisma ORM
+  - MySQL database with Prisma ORM
   - Responsive design with Tailwind CSS
   - Component library with Radix UI
   - Smooth animations with Framer Motion

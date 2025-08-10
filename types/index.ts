@@ -1,5 +1,3 @@
-// Central place to define and export app-wide types.
-
 export type UserLink = {
   id: string;
   title: string;
@@ -59,6 +57,3 @@ export type PublicUser = {
   typographyTheme?: TypographyTheme;
   [key: string]: any;
 };
-
-
-
