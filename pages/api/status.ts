@@ -68,7 +68,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    res.status(405).json({ message: 'Method not allowed' });
+    return;
   }
 
   try {
@@ -134,11 +135,12 @@ export default async function handler(
     };
 
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=300');
-    return res.status(200).json(simplified);
+    res.status(200).json(simplified);
+    return;
   } catch (error) {
     // Cache short to avoid thundering herd
     res.setHeader('Cache-Control', 's-maxage=30');
-    return res.status(200).json({
+    res.status(200).json({
       label: 'Status unavailable',
       state: 'unknown',
       color: 'gray',
@@ -146,5 +148,6 @@ export default async function handler(
       incidents: 0,
       maintenances: 0,
     } satisfies SimplifiedStatus);
+    return;
   }
 }

@@ -6,18 +6,30 @@ import { db } from './db';
 const serverAuth = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = (await getServerSession(req, res, authOptions as any)) as any;
 
-  if (!session?.user?.email) {
+  if (!session?.user) {
     throw new Error('Not signed in');
   }
 
-  const currentUser = await db.user.findUnique({
-    where: {
-      email: session.user.email,
-    },
-    include: {
-      accounts: true,
-    },
-  });
+  // Prefer looking up by session user id, which should always be present
+  // per our NextAuth callbacks. Fallback to email if needed.
+  const userId: string | undefined = session.user.id;
+  const userEmail: string | undefined = session.user.email;
+
+  let currentUser = null;
+
+  if (userId) {
+    currentUser = await db.user.findUnique({
+      where: { id: userId },
+      include: { accounts: true },
+    });
+  }
+
+  if (!currentUser && userEmail) {
+    currentUser = await db.user.findUnique({
+      where: { email: userEmail },
+      include: { accounts: true },
+    });
+  }
 
   if (!currentUser) {
     throw new Error('Not signed in');
