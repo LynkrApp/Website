@@ -13,8 +13,8 @@ export default async function handler(
   try {
     if (req.method === 'POST') {
       const { currentUser } = await serverAuth(req, res);
-      const { title, url, order, isSocial, sectionId, showFavicon } = req.body;
-
+      const { title, url, order, isSocial, isNSFW, sectionId, showFavicon } = req.body;
+      
       const link = await db.link.create({
         data: {
           title,
@@ -22,6 +22,7 @@ export default async function handler(
           order,
           userId: currentUser.id,
           isSocial: isSocial === true, // Ensure boolean conversion
+          isNSFWLink: isNSFW === true,
           showFavicon: showFavicon !== undefined ? Boolean(showFavicon) : true, // Ensure proper boolean conversion with default
           ...(sectionId && { sectionId }),
         },
