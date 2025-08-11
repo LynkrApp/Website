@@ -14,18 +14,7 @@ export default async function handler(
     if (req.method === 'POST') {
       const { currentUser } = await serverAuth(req, res);
       const { title, url, order, isSocial, isNSFW, sectionId, showFavicon } = req.body;
-
-      // Log the received data for debugging
-      console.log('Creating link with data:', {
-        title,
-        url,
-        order,
-        isSocial,
-        sectionId,
-        showFavicon,
-        isNSFW,
-      });
-
+      
       const link = await db.link.create({
         data: {
           title,

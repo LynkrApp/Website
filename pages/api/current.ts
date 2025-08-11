@@ -6,14 +6,17 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).end();
+    res.status(405).end();
+    return;
   }
 
   try {
     const { currentUser } = await serverAuth(req, res);
-
-    return res.status(200).json(currentUser);
+    res.status(200).json(currentUser);
+    return;
   } catch (error) {
-    return res.status(400).end();
+    // Use 401 for unauthenticated to avoid confusion
+    res.status(401).end();
+    return;
   }
 }

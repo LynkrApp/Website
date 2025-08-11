@@ -12,11 +12,22 @@ import packageInfo from '../../package.json';
 import { FaDiscord } from 'react-icons/fa';
 import React from 'react';
 
+type StatusColor = 'green' | 'blue' | 'yellow' | 'orange' | 'red' | 'gray';
+
 const Footer = ({ className = '' }) => {
   const currentYear = new Date().getFullYear();
   const [versionInfo, setVersionInfo] = useState({
     version: packageInfo.version || 'v0.0.0',
     gitHash: 'dev',
+  });
+  const [statusInfo, setStatusInfo] = useState<{
+    label: string;
+    color: StatusColor;
+    pageUrl: string;
+  }>({
+    label: 'All systems operational',
+    color: 'green',
+    pageUrl: 'https://lynkr.instatus.com',
   });
 
   useEffect(() => {
@@ -37,6 +48,29 @@ const Footer = ({ className = '' }) => {
     };
 
     fetchVersionInfo();
+
+    // Fetch system status and refresh periodically
+    let intervalId: number | undefined;
+    const fetchStatus = async () => {
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          setStatusInfo({
+            label: data.label || 'Status unavailable',
+            color: (data.color as StatusColor) || 'gray',
+            pageUrl: data.pageUrl || 'https://lynkr.instatus.com',
+          });
+        }
+      } catch (err) {
+        // Ignore errors; keep previous status
+      }
+    };
+    fetchStatus();
+    intervalId = window.setInterval(fetchStatus, 60_000);
+    return () => {
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+    };
   }, []);
 
   const footerLinks = {
@@ -225,10 +259,24 @@ const Footer = ({ className = '' }) => {
                 <ExternalLink className="w-3 h-3" />
               </a>
               <span className="hidden text-gray-600 md:inline">|</span>
-              <div className="flex items-center gap-2 text-gray-400">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span>All systems operational</span>
-              </div>
+              <Link
+                href="/status"
+                className="flex items-center gap-2 text-gray-400 hover:text-gray-200"
+              >
+                <div
+                  className={`w-2 h-2 rounded-full animate-pulse ${
+                    {
+                      green: 'bg-green-500',
+                      blue: 'bg-blue-500',
+                      yellow: 'bg-yellow-400',
+                      orange: 'bg-orange-500',
+                      red: 'bg-red-500',
+                      gray: 'bg-gray-400',
+                    }[statusInfo.color]
+                  }`}
+                ></div>
+                <span>{statusInfo.label}</span>
+              </Link>
               <span className="hidden text-gray-600 md:inline">|</span>
               <Link
                 href="/changelog"

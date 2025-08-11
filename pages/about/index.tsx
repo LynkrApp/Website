@@ -1,5 +1,13 @@
 import Link from 'next/link';
-import { ArrowLeft, Heart, Users, Code, Zap, Shield, Github } from 'lucide-react';
+import {
+  ArrowLeft,
+  Heart,
+  Users,
+  Code,
+  Zap,
+  Shield,
+  Github,
+} from 'lucide-react';
 import { ContentLayout } from '@/components/layout/BaseLayout';
 
 const About = () => {
@@ -24,7 +32,11 @@ const About = () => {
           Our Mission
         </h2>
         <p className="text-lg leading-relaxed text-gray-700">
-          We believe that everyone should have access to professional, beautiful link-in-bio pages without paying expensive subscription fees or being locked into proprietary platforms. Lynkr democratizes the link-in-bio space by providing a completely free, open-source solution that puts users first.
+          We believe that everyone should have access to professional, beautiful
+          link-in-bio pages without paying expensive subscription fees or being
+          locked into proprietary platforms. Lynkr democratizes the link-in-bio
+          space by providing a completely free, open-source solution that puts
+          users first.
         </p>
       </div>
 
@@ -39,40 +51,52 @@ const About = () => {
             <div className="p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center mb-4">
                 <Shield className="w-8 h-8 mr-3 text-green-500" />
-                <h3 className="text-xl font-semibold text-gray-900">100% Free Forever</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  100% Free Forever
+                </h3>
               </div>
               <p className="text-gray-700">
-                No hidden fees, no premium tiers, no feature limitations. Everything is completely free and always will be.
+                No hidden fees, no premium tiers, no feature limitations.
+                Everything is completely free and always will be.
               </p>
             </div>
 
             <div className="p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center mb-4">
                 <Code className="w-8 h-8 mr-3 text-blue-500" />
-                <h3 className="text-xl font-semibold text-gray-900">Open Source</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Open Source
+                </h3>
               </div>
               <p className="text-gray-700">
-                Our entire codebase is public on GitHub. Contribute, customize, or host your own instance.
+                Our entire codebase is public on GitHub. Contribute, customize,
+                or host your own instance.
               </p>
             </div>
 
             <div className="p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center mb-4">
                 <Users className="w-8 h-8 mr-3 text-purple-500" />
-                <h3 className="text-xl font-semibold text-gray-900">Privacy First</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Privacy First
+                </h3>
               </div>
               <p className="text-gray-700">
-                Your data belongs to you. We don't sell your information, and you can export or delete your data anytime.
+                Your data belongs to you. We don't sell your information, and
+                you can export or delete your data anytime.
               </p>
             </div>
 
             <div className="p-6 bg-white border border-gray-200 rounded-lg">
               <div className="flex items-center mb-4">
                 <Zap className="w-8 h-8 mr-3 text-yellow-500" />
-                <h3 className="text-xl font-semibold text-gray-900">Feature Rich</h3>
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Feature Rich
+                </h3>
               </div>
               <p className="text-gray-700">
-                Analytics, themes, sections, custom buttons, and more. All the features you need in one platform.
+                Analytics, themes, sections, custom buttons, and more. All the
+                features you need in one platform.
               </p>
             </div>
           </div>
@@ -83,13 +107,24 @@ const About = () => {
             The Story Behind Lynkr
           </h2>
           <p className="mb-4 leading-relaxed text-gray-700">
-            Lynkr was born out of frustration with existing link-in-bio platforms that charge monthly fees for basic features or lock users into proprietary ecosystems. We saw creators, small businesses, and individuals struggling to find an affordable solution that didn't compromise on functionality or design.
+            Lynkr was born out of frustration with existing link-in-bio
+            platforms that charge monthly fees for basic features or lock users
+            into proprietary ecosystems. We saw creators, small businesses, and
+            individuals struggling to find an affordable solution that didn't
+            compromise on functionality or design.
           </p>
           <p className="mb-4 leading-relaxed text-gray-700">
-            Our founding principle is simple: powerful tools should be accessible to everyone. Whether you're a content creator just starting out, a small business owner, or someone who wants to organize their online presence, you shouldn't have to pay premium prices for basic functionality.
+            Our founding principle is simple: powerful tools should be
+            accessible to everyone. Whether you're a content creator just
+            starting out, a small business owner, or someone who wants to
+            organize their online presence, you shouldn't have to pay premium
+            prices for basic functionality.
           </p>
           <p className="mb-4 leading-relaxed text-gray-700">
-            By making Lynkr open-source, we ensure that the platform remains transparent, secure, and community-driven. Anyone can contribute to the project, suggest features, report bugs, or even host their own instance with custom modifications.
+            By making Lynkr open-source, we ensure that the platform remains
+            transparent, secure, and community-driven. Anyone can contribute to
+            the project, suggest features, report bugs, or even host their own
+            instance with custom modifications.
           </p>
         </section>
 
@@ -140,7 +175,8 @@ const About = () => {
             Technology Stack
           </h2>
           <p className="mb-4 leading-relaxed text-gray-700">
-            Lynkr is built with modern, reliable technologies to ensure a fast, secure, and scalable experience:
+            Lynkr is built with modern, reliable technologies to ensure a fast,
+            secure, and scalable experience:
           </p>
           <div className="p-6 rounded-lg bg-gray-50">
             <div className="grid gap-6 md:grid-cols-3">
@@ -159,11 +195,13 @@ const About = () => {
                   <li>Next.js API Routes</li>
                   <li>NextAuth.js</li>
                   <li>Prisma ORM</li>
-                  <li>PostgreSQL</li>
+                  <li>MySQL</li>
                 </ul>
               </div>
               <div>
-                <h4 className="mb-2 font-semibold text-gray-900">Authentication</h4>
+                <h4 className="mb-2 font-semibold text-gray-900">
+                  Authentication
+                </h4>
                 <ul className="space-y-1 text-sm text-gray-700">
                   <li>OAuth 2.0</li>
                   <li>Google</li>
@@ -180,7 +218,9 @@ const About = () => {
             Community and Contributing
           </h2>
           <p className="mb-4 leading-relaxed text-gray-700">
-            Lynkr thrives on community contributions. Whether you're a developer, designer, or just someone with great ideas, there are many ways to get involved:
+            Lynkr thrives on community contributions. Whether you're a
+            developer, designer, or just someone with great ideas, there are
+            many ways to get involved:
           </p>
           <ul className="pl-6 mb-6 text-gray-700 list-disc">
             <li>Report bugs or suggest features on GitHub</li>
@@ -193,10 +233,13 @@ const About = () => {
           <div className="p-6 border border-blue-200 rounded-lg bg-blue-50">
             <div className="flex items-center mb-3">
               <Github className="w-6 h-6 mr-3 text-gray-900" />
-              <h3 className="text-lg font-semibold text-gray-900">Join Us on GitHub</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Join Us on GitHub
+              </h3>
             </div>
             <p className="mb-4 text-gray-700">
-              Check out our source code, contribute to the project, or report issues.
+              Check out our source code, contribute to the project, or report
+              issues.
             </p>
             <Link
               href="https://github.com/LynkrApp/Website"
@@ -214,14 +257,30 @@ const About = () => {
             Commitment to Users
           </h2>
           <p className="mb-4 leading-relaxed text-gray-700">
-            We're committed to maintaining Lynkr as a free, open-source platform that serves its users first. Our promises to you:
+            We're committed to maintaining Lynkr as a free, open-source platform
+            that serves its users first. Our promises to you:
           </p>
           <ul className="pl-6 mb-4 text-gray-700 list-disc">
-            <li><strong>Always Free:</strong> Core features will never be locked behind paywalls</li>
-            <li><strong>Privacy Focused:</strong> Your data is yours, and we'll never sell it</li>
-            <li><strong>Transparent:</strong> Open-source code means you can see exactly what we do</li>
-            <li><strong>Community-Driven:</strong> Feature development guided by user needs</li>
-            <li><strong>Reliable:</strong> Built to last with modern, scalable technology</li>
+            <li>
+              <strong>Always Free:</strong> Core features will never be locked
+              behind paywalls
+            </li>
+            <li>
+              <strong>Privacy Focused:</strong> Your data is yours, and we'll
+              never sell it
+            </li>
+            <li>
+              <strong>Transparent:</strong> Open-source code means you can see
+              exactly what we do
+            </li>
+            <li>
+              <strong>Community-Driven:</strong> Feature development guided by
+              user needs
+            </li>
+            <li>
+              <strong>Reliable:</strong> Built to last with modern, scalable
+              technology
+            </li>
           </ul>
         </section>
 
@@ -230,7 +289,8 @@ const About = () => {
             Get Started Today
           </h2>
           <p className="mb-6 leading-relaxed text-gray-700">
-            Ready to create your own beautiful link-in-bio page? Join thousands of users who've already made the switch to Lynkr.
+            Ready to create your own beautiful link-in-bio page? Join thousands
+            of users who've already made the switch to Lynkr.
           </p>
           <div className="text-center">
             <Link
