@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - ⚡ Everything uses React-Icons or Lucide-React insted of SVGs to provide consistency.
 - ⚡ Added Username and Bio to onboarding (Optional)
+- ⚡ Added a wanring when clicking on "NSFW" links
 
 ### 🔧 Bug Fixes
 
