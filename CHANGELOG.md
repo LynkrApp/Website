@@ -16,6 +16,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk link import/export
 - Link scheduling
 
+## [0.3.0] - 2025-08-08
+
+### 🚀 New Features
+
+- ✨ Update the codebase to use TypeScript
+- ✨ Formating changes
+- ✨ Added New CLI to convert Mongodb data to MySQL
+
+### ⚡ Improvements
+
+- ⚡ Everything uses React-Icons or Lucide-React insted of SVGs to provide consistency.
+- ⚡ Added Username and Bio to onboarding (Optional)
+- ⚡ Added a wanring when clicking on "NSFW" links
+
+### 🔧 Bug Fixes
+
+- 🐛 Fixed the og
+- 🐛 Fixed API praising bugs
+
 ## [0.2.0] - 2025-08-07
 
 ### 🚀 New Features
@@ -168,7 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Technical Features**
   - Server-side rendering with Next.js 13
-  - PostgreSQL database with Prisma ORM
+  - MySQL database with Prisma ORM
   - Responsive design with Tailwind CSS
   - Component library with Radix UI
   - Smooth animations with Framer Motion
