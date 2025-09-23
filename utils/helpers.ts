@@ -105,5 +105,3 @@ export type OgStyles = {
   showStats?: boolean;
   backgroundOpacity?: number;
 };
-
-

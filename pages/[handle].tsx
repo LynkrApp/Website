@@ -18,11 +18,20 @@ import AnimatedBackground from '@/components/core/animated-backgrounds/animated-
 import { ProfilePageMeta } from '@/components/meta/metadata';
 import TabbedSections from '@/components/core/user-profile/tabbed-sections';
 
-type ProfilePageProps = {
-  serverHandle?: string | null;
+type ServerUser = {
+  id?: string;
+  handle?: string;
+  name?: string | null;
+  bio?: string | null;
+  image?: string | null;
 };
 
-const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
+type ProfilePageProps = {
+  serverHandle?: string | null;
+  serverUser?: ServerUser | null;
+};
+
+const ProfilePage = ({ serverHandle, serverUser }: ProfilePageProps) => {
   const { query } = useRouter();
   const { handle } = query;
   const normalizedHandle =
@@ -51,7 +60,7 @@ const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
   const queryClient = useQueryClient();
   const [, setIsDataLoaded] = useState(false);
 
-  const user = fetchedUser as any;
+  const user = (fetchedUser as any) || (serverUser as any);
   const links = (userLinks as any[]) || [];
   const sectionList = (sections as any[]) || [];
 
@@ -120,9 +129,9 @@ const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
       <>
         <ProfilePageMeta
           handle={effectiveHandle}
-          name={undefined}
-          bio={'Welcome to Lynkr'}
-          user={undefined}
+          name={serverUser?.name || undefined}
+          bio={serverUser?.bio || 'Welcome to Lynkr'}
+          user={serverUser || undefined}
         />
         <Loader
           message={'Loading...'}
@@ -141,9 +150,9 @@ const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
       <>
         <ProfilePageMeta
           handle={effectiveHandle}
-          name={effectiveHandle ? `@${effectiveHandle}` : undefined}
-          bio={'Welcome to Lynkr'}
-          user={undefined}
+          name={serverUser?.name || (effectiveHandle ? `@${effectiveHandle}` : undefined)}
+          bio={serverUser?.bio || 'Welcome to Lynkr'}
+          user={serverUser || undefined}
         />
         <NotFound />
       </>
@@ -491,3 +500,39 @@ const ProfilePage = ({ serverHandle }: ProfilePageProps) => {
 };
 
 export default ProfilePage;
+
+export async function getServerSideProps(context) {
+  const handleParam = context.params?.handle as string | undefined;
+
+  if (!handleParam) {
+    return { props: { serverHandle: null, serverUser: null } };
+  }
+
+  try {
+    // Fetch minimal user data for meta tags on the server
+    const { db } = await import('@/lib/db');
+    const serverUser = await db.user.findUnique({
+      where: { handle: handleParam },
+      select: {
+        id: true,
+        handle: true,
+        name: true,
+        bio: true,
+        image: true,
+        themePalette: true,
+        ogStyles: true,
+        _count: { select: { pageViews: true } },
+        links: { where: { archived: false }, select: { id: true, clicks: true } },
+      },
+    });
+
+    return {
+      props: {
+        serverHandle: handleParam,
+        serverUser: serverUser || null,
+      },
+    };
+  } catch (e) {
+    return { props: { serverHandle: handleParam, serverUser: null } };
+  }
+}
