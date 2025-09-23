@@ -16,6 +16,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bulk link import/export
 - Link scheduling
 
+## [0.3.1] - 2025-09-23  
+### 🚀 New Features  
+- 🌐 **Social Meta Customization** — users can now fully customize how their Lynkr profile looks when shared on social media (custom backgrounds, layouts, typography, and live preview).  
+- ⚠️ **NSFW Warning Modal** — added age verification prompt for links marked as sensitive.  
+
+### ⚡ Improvements  
+- 🔄 Migrated database from **PostgreSQL → MySQL** for better performance and consistency.  
+- 🎨 Unified all icons under **react-icons** for improved consistency across the app.  
+- 🔐 Refactored user authentication logic with enhanced API responses for smoother login and onboarding.  
+- 🛠️ Improved Open Graph (OG) logic for better link previews.  
+- 🖼️ Added real-time theme application for meta images when sharing links.  
+
+### 🐛 Bug Fixes  
+- 🎯 Fixed dashboard navbar text color and hover states.  
+- ⚙️ Resolved minor layout, icon, and preview inconsistencies.  
+
 ## [0.3.0] - 2025-08-08
 
 ### 🚀 New Features
