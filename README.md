@@ -121,12 +121,14 @@
 │   ├── shared/         # Shared components across features
 │   └── utils/          # Utility components
 ├── hooks/              # Custom React hooks
+├── types/              # All typings
 ├── lib/                # Utility libraries and configurations
 ├── pages/              # Next.js pages (file-based routing)
 │   ├── api/           # API routes
 │   ├── admin/         # Admin dashboard pages
 │   └── auth/          # Authentication pages
 ├── prisma/             # Database schema and migrations
+├── scripts/            # Database migration scripts
 ├── public/             # Static assets
 ├── styles/             # Global styles
 └── utils/              # Helper functions
