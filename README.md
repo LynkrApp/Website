@@ -33,7 +33,7 @@
 ## 🛠️ Tech Stack
 
 - **Framework:** [Next.js 13](https://nextjs.org/)
-- **Database:** [Prisma](https://prisma.io/) with Mongoose
+- **Database:** [Prisma](https://prisma.io/) with MySQL
 - **Authentication:** [NextAuth.js](https://next-auth.js.org/)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Components:** [Radix UI](https://radix-ui.com/)
@@ -48,7 +48,7 @@
 
 - Node.js 18+ 
 - npm or yarn or bun
-- Mongoose database
+- MySQL database
 
 ### Installation
 
@@ -75,7 +75,7 @@
    Fill in your environment variables:
    ```env
    # Database
-   DATABASE_URL="mongodb://username:password@localhost:27017/lynkr"
+   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASEr"
    
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
@@ -116,16 +116,19 @@
 ├── components/          # Reusable UI components
 │   ├── core/           # Core application components
 │   ├── layout/         # Layout components
+│   ├── meta  /         # Meta components
 │   ├── root/           # Root level components (navbar, footer)
 │   ├── shared/         # Shared components across features
 │   └── utils/          # Utility components
 ├── hooks/              # Custom React hooks
+├── types/              # All typings
 ├── lib/                # Utility libraries and configurations
 ├── pages/              # Next.js pages (file-based routing)
 │   ├── api/           # API routes
 │   ├── admin/         # Admin dashboard pages
 │   └── auth/          # Authentication pages
 ├── prisma/             # Database schema and migrations
+├── scripts/            # Database migration scripts
 ├── public/             # Static assets
 ├── styles/             # Global styles
 └── utils/              # Helper functions
