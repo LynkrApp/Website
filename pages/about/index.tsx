@@ -183,8 +183,8 @@ const About = () => {
               <div>
                 <h4 className="mb-2 font-semibold text-gray-900">Frontend</h4>
                 <ul className="space-y-1 text-sm text-gray-700">
-                  <li>Next.js 13</li>
-                  <li>React 18</li>
+                  <li>Next.js 15</li>
+                  <li>React 19</li>
                   <li>Tailwind CSS</li>
                   <li>React Query</li>
                 </ul>
