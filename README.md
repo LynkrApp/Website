@@ -12,7 +12,8 @@
   [![GitHub License](https://img.shields.io/github/license/LynkrApp/Website?style=for-the-badge)](https://github.com/LynkrApp/Website/blob/main/LICENSE)
   [![Discord](https://img.shields.io/discord/1387524650895933540?style=for-the-badge&logo=discord)](https://discord.gg/g76w2v7RzG)
 
-  [🌐 Live Demo](https://lynkr.link) • [📖 Documentation](#getting-started) • [🐛 Report Bug](https://github.com/LynkrApp/Website/issues) • [💡 Request Feature](https://github.com/LynkrApp/Website/issues)
+[🌐 Live Demo](https://lynkr.link) • [📖 Documentation](#getting-started) • [🐛 Report Bug](https://github.com/LynkrApp/Website/issues) • [💡 Request Feature](https://github.com/LynkrApp/Website/issues)
+
 </div>
 
 ---
@@ -46,19 +47,21 @@
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn or bun
 - MySQL database
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/LynkrApp/Website.git
    cd Website
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    # or
@@ -68,37 +71,41 @@
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Fill in your environment variables:
+
    ```env
    # Database
-   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASEr"
-   
+   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
+
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-secret-key"
-   
+
    # OAuth Providers
    GOOGLE_CLIENT_ID="your-google-client-id"
    GOOGLE_CLIENT_SECRET="your-google-client-secret"
-   
+
    GITHUB_CLIENT_ID="your-github-client-id"
    GITHUB_CLIENT_SECRET="your-github-client-secret"
-   
+
    DISCORD_CLIENT_ID="your-discord-client-id"
    DISCORD_CLIENT_SECRET="your-discord-client-secret"
    ```
 
 4. **Set up the database**
+
    ```bash
    npx prisma migrate dev
    npx prisma generate
    ```
 
 5. **Run the development server**
+
    ```bash
    npm run dev
    # or
