@@ -8,14 +8,13 @@ import { FaDiscord, FaGithub, FaGoogle } from 'react-icons/fa';
 import React from 'react';
 import ReAuthModal from '@/components/shared/modals/reauth-modal';
 import { CheckCircle, X, Link as LinkIcon } from 'lucide-react';
-import type { IconType } from 'react-icons';
 
 const AccountLinking = () => {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const [loadingProvider, setLoadingProvider] = useState(null);
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
   const [showReAuthModal, setShowReAuthModal] = useState(false);
-  const [providerToLink, setProviderToLink] = useState(null);
+  const [providerToLink, setProviderToLink] = useState<string | null>(null);
 
   // Fetch linked accounts
   const {
@@ -32,41 +31,55 @@ const AccountLinking = () => {
   });
 
   // Handle re-authentication completion
-  const handleReAuthCompletion = useCallback(async (token, linkProvider) => {
-    try {
-      console.log(
-        'Re-auth completed, will start linking in 2 seconds...',
-        linkProvider
-      );
-      setLoadingProvider(linkProvider);
+  const handleReAuthCompletion = useCallback(
+    async (token: string, linkProvider: string) => {
+      try {
+        console.log(
+          'Re-auth completed, will start linking in 2 seconds...',
+          linkProvider
+        );
+        setLoadingProvider(linkProvider);
 
-      // Add a delay to ensure the previous OAuth flow has fully completed
-      // This prevents OAuth state conflicts between GitHub reauth and Discord linking
-      setTimeout(() => {
-        console.log('Starting Discord OAuth flow for account linking');
-        signIn(linkProvider, {
-          callbackUrl: `/admin/settings?tab=accounts&action=complete&token=${token}`,
-        });
-      }, 2000); // 2 second delay to ensure OAuth state is cleared
-    } catch (error) {
-      console.error('Error completing re-auth:', error);
-      toast.error('Failed to complete account linking');
-      setLoadingProvider(null);
-    }
-  }, []);
+        // Add a delay to prevent OAuth state conflicts
+        setTimeout(() => {
+          console.log(
+            'Starting OAuth flow for account linking with:',
+            linkProvider
+          );
+          signIn(linkProvider, {
+            callbackUrl: `/admin/settings?tab=accounts&action=complete&token=${token}&linkProvider=${linkProvider}`,
+          });
+        }, 2000);
+      } catch (error) {
+        console.error('Error completing re-auth:', error);
+        toast.error('Failed to complete account linking');
+        setLoadingProvider(null);
+      }
+    },
+    []
+  );
 
   // Handle account linking completion
   const handleLinkCompletion = useCallback(
-    async (token) => {
+    async (token: string, linkProvider: string | null) => {
       try {
-        console.log('Processing account link completion with token:', token);
+        console.log(
+          'Processing account link completion with token:',
+          token,
+          'provider:',
+          linkProvider
+        );
 
-        const response = await axios.post('/api/auth/process-link', { token });
+        const response = await axios.post('/api/auth/process-link', {
+          token,
+          linkProvider,
+        });
 
         if (response.status === 200) {
           toast.success('Account linked successfully!');
-          refetch(); // Refresh the linked accounts list
+          refetch();
           setLoadingProvider(null);
+          setProviderToLink(null);
         }
       } catch (error) {
         console.error('Error completing account link:', error);
@@ -75,6 +88,7 @@ const AccountLinking = () => {
           : undefined;
         toast.error(message || 'Failed to link account');
         setLoadingProvider(null);
+        setProviderToLink(null);
       }
     },
     [refetch]
@@ -94,37 +108,23 @@ const AccountLinking = () => {
     });
 
     if (action === 'link') {
-      // Refresh the linked accounts data after regular sign-in
       refetch();
       setLoadingProvider(null);
-      // Clear URL to prevent re-triggering
       window.history.replaceState({}, '', '/admin/settings?tab=accounts');
     } else if (action === 'reauth' && token && linkProvider) {
-      // Handle re-authentication completion
-      console.log(
-        'Re-authentication completed, preparing to link:',
-        linkProvider
-      );
-
-      // Clear the URL parameters first to prevent re-triggering
-      const newUrl = window.location.pathname + '?tab=accounts';
-      window.history.replaceState({}, '', newUrl);
-
-      // Add a delay and then trigger the Discord linking
+      // Clear URL first to prevent re-triggering
+      window.history.replaceState({}, '', '/admin/settings?tab=accounts');
       handleReAuthCompletion(token, linkProvider);
     } else if (action === 'complete' && token) {
-      // Handle account linking completion
-      console.log('CALLING handleLinkCompletion with token:', token);
-      handleLinkCompletion(token);
-
       // Clear URL immediately to prevent duplicate calls
       window.history.replaceState({}, '', '/admin/settings?tab=accounts');
+      handleLinkCompletion(token, linkProvider);
     }
   }, [refetch, handleLinkCompletion, handleReAuthCompletion]);
 
   // Unlink account mutation
   const unlinkMutation = useMutation({
-    mutationFn: async (provider) => {
+    mutationFn: async (provider: string) => {
       await axios.delete(`/api/auth/unlink-account?provider=${provider}`);
     },
     onSuccess: () => {
@@ -160,14 +160,16 @@ const AccountLinking = () => {
     },
   ] as const;
 
-  const handleLinkAccount = (providerId) => {
+  const handleLinkAccount = (providerId: string) => {
     setProviderToLink(providerId);
     setShowReAuthModal(true);
   };
 
   const handleReAuthSuccess = () => {
     setShowReAuthModal(false);
-    setLoadingProvider(providerToLink);
+    if (providerToLink) {
+      setLoadingProvider(providerToLink);
+    }
   };
 
   const handleCloseReAuthModal = () => {
@@ -175,7 +177,7 @@ const AccountLinking = () => {
     setProviderToLink(null);
   };
 
-  const handleUnlinkAccount = (provider) => {
+  const handleUnlinkAccount = (provider: string) => {
     if (linkedAccounts?.length <= 1) {
       toast.error('You must have at least one linked account');
       return;
@@ -183,8 +185,10 @@ const AccountLinking = () => {
     unlinkMutation.mutate(provider);
   };
 
-  const isLinked = (providerId) => {
-    return linkedAccounts?.some((account) => account.provider === providerId);
+  const isLinked = (providerId: string) => {
+    return linkedAccounts?.some(
+      (account: any) => account.provider === providerId
+    );
   };
 
   if (isLoading) {
@@ -212,9 +216,7 @@ const AccountLinking = () => {
         <div className="space-y-4">
           {providers.map((provider) => {
             const linked = isLinked(provider.id);
-            const IconComponent = provider.icon as React.ComponentType<
-              React.SVGProps<SVGSVGElement>
-            >;
+            const IconComponent = provider.icon;
 
             return (
               <div
