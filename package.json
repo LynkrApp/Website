@@ -48,13 +48,13 @@
     "mongodb": "^5.9.0",
     "ms": "^2.1.3",
     "nanoid": "^4.0.2",
-    "next": "13.5.9",
+    "next": "^15.5.4",
     "next-auth": "^4.22.4",
     "postcss": "8.4.23",
     "qrcode.react": "^3.1.0",
-    "react": "18.2.0",
+    "react": "^19.1.1",
     "react-colorful": "^5.6.1",
-    "react-dom": "18.2.0",
+    "react-dom": "^19.1.1",
     "react-dom-confetti": "^0.2.0",
     "react-dropzone": "^14.2.3",
     "react-hot-toast": "^2.4.1",
@@ -72,14 +72,14 @@
     "zustand": "^4.3.9"
   },
   "devDependencies": {
-    "@types/react": "18.2.0",
-    "@types/react-dom": "18.2.0",
+    "@types/react": "^19.1.15",
+    "@types/react-dom": "^19.1.9",
     "eslint": "^8.48.0",
     "eslint-config-prettier": "^9.0.0",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3",
-    "prisma": "^6.13.0"
+    "prisma": "^6.16.2"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix",

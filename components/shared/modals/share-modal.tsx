@@ -4,7 +4,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as Tabs from '@radix-ui/react-tabs';
 import Image from 'next/image';
 import { QRCodeCanvas } from 'qrcode.react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import useCurrentUser from '@/hooks/useCurrentUser';
 import { getCurrentBaseURL } from '@/utils/helpers';
@@ -15,6 +15,7 @@ const ShareModal = () => {
   const userProfileLink = `${baseURL}/${currentUser?.handle}`;
 
   const [isCopied, setIsCopied] = useState(false);
+  const qrCodeRef = useRef<HTMLDivElement>(null);
 
   const goTo = siteConfig.redirects;
 
@@ -27,22 +28,85 @@ const ShareModal = () => {
     }, 2000);
   };
 
-  const downloadQRCode = () => {
-    const canvas = document.getElementById(
-      'qr-code'
-    ) as HTMLCanvasElement | null;
+  const downloadQRCode = async () => {
+    const canvas = document.getElementById('qr-code') as HTMLCanvasElement | null;
     if (!canvas) return;
-    const pngUrl = canvas
-      .toDataURL('image/png')
-      .replace('image/png', 'image/octet-stream');
-    let downloadLink = document.createElement('a');
-    downloadLink.href = pngUrl;
-    downloadLink.download = currentUser?.handle
-      ? `${currentUser?.handle}.png`
-      : 'qr-code.png';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+
+    try {
+      // Create a new canvas to avoid CORS issues
+      const newCanvas = document.createElement('canvas');
+      const ctx = newCanvas.getContext('2d');
+      
+      if (!ctx) {
+        toast.error('Failed to create canvas context');
+        return;
+      }
+
+      // Set canvas dimensions
+      newCanvas.width = canvas.width;
+      newCanvas.height = canvas.height;
+
+      // Draw white background
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+      // Draw the QR code (this part is safe as it's already rendered)
+      ctx.drawImage(canvas, 0, 0);
+
+      // If there's a user image, we need to handle it separately with CORS
+      if (currentUser?.image) {
+        try {
+          // Create a CORS-enabled image
+          const img = new window.Image();
+          img.crossOrigin = 'anonymous';
+          
+          // Use a promise to wait for image load
+          await new Promise<void>((resolve, reject) => {
+            img.onload = () => {
+              // Calculate center position for the logo
+              const logoSize = 40;
+              const x = (newCanvas.width - logoSize) / 2;
+              const y = (newCanvas.height - logoSize) / 2;
+              
+              // Draw white background for logo
+              ctx.fillStyle = '#ffffff';
+              ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+              
+              // Draw the logo
+              ctx.drawImage(img, x, y, logoSize, logoSize);
+              resolve();
+            };
+            
+            img.onerror = () => {
+              console.warn('Failed to load user image, proceeding without it');
+              resolve(); // Continue even if image fails
+            };
+
+            // Try to use a proxied version or the original
+            img.src = currentUser.image;
+          });
+        } catch (error) {
+          console.warn('Error loading user image:', error);
+          // Continue with QR code without the user image
+        }
+      }
+
+      // Export the canvas
+      const pngUrl = newCanvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.href = pngUrl;
+      downloadLink.download = currentUser?.handle
+        ? `${currentUser.handle}-qr.png`
+        : 'qr-code.png';
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      
+      toast.success('QR Code downloaded successfully!');
+    } catch (error) {
+      console.error('Error downloading QR code:', error);
+      toast.error('Failed to download QR Code. Please try again.');
+    }
   };
 
   return (
@@ -93,6 +157,7 @@ const ShareModal = () => {
                           target="_blank"
                           href={goTo.twitter}
                           className="underline"
+                          rel="noopener noreferrer"
                         >
                           Twitter
                         </a>
@@ -101,6 +166,7 @@ const ShareModal = () => {
                           target="_blank"
                           href={goTo.instagram}
                           className="underline"
+                          rel="noopener noreferrer"
                         >
                           Instagram
                         </a>{' '}
@@ -109,6 +175,7 @@ const ShareModal = () => {
                           target="_blank"
                           href={goTo.linkedin}
                           className="underline"
+                          rel="noopener noreferrer"
                         >
                           LinkedIn
                         </a>{' '}
@@ -135,22 +202,18 @@ const ShareModal = () => {
                 </Tabs.Content>
 
                 <Tabs.Content value="QR">
-                  <QRCodeCanvas
-                    className="mx-auto w-full"
-                    id="qr-code"
-                    size={256}
-                    includeMargin={true}
-                    level="H"
-                    value={userProfileLink}
-                    imageSettings={{
-                      src: `${currentUser?.image}`,
-                      x: undefined,
-                      y: undefined,
-                      height: 40,
-                      width: 40,
-                      excavate: true,
-                    }}
-                  />
+                  <div ref={qrCodeRef}>
+                    <QRCodeCanvas
+                      className="mx-auto w-full"
+                      id="qr-code"
+                      size={256}
+                      includeMargin={true}
+                      level="H"
+                      value={userProfileLink}
+                      // Remove imageSettings to avoid CORS issues
+                      // The user image will be added during download
+                    />
+                  </div>
 
                   <p className="mt-4 text-center text-gray-700">
                     Share this QR code with your audience to provide access to
@@ -159,7 +222,7 @@ const ShareModal = () => {
                   <button
                     onClick={downloadQRCode}
                     className="mt-4 w-full py-3 px-4 text-center text-white bg-slate-900 hover:bg-slate-700
-					          rounded-md focus:outline-none focus:shadow-outline-blue"
+                      rounded-md focus:outline-none focus:shadow-outline-blue"
                   >
                     Download QR Code
                   </button>

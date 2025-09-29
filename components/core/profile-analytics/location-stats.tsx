@@ -46,7 +46,7 @@ export const LocationStats = ({
                     {location ? (
                       <div className="h-8 w-8 border rounded-full">
                         <img
-                          src={`https://flag.vercel.app/m/${location}.svg`}
+                          src={`https://flag.vercel.app/l/${location}.svg`}
                           alt={location}
                           className="h-8 w-8 blur-0 rounded-full lg:h-8 lg:w-8"
                           loading="lazy"
