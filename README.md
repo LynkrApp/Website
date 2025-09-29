@@ -80,8 +80,9 @@
 
    ```env
    # Database
-   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
-
+   DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASEr"
+  
+  
    # NextAuth
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-secret-key"
