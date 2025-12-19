@@ -21,9 +21,9 @@ export default async function handler(
           url,
           order,
           userId: currentUser.id,
-          isSocial: isSocial === true, // Ensure boolean conversion
-          isNSFWLink: isNSFW === true,
-          showFavicon: showFavicon !== undefined ? Boolean(showFavicon) : true, // Ensure proper boolean conversion with default
+          isSocial: Boolean(isSocial),
+          isNSFWLink: Boolean(isNSFW),
+          showFavicon: showFavicon !== undefined ? Boolean(showFavicon) : true,
           ...(sectionId && { sectionId }),
         },
       });
@@ -34,32 +34,48 @@ export default async function handler(
     if (req.method === 'GET') {
       const { userId } = req.query as { userId?: string };
 
-      let links;
-
-      if (userId && typeof userId === 'string') {
-        links = await db.link.findMany({
-          where: {
-            userId,
-          },
-          include: {
-            user: true,
-            section: true,
-          },
-          orderBy: {
-            // createdAt: "desc",
-            order: 'asc',
-          },
-        });
+      if (!userId || typeof userId !== 'string') {
+        return res.status(400).json({ message: 'Missing userId' });
       }
+
+      const links = await db.link.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          section: true,
+        },
+        orderBy: {
+          order: 'asc',
+        },
+      });
 
       return res.status(200).json(links);
     }
 
     if (req.method === 'PUT') {
+      const { currentUser } = await serverAuth(req, res);
       const { links } = req.body;
-      console.log('links', links);
 
-      await Promise.all(
+      if (!Array.isArray(links)) {
+        return res.status(400).json({ message: 'Invalid links array' });
+      }
+
+      // Verify ownership of all links
+      const linkIds = links.map((l: any) => l.id);
+      const userLinks = await db.link.findMany({
+        where: {
+          id: { in: linkIds },
+          userId: currentUser.id,
+        },
+        select: { id: true },
+      });
+
+      if (userLinks.length !== links.length) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+
+      await db.$transaction(
         links.map(({ id }: { id: string }, index: number) =>
           db.link.update({
             where: {
@@ -71,10 +87,12 @@ export default async function handler(
           })
         )
       );
-      res.status(200).json({ msg: 'link order updated' });
+      return res.status(200).json({ message: 'Link order updated' });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).end();
+  } catch (error: any) {
+    console.error('LINKS_API_ERROR:', error);
+    return res.status(error.message === 'Not signed in' ? 401 : 500).json({
+      message: error.message || 'Internal server error',
+    });
   }
 }

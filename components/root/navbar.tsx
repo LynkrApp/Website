@@ -1,13 +1,20 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { Menu, X, Settings, LogOut } from 'lucide-react';
+import { Menu, X, Settings, LogOut, Shield } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import UserAccountNavDesktop from '../utils/usernavbutton-desktop';
 
-const Navbar = ({ transparent = false, className = '' }) => {
+interface NavbarProps {
+  transparent?: boolean;
+  className?: string;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ transparent = false, className = '' }) => {
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -15,6 +22,9 @@ const Navbar = ({ transparent = false, className = '' }) => {
   const handleSignOut = () => {
     signOut({ callbackUrl: '/' });
   };
+
+  // Check if user is admin or super admin
+  const isStaff = session?.user?.role === 'ADMIN' || session?.user?.role === 'SUPERADMIN';
 
   const navLinks = [
     { href: '/about', label: 'About' },
@@ -107,6 +117,23 @@ const Navbar = ({ transparent = false, className = '' }) => {
                           Settings
                         </Link>
                       </DropdownMenu.Item>
+                      
+                      {/* Staff Dashboard - Only visible to ADMIN and SUPERADMIN */}
+                      {isStaff && (
+                        <>
+                          <DropdownMenu.Separator className="h-px my-1 bg-slate-700" />
+                          <DropdownMenu.Item asChild>
+                            <Link
+                              href="/staff/user"
+                              className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer text-purple-300 hover:bg-purple-900/30 hover:text-purple-200"
+                            >
+                              <Shield className="w-4 h-4" />
+                              Staff Dashboard
+                            </Link>
+                          </DropdownMenu.Item>
+                        </>
+                      )}
+
                       <DropdownMenu.Separator className="h-px my-1 bg-slate-700" />
                       <DropdownMenu.Item
                         onClick={handleSignOut}
@@ -165,6 +192,27 @@ const Navbar = ({ transparent = false, className = '' }) => {
                       <Settings className="w-4 h-4" />
                       Dashboard
                     </Link>
+                    <Link
+                      href="/admin/settings"
+                      className="flex items-center gap-3 py-2 font-medium transition-colors text-slate-300 hover:text-white"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <Settings className="w-4 h-4" />
+                      Settings
+                    </Link>
+
+                    {/* Staff Dashboard - Mobile */}
+                    {isStaff && (
+                      <Link
+                        href="/staff/user"
+                        className="flex items-center gap-3 py-2 font-medium transition-colors text-purple-300 hover:text-purple-200"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        <Shield className="w-4 h-4" />
+                        Staff Dashboard
+                      </Link>
+                    )}
+
                     <button
                       onClick={() => {
                         handleSignOut();
