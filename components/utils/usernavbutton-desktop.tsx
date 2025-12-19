@@ -5,7 +5,7 @@ import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
-import { User, LogOut, AlertCircle } from 'lucide-react';
+import { User, LogOut, AlertCircle, ShieldCheck } from 'lucide-react';
 import useMediaQuery from '@/hooks/use-media-query';
 import { Drawer } from 'vaul';
 import UserNavButtonMobile from './usernavbutton-mobile';
@@ -56,6 +56,17 @@ const UserAccountNavDesktop = () => {
               <User size={17} color="gray" />
               <h4 className="w-full truncate text-black">{data.user.name}</h4>
             </Link>
+            {(data.user as any)?.role &&
+              ((data.user as any).role === 'ADMIN' ||
+                (data.user as any).role === 'SUPERADMIN') && (
+                <Link
+                  href="/staff/user"
+                  className="flex items-center w-full gap-2 p-3 text-sm font-medium text-gray-500 transition-all duration-75 rounded-md group hover:bg-gray-100"
+                >
+                  <ShieldCheck size={17} color="gray" />
+                  <h4 className="w-full truncate text-black">Staff</h4>
+                </Link>
+              )}
             <Link
               target="_blank"
               href="https://github.com/LynkrApp/Website/issues/new/choose"

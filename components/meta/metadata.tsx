@@ -173,6 +173,7 @@ export const AdminPageMeta = ({ pageType, ...props }) => {
     analytics: 'Analytics',
     customize: 'Customize',
     settings: 'Settings',
+    staff: 'Staff Management',
   };
 
   return (
@@ -180,7 +181,7 @@ export const AdminPageMeta = ({ pageType, ...props }) => {
       title={titles[pageType] || 'Admin'}
       description="Manage your Lynkr profile and links."
       image={defaultConfig.defaultImage}
-      url={'/admin'}
+      url={pageType === 'staff' ? '/staff/user' : '/admin'}
       noIndex={true}
       {...props}
     />
