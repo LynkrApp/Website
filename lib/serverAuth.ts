@@ -20,14 +20,32 @@ const serverAuth = async (req: NextApiRequest, res: NextApiResponse) => {
   if (userId) {
     currentUser = await db.user.findUnique({
       where: { id: userId },
-      include: { accounts: true },
+      include: {
+        accounts: {
+          select: {
+            id: true,
+            provider: true,
+            userRole: true,
+            isBanned: true,
+          },
+        },
+      },
     });
   }
 
   if (!currentUser && userEmail) {
     currentUser = await db.user.findUnique({
       where: { email: userEmail },
-      include: { accounts: true },
+      include: {
+        accounts: {
+          select: {
+            id: true,
+            provider: true,
+            userRole: true,
+            isBanned: true,
+          },
+        },
+      },
     });
   }
 

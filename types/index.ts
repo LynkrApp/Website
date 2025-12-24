@@ -57,3 +57,30 @@ export type PublicUser = {
   typographyTheme?: TypographyTheme;
   [key: string]: any;
 };
+
+export enum UserRole {
+  SUPERADMIN = 'SUPERADMIN',
+  ADMIN = 'ADMIN',
+  USER = 'USER',
+}
+
+export type Account = {
+  id: string;
+  userId: string;
+  type: string;
+  provider: string;
+  providerAccountId: string;
+  refresh_token?: string | null;
+  access_token?: string | null;
+  expires_at?: number | null;
+  token_type?: string | null;
+  scope?: string | null;
+  id_token?: string | null;
+  userRole: UserRole;
+  isBanned?: boolean;
+  session_state?: string | null;
+  oauth_token_secret?: string | null;
+  oauth_token?: string | null;
+  legacyObjectId?: string | null;
+  [key: string]: any;
+};

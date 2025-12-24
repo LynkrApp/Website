@@ -93,6 +93,10 @@ export const authOptions: AuthOptions = {
             (acc) => acc.provider === account.provider
           );
           if (hasThisProvider) {
+            const isBanned = existingUser.accounts.some((acc) => acc.isBanned);
+            if (isBanned) {
+              return false;
+            }
             return true;
           }
         }
@@ -158,6 +162,8 @@ export const authOptions: AuthOptions = {
         session.user.name = token.name;
         session.user.email = token.email;
         session.user.handle = token.handle;
+        session.user.isBanned = token.isBanned;
+        session.user.role = token.role;
       }
       return session;
     },
@@ -166,6 +172,9 @@ export const authOptions: AuthOptions = {
       const dbUser = await db.user.findFirst({
         where: {
           email: token.email,
+        },
+        include: {
+          accounts: true,
         },
       });
 
@@ -183,6 +192,12 @@ export const authOptions: AuthOptions = {
         handle: dbUser.handle, // This will be undefined for new users, which is what we want
         buttonStyle: dbUser.buttonStyle,
         themePalette: dbUser.themePalette,
+        isBanned: dbUser.accounts.some((acc) => acc.isBanned),
+        role: dbUser.accounts.some((acc) => acc.userRole === 'SUPERADMIN')
+          ? 'SUPERADMIN'
+          : dbUser.accounts.some((acc) => acc.userRole === 'ADMIN')
+          ? 'ADMIN'
+          : 'USER',
       };
     },
 

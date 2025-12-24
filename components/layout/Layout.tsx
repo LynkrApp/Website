@@ -12,13 +12,13 @@ const Layout = ({ children }) => {
         <Navbar showName={false} isHomePage={false} />
         <main className="bg-[#f8ebeb] flex flex-row h-screen z-0 ">
           {children}
-          {router.pathname != '/admin/analytics' && (
+          {router.pathname != '/admin/analytics' && !router.pathname.startsWith('/staff') && (
             <div className="hidden pl-4 lg:my-auto lg:block lg:basis-2/5">
               <Preview />
             </div>
           )}
 
-          <PreviewBtn />
+          {!router.pathname.startsWith('/staff') && <PreviewBtn />}
         </main>
       </section>
     </>

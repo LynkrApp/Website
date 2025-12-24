@@ -1,8 +1,17 @@
 import { db } from '@/lib/db';
 import serverAuth from '@/lib/serverAuth';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST' && req.method !== 'GET' && req.method !== 'PUT' && req.method !== 'DELETE') {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (
+    req.method !== 'POST' &&
+    req.method !== 'GET' &&
+    req.method !== 'PUT' &&
+    req.method !== 'DELETE'
+  ) {
     return res.status(405).end();
   }
 
@@ -25,34 +34,53 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       const { userId } = req.query;
 
-      let sections;
+      if (!userId || typeof userId !== 'string') {
+        return res.status(400).json({ message: 'Missing userId' });
+      }
 
-      if (userId && typeof userId === 'string') {
-        sections = await db.section.findMany({
-          where: {
-            userId,
-          },
-          include: {
-            links: {
-              orderBy: {
-                order: 'asc',
-              },
+      const sections = await db.section.findMany({
+        where: {
+          userId,
+        },
+        include: {
+          links: {
+            orderBy: {
+              order: 'asc',
             },
           },
-          orderBy: {
-            order: 'asc',
-          },
-        });
-      }
+        },
+        orderBy: {
+          order: 'asc',
+        },
+      });
 
       return res.status(200).json(sections);
     }
 
     if (req.method === 'PUT') {
+      const { currentUser } = await serverAuth(req, res);
       const { sections } = req.body;
 
-      await Promise.all(
-        sections.map(({ id }, index) =>
+      if (!Array.isArray(sections)) {
+        return res.status(400).json({ message: 'Invalid sections array' });
+      }
+
+      // Verify ownership
+      const sectionIds = sections.map((s: any) => s.id);
+      const userSections = await db.section.findMany({
+        where: {
+          id: { in: sectionIds },
+          userId: currentUser.id,
+        },
+        select: { id: true },
+      });
+
+      if (userSections.length !== sections.length) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+
+      await db.$transaction(
+        sections.map(({ id }: { id: string }, index: number) =>
           db.section.update({
             where: {
               id,
@@ -63,36 +91,56 @@ export default async function handler(req, res) {
           })
         )
       );
-      res.status(200).json({ msg: 'section order updated' });
+      return res.status(200).json({ message: 'Section order updated' });
     }
 
     if (req.method === 'DELETE') {
       const { currentUser } = await serverAuth(req, res);
       const { sectionId } = req.query;
 
-      // Move all links in this section to no section (sectionId = null)
-      await db.link.updateMany({
-        where: {
-          sectionId: sectionId,
-          userId: currentUser.id,
-        },
-        data: {
-          sectionId: null,
-        },
-      });
+      if (!sectionId || typeof sectionId !== 'string') {
+        return res.status(400).json({ message: 'Missing sectionId' });
+      }
 
-      // Delete the section
-      await db.section.delete({
+      // Verify ownership before deleting
+      const section = await db.section.findUnique({
         where: {
           id: sectionId,
-          userId: currentUser.id,
         },
       });
 
-      return res.status(200).json({ msg: 'section deleted' });
+      if (!section) {
+        return res.status(404).json({ message: 'Section not found' });
+      }
+
+      if (section.userId !== currentUser.id) {
+        return res.status(403).json({ message: 'Unauthorized' });
+      }
+
+      // Perform deletion and link update in transaction
+      await db.$transaction([
+        db.link.updateMany({
+          where: {
+            sectionId: sectionId,
+            userId: currentUser.id,
+          },
+          data: {
+            sectionId: null,
+          },
+        }),
+        db.section.delete({
+          where: {
+            id: sectionId,
+          },
+        }),
+      ]);
+
+      return res.status(200).json({ message: 'Section deleted' });
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).end();
+  } catch (error: any) {
+    console.error('SECTIONS_API_ERROR:', error);
+    return res.status(error.message === 'Not signed in' ? 401 : 500).json({
+      message: error.message || 'Internal server error',
+    });
   }
 }

@@ -11,6 +11,7 @@ export default async function middleware(req: NextRequest) {
     '/admin/customize',
     '/admin/analytics',
     '/admin/settings',
+    '/staff/user',
   ];
 
   // If it's the root path, just render it
@@ -22,6 +23,22 @@ export default async function middleware(req: NextRequest) {
     req,
     secret: process.env.NEXTAUTH_SECRET,
   });
+
+  // Check if user is banned
+  if (session?.isBanned) {
+    // Allow signout
+    if (path.includes('/api/auth/signout')) {
+      return NextResponse.next();
+    }
+    // Prevent redirect loop if already on login page with error
+    if (path === '/login' && req.nextUrl.searchParams.get('error') === 'AccountBanned') {
+       return NextResponse.next(); // Don't redirect again, and stop execution so we don't hit the 'authenticated user' redirect below? 
+       // WAIT. If I return next(), does it execute lines below in THIS function? 
+       // No, 'return' exits the function. So it skips lines 35-46. Perfect.
+    }
+    
+    return NextResponse.redirect(new URL('/login?error=AccountBanned', req.url));
+  }
 
   // Handle protected paths that require authentication
   if (!session && protectedPaths.includes(path)) {

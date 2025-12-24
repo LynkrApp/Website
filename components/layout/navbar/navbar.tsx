@@ -8,6 +8,7 @@ import {
   Menu,
   X,
   ExternalLink,
+  ShieldCheck,
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
@@ -20,33 +21,46 @@ import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
-const navItems = [
-  {
-    title: 'Links',
-    href: '/admin',
-    icon: <Link2 size={20} />,
-  },
-  {
-    title: 'Customize',
-    href: '/admin/customize',
-    icon: <CircleDot size={20} />,
-  },
-  {
-    title: 'Analytics',
-    href: '/admin/analytics',
-    icon: <BarChart size={20} />,
-  },
-  {
-    title: 'Settings',
-    href: '/admin/settings',
-    icon: <Settings2 size={20} />,
-  },
-];
 
 const Navbar = ({ showName = false, isHomePage = true }) => {
   const session = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const router = useRouter();
+
+  const userRole = (session.data?.user as any)?.role;
+  const isAuthorized = userRole === 'ADMIN' || userRole === 'SUPERADMIN';
+
+  const navItems = [
+    {
+      title: 'Links',
+      href: '/admin',
+      icon: <Link2 size={20} />,
+    },
+    {
+      title: 'Customize',
+      href: '/admin/customize',
+      icon: <CircleDot size={20} />,
+    },
+    {
+      title: 'Analytics',
+      href: '/admin/analytics',
+      icon: <BarChart size={20} />,
+    },
+    {
+      title: 'Settings',
+      href: '/admin/settings',
+      icon: <Settings2 size={20} />,
+    },
+    ...(isAuthorized
+      ? [
+          {
+            title: 'Staff',
+            href: '/staff/user',
+            icon: <ShieldCheck size={20} />,
+          },
+        ]
+      : []),
+  ];
 
   return (
     <header className="z-40 top-0 w-[100vw] border-b border-b-slate-200 border-slate-800 bg-slate-900 text-white shadow-md">

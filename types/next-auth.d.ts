@@ -5,12 +5,16 @@ declare module 'next-auth' {
     user: {
       id: string;
       handle?: string;
+      isBanned?: boolean;
+      role?: string;
     } & DefaultSession['user'];
   }
 
   interface User {
     id: string;
     handle?: string | null;
+    isBanned?: boolean;
+    role?: string;
   }
 }
 
@@ -20,6 +24,8 @@ declare module 'next-auth/jwt' {
     handle?: string | null;
     name?: string | null;
     email?: string | null;
+    isBanned?: boolean;
+    role?: string;
   }
 }
 

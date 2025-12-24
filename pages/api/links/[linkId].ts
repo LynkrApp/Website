@@ -1,11 +1,28 @@
 import { db } from '@/lib/db';
+import serverAuth from '@/lib/serverAuth';
 
 export default async function handler(req, res) {
   try {
+    const { currentUser } = await serverAuth(req, res);
     const { linkId } = req.query;
 
     if (!linkId || typeof linkId !== 'string') {
-      throw new Error('Invalid ID');
+      return res.status(400).json({ message: 'Invalid ID' });
+    }
+
+    // Verify ownership
+    const link = await db.link.findUnique({
+      where: {
+        id: linkId,
+      },
+    });
+
+    if (!link) {
+      return res.status(404).json({ message: 'Link not found' });
+    }
+
+    if (link.userId !== currentUser.id) {
+      return res.status(403).json({ message: 'Unauthorized' });
     }
 
     if (req.method === 'PATCH') {
@@ -16,17 +33,8 @@ export default async function handler(req, res) {
         sectionId,
         newShowFavicon,
         newIsSocial,
-        newIsNSFW
+        newIsNSFW,
       } = req.body;
-
-      // Enhanced logging for debugging
-      console.log('PATCH request body:', req.body);
-      console.log(
-        'showFavicon value received:',
-        newShowFavicon,
-        'type:',
-        typeof newShowFavicon
-      );
 
       const updatedLink = await db.link.update({
         where: {
@@ -37,16 +45,14 @@ export default async function handler(req, res) {
           ...(newUrl !== undefined && { url: newUrl }),
           ...(archived !== undefined && { archived }),
           ...(sectionId !== undefined && { sectionId }),
-          // Ensure explicit boolean conversion
           ...(newShowFavicon !== undefined && {
-            showFavicon: newShowFavicon === true,
+            showFavicon: Boolean(newShowFavicon),
           }),
-          ...(newIsSocial !== undefined && { isSocial: newIsSocial === true }),
-          ...(newIsNSFW !== undefined && { isNSFWLink: newIsNSFW === true }),
+          ...(newIsSocial !== undefined && { isSocial: Boolean(newIsSocial) }),
+          ...(newIsNSFW !== undefined && { isNSFWLink: Boolean(newIsNSFW) }),
         },
       });
 
-      console.log('Updated link:', updatedLink);
       return res.status(200).json(updatedLink);
     } else if (req.method === 'DELETE') {
       await db.link.delete({
@@ -57,8 +63,12 @@ export default async function handler(req, res) {
 
       return res.status(204).end();
     }
-  } catch (error) {
-    console.log(error);
-    return res.status(400).end();
+
+    return res.status(405).end();
+  } catch (error: any) {
+    console.error('LINK_ID_ERROR:', error);
+    return res.status(error.message === 'Not signed in' ? 401 : 400).json({
+      message: error.message || 'Error processing request',
+    });
   }
 }
